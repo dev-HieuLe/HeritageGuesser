@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   GoogleMap,
   StreetViewPanorama,
@@ -10,6 +10,7 @@ import {
   Landmark,
   MessageCircle,
   CheckCircle,
+  Bot,
 } from "lucide-react";
 import axios from "axios";
 
@@ -21,8 +22,16 @@ export default function Game() {
   const [chatInput, setChatInput] = useState("");
   const [chatCount, setChatCount] = useState(0);
   const [locations, setLocations] = useState([]);
-  const [result, setResult] = useState(null); // { total, nameScore, ageScore, similarity, ageDiff, correctName, correctAge }
+  const [result, setResult] = useState(null);
   const [finished, setFinished] = useState(false);
+  const [loadingReply, setLoadingReply] = useState(false);
+
+  const messagesEndRef = useRef(null);
+
+  // Scroll to bottom when messages update
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, loadingReply]);
 
   useEffect(() => {
     const fetchLocations = async () => {
@@ -39,18 +48,24 @@ export default function Game() {
   }, []);
 
   const sendMessage = async () => {
+    if (locations.length === 0) return;
+    const current = locations[index];
+
     if (!chatInput.trim() || chatCount >= 10) return;
 
-    const userMsg = { role: "user", text: chatInput };
+    const userMsg = { role: "user", text: chatInput.trim() };
     setMessages((prev) => [...prev, userMsg]);
     setChatInput("");
     setChatCount((prev) => prev + 1);
 
+    setLoadingReply(true);
+
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/chat`,
-        { message: chatInput }
+        { message: userMsg.text, locationId: current.id }
       );
+
       const botMsg = { role: "bot", text: res.data.reply };
       setMessages((prev) => [...prev, botMsg]);
     } catch {
@@ -58,6 +73,8 @@ export default function Game() {
         ...prev,
         { role: "bot", text: "⚠️ Failed to connect to Gemini API." },
       ]);
+    } finally {
+      setLoadingReply(false);
     }
   };
 
@@ -66,7 +83,6 @@ export default function Game() {
     const current = locations[index];
 
     try {
-      // Call Node backend → FastAPI
       const res = await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/heritage/check`,
         {
@@ -76,9 +92,7 @@ export default function Game() {
       );
 
       const { nameScore, similarity } = res.data;
-      console.log("Name score:", nameScore, "Similarity:", similarity);
 
-      // Keep age scoring from computeScores
       const diff = Math.abs(Number(ageGuess) - Number(current.years_old));
       let ageScore = 0;
       if (diff <= 10) ageScore = 5;
@@ -109,12 +123,20 @@ export default function Game() {
       setHeritage("");
       setAgeGuess(100);
       setResult(null);
+      setMessages([]);
+      setChatCount(0);
     } else {
       setFinished(true);
     }
   };
 
-  // Function to determine feedback text
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  };
+
   const getFeedback = (score) => {
     if (score < 5) {
       return {
@@ -278,21 +300,47 @@ export default function Game() {
         {/* RIGHT: Chatbot */}
         <div className="w-[350px] bg-[#1D1633] flex flex-col p-4 border-l border-gray-700">
           <div className="text-sm text-gray-300 mb-2 flex items-center">
-            <MessageCircle size={16} className="mr-2" /> Gemini Assistant
+            <MessageCircle size={16} className="mr-2" /> AI Assistant
           </div>
-          <div className="flex-1 overflow-y-auto space-y-2 mb-3">
+          <div className="flex-1 overflow-y-auto space-y-3 mb-3">
             {messages.map((msg, i) => (
               <div
                 key={i}
-                className={`p-2 rounded-lg max-w-[80%] ${
-                  msg.role === "user"
-                    ? "bg-blue-600 ml-auto text-white"
-                    : "bg-gray-700 text-gray-200"
+                className={`flex items-start space-x-2 ${
+                  msg.role === "user" ? "justify-end" : "justify-start"
                 }`}
               >
-                {msg.text}
+                {msg.role === "bot" && (
+                  <div className="w-8 h-8 flex items-center justify-center rounded-full bg-cyan-600">
+                    <Bot size={18} />
+                  </div>
+                )}
+                <div
+                  className={`p-2 rounded-lg max-w-[70%] ${
+                    msg.role === "user"
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-700 text-gray-200"
+                  }`}
+                >
+                  {msg.text}
+                </div>
               </div>
             ))}
+
+            {loadingReply && (
+              <div className="flex items-center space-x-2">
+                <div className="w-8 h-8 flex items-center justify-center rounded-full bg-cyan-600">
+                  <Bot size={18} />
+                </div>
+                <div className="flex space-x-1">
+                  <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></span>
+                  <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-150"></span>
+                  <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-300"></span>
+                </div>
+              </div>
+            )}
+
+            <div ref={messagesEndRef} />
           </div>
 
           <div className="flex items-center space-x-2">
@@ -303,6 +351,7 @@ export default function Game() {
               }
               value={chatInput}
               onChange={(e) => setChatInput(e.target.value)}
+              onKeyDown={handleKeyPress}
               disabled={chatCount >= 10}
               className="flex-1 px-3 py-2 rounded-lg bg-gray-800 text-white"
             />
