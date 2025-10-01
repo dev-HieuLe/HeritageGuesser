@@ -1,9 +1,23 @@
-import React from "react";
-import { Search } from "lucide-react";
+import { useContext } from "react";
+import { Search, User, LogOut } from "lucide-react";
+import { AuthContext } from "../../Context/authContext";
+import { Link } from "react-router-dom";
 
 export default function Homepage() {
+  const { auth, user, logout, loading } = useContext(AuthContext);
+  console.log("User in Homepage:", auth, user);
+
+  if (loading) {
+    // Don’t show login/logout until we know
+    return (
+      <div className="h-screen flex justify-center items-center text-white">
+        Loading...
+      </div>
+    );
+  }
+
   return (
-    <div className="h-screen w-screen flex bg-gradient-to-br from-[#141021] via-[#1C1530] to-[#2B2440] text-white font-sans">
+    <div className="h-screen flex flex-1 flex-col  text-white font-sans">
       {/* Main Content */}
       <main className="flex-1 px-8 py-6 overflow-y-auto">
         {/* Top Search + Profile */}
@@ -19,21 +33,56 @@ export default function Homepage() {
           </div>
 
           {/* Profile */}
-          <div className="flex items-center space-x-4">
-            <div className="bg-[#1D1633] px-4 py-2 rounded-lg text-sm">
-              level 51
-              <div className="w-24 h-1 bg-gray-700 rounded mt-1">
-                <div className="w-3/4 h-full bg-yellow-400 rounded"></div>
-              </div>
-            </div>
-            <div className="w-10 h-10 bg-gradient-to-tr from-blue-500 to-cyan-400 rounded-full flex items-center justify-center text-white font-bold">
-              👤
-            </div>
+          <div className="flex items-center">
+            {auth && user?.name ? (
+              <>
+                {/* Profile Icon */}
+                <div className="w-10 h-10 bg-gradient-to-tr from-blue-500 to-cyan-400 rounded-full flex items-center justify-center text-white font-bold cursor-pointer">
+                  <User size={20} />
+                </div>
+                {/* User Info */}
+                <div className="bg-[#1D1633] px-4 py-2 rounded-lg text-sm text-white flex flex-col w-48">
+                  
+                  <span>{user?.name || "User"}</span>
+                  <div className="w-full h-2 bg-gray-700 rounded mt-1 overflow-hidden">
+                    <div
+                      className="h-full bg-yellow-400 rounded transition-all duration-500"
+                      style={{
+                        width: `${Math.min(
+                          ((user?.level || 0) / 900) * 100,
+                          100
+                        )}%`,
+                      }}
+                    ></div>
+                  </div>
+
+                  <span className="text-xs text-gray-400 mt-1">
+                    {user?.level || 0} / 900
+                  </span>
+                </div>
+
+                {/* Logout Icon */}
+                <div
+                  onClick={logout}
+                  className="w-10 h-10 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center text-white cursor-pointer transition"
+                  title="Logout"
+                >
+                  <LogOut size={18} />
+                </div>
+              </>
+            ) : (
+              <Link
+                to="/login"
+                className=" flex items-center bg-gradient-to-tr from-blue-500 to-cyan-400 px-4 py-2 rounded-lg text-white font-bold"
+              >
+                Login
+              </Link>
+            )}
           </div>
         </div>
 
         {/* Banner Row */}
-        <div className="grid grid-cols-2 gap-6 mb-10">
+        <div className="grid grid-cols-2 gap-6 mb-10 min-h-60">
           {/* Left Banner */}
           <div className="bg-gradient-to-r from-[#6C4AB6] via-[#5940A9] to-[#43358F] rounded-xl p-6 flex flex-col justify-between shadow-lg">
             <h2 className="text-xl font-bold mb-2">New season is here</h2>

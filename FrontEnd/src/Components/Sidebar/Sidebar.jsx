@@ -5,7 +5,7 @@ import { FaMapMarkerAlt, FaUserFriends, FaLayerGroup } from "react-icons/fa";
 
 export default function Sidebar() {
   return (
-    <aside className="w-60 bg-[#171726] backdrop-blur-sm flex flex-col justify-between py-6 ]">
+    <aside className="w-60 h-screen bg-[#171726] backdrop-blur-sm flex flex-col justify-between py-6">
       <div>
         {/* Logo / Title */}
         <div className="px-6 pb-8">
@@ -59,7 +59,7 @@ export default function Sidebar() {
           {/* 🔥 Standout GUESS NOW button */}
           <div className="mt-6 px-3">
             <Link
-              to="/play"
+              to="/game"
               className="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-[#3B82F6] via-[#06B6D4] to-[#22D3EE] hover:from-[#60A5FA] hover:via-[#22D3EE] hover:to-[#67E8F9] text-white font-bold py-3 rounded-xl shadow-lg shadow-cyan-900/40 transition transform hover:scale-105"
             >
               <Zap size={18} className="animate-pulse" />
