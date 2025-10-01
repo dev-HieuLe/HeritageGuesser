@@ -38,7 +38,6 @@ export default function Game() {
     fetchLocations();
   }, []);
 
-
   const sendMessage = async () => {
     if (!chatInput.trim() || chatCount >= 10) return;
 
@@ -115,6 +114,35 @@ export default function Game() {
     }
   };
 
+  // Function to determine feedback text
+  const getFeedback = (score) => {
+    if (score < 5) {
+      return {
+        title: "❌ Not quite!",
+        color: "text-red-400",
+        description: "Better luck next time!",
+      };
+    } else if (score >= 6 && score <= 7) {
+      return {
+        title: "🟡 You are on the right track!",
+        color: "text-yellow-400",
+        description: "Almost there, keep going!",
+      };
+    } else if (score >= 8 && score <= 9) {
+      return {
+        title: "🔵 You are close!",
+        color: "text-blue-400",
+        description: "Very good attempt!",
+      };
+    } else if (score === 10) {
+      return {
+        title: "🎉 Congratulations!",
+        color: "text-green-400",
+        description: "Perfect guess!",
+      };
+    }
+  };
+
   return (
     <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
       <div className="w-full h-screen flex bg-[#0F0B1A] text-white">
@@ -153,33 +181,26 @@ export default function Game() {
               <div className="text-center text-xl">🎉 You finished all!</div>
             ) : result ? (
               <div className="text-center">
-                {result.total >= 9 ? (
-                  <>
-                    <h2 className="text-2xl font-bold text-green-400 mb-4">
-                      🎉 Congratulations!
-                    </h2>
-                    <p>
-                      Correct:{" "}
-                      <span className="font-semibold">
-                        {result.correctName}
-                      </span>{" "}
-                      ({result.correctAge} years old)
-                    </p>
-                  </>
-                ) : (
-                  <>
-                    <h2 className="text-2xl font-bold text-red-400 mb-4">
-                      ❌ Not quite!
-                    </h2>
-                    <p className="mb-2">
-                      The correct answer was{" "}
-                      <span className="font-semibold">
-                        {result.correctName}
-                      </span>{" "}
-                      ({result.correctAge} years old).
-                    </p>
-                  </>
-                )}
+                {(() => {
+                  const feedback = getFeedback(result.total);
+                  return (
+                    <>
+                      <h2
+                        className={`text-2xl font-bold mb-4 ${feedback.color}`}
+                      >
+                        {feedback.title}
+                      </h2>
+                      <p className="mb-2">{feedback.description}</p>
+                      <p>
+                        Correct:{" "}
+                        <span className="font-semibold">
+                          {result.correctName}
+                        </span>{" "}
+                        ({result.correctAge} years old)
+                      </p>
+                    </>
+                  );
+                })()}
 
                 <div className="mt-4 p-4 bg-gray-800 rounded-lg border border-gray-700 text-left">
                   <div className="text-cyan-300 font-bold text-lg mb-2">
