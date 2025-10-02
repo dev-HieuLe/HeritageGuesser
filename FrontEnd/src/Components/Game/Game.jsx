@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import {
   GoogleMap,
   StreetViewPanorama,
-  LoadScript,
+  LoadScriptNext,
 } from "@react-google-maps/api";
 import {
   Send,
@@ -13,6 +13,8 @@ import {
   Bot,
 } from "lucide-react";
 import axios from "axios";
+import Confetti from "react-confetti";
+import { useWindowSize } from "react-use";
 
 export default function Game() {
   const [index, setIndex] = useState(0);
@@ -26,7 +28,14 @@ export default function Game() {
   const [finished, setFinished] = useState(false);
   const [loadingReply, setLoadingReply] = useState(false);
 
+  // NEW STATES
+  const [countdown, setCountdown] = useState(3);
+  const [isBlurred, setIsBlurred] = useState(true);
+  const [timeLeft, setTimeLeft] = useState(180); // 3 minutes in seconds
+  const [showConfetti, setShowConfetti] = useState(false); // confetti toggle
+
   const messagesEndRef = useRef(null);
+  const { width, height } = useWindowSize(); // screen size for confetti
 
   // Scroll to bottom when messages update
   useEffect(() => {
@@ -47,6 +56,44 @@ export default function Game() {
     fetchLocations();
   }, []);
 
+  //START NEW ROUND (with blur countdown and timer reset
+  const startNewRound = () => {
+    setIsBlurred(true);
+    setCountdown(3);
+    setTimeLeft(180);
+    setShowConfetti(false);
+
+    let counter = 3;
+    const interval = setInterval(() => {
+      counter--;
+      setCountdown(counter);
+      if (counter === 0) {
+        clearInterval(interval);
+        setIsBlurred(false);
+      }
+    }, 1000);
+  };
+
+  // Trigger new round when index changes
+  useEffect(() => {
+    if (locations.length > 0) {
+      startNewRound();
+    }
+  }, [index, locations]);
+
+  // Timer countdown (auto submit when time = 0)
+  useEffect(() => {
+    if (!isBlurred && timeLeft > 0) {
+      const timer = setInterval(() => {
+        setTimeLeft((prev) => prev - 1);
+      }, 1000);
+      return () => clearInterval(timer);
+    } else if (timeLeft === 0) {
+      handleSubmit();
+    }
+  }, [isBlurred, timeLeft]);
+
+  //CHAT FUNCTION
   const sendMessage = async () => {
     if (locations.length === 0) return;
     const current = locations[index];
@@ -78,6 +125,7 @@ export default function Game() {
     }
   };
 
+  //Submit Guess
   const handleSubmit = async () => {
     if (locations.length === 0) return;
     const current = locations[index];
@@ -112,6 +160,11 @@ export default function Game() {
         correctName: current.name,
         correctAge: current.years_old,
       });
+
+      if (total === 10) {
+        setShowConfetti(true); // 🎉 trigger confetti
+        setTimeout(() => setShowConfetti(false), 7000); // stop after 7s
+      }
     } catch (err) {
       console.error("Check answer failed:", err);
     }
@@ -125,6 +178,7 @@ export default function Game() {
       setResult(null);
       setMessages([]);
       setChatCount(0);
+      startNewRound(); // restart
     } else {
       setFinished(true);
     }
@@ -166,8 +220,36 @@ export default function Game() {
   };
 
   return (
-    <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
-      <div className="w-full h-screen flex bg-[#0F0B1A] text-white">
+    <LoadScriptNext googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
+      <div className="w-full h-screen flex bg-[#0F0B1A] text-white relative">
+        {/* 🎉 CONFETTI OVERLAY */}
+        {showConfetti && (
+          <Confetti
+            width={width}
+            height={height}
+            recycle={false} // play once, not loop forever
+            numberOfPieces={400} // how many confetti
+            gravity={1}
+          />
+        )}
+
+        {/* TIMER TOP BAR */}
+        {!finished && (
+          <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-[#0F0B1A]  px-4 py-2 rounded-xl text-white font-bold text-lg z-20">
+            ⏳ {Math.floor(timeLeft / 60)}:
+            {String(timeLeft % 60).padStart(2, "0")}
+          </div>
+        )}
+
+        {/* BLUR + COUNTDOWN OVERLAY */}
+        {isBlurred && !finished && (
+          <div className="absolute inset-0 bg-[#0F0B1A] flex items-center justify-center z-50">
+            <span className="text-6xl font-bold text-white animate-pulse">
+              {countdown > 0 ? countdown : ""}
+            </span>
+          </div>
+        )}
+
         {/* LEFT */}
         <div className="flex-1 flex flex-col items-center">
           {/* VR Window */}
@@ -180,18 +262,30 @@ export default function Game() {
               zoom={14}
               options={{
                 disableDefaultUI: true,
-                draggable: false,
+                gestureHandling: "none",
+                keyboardShortcuts: false,
+                linksControl: true,
+                clickToGo: true,
               }}
             >
               <StreetViewPanorama
+                key={index}
                 position={
                   locations.length > 0 ? locations[index] : { lat: 0, lng: 0 }
                 }
                 visible={true}
                 options={{
-                  pov: { heading: 100, pitch: 0 },
-                  zoom: 1,
                   disableDefaultUI: true,
+                  clickToGo: true,
+                  linksControl: true,
+                  addressControl: false,
+                  motionTracking: true,
+                  motionTrackingControl: false,
+                  enableCloseButton: false,
+                }}
+                onLoad={(pano) => {
+                  pano.setPov({ heading: 100, pitch: 0 });
+                  pano.setZoom(1);
                 }}
               />
             </GoogleMap>
@@ -368,6 +462,6 @@ export default function Game() {
           </div>
         </div>
       </div>
-    </LoadScript>
+    </LoadScriptNext>
   );
 }
