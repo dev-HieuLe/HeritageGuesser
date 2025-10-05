@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { Search, User, LogOut } from "lucide-react";
+import { Search, User, LogOut, LogIn } from "lucide-react";
 import { AuthContext } from "../../Context/authContext";
 import { Link } from "react-router-dom";
 
@@ -73,9 +73,10 @@ export default function Homepage() {
             ) : (
               <Link
                 to="/login"
-                className=" flex items-center bg-gradient-to-tr from-blue-500 to-cyan-400 px-4 py-2 rounded-lg text-white font-bold"
+                className=" flex gap-2 items-center bg-gradient-to-tr from-blue-500 to-cyan-400 px-5 py-2 rounded-lg text-white font-bold"
               >
-                Login
+                <span>Login</span>
+                <LogIn size={20} className="text-white" />
               </Link>
             )}
           </div>

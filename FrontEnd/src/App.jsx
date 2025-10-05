@@ -8,6 +8,7 @@ import Signup from "./Components/Register";
 import { AuthProvider } from "./Context/authContext";
 import { useLocation } from "react-router-dom";
 import Game from "./Components/Game/Game";
+import Leaderboard from "./Components/Leaderboard/Leaderboard";
 
 export default function App() {
   const location = useLocation();
@@ -21,8 +22,8 @@ export default function App() {
     );
   }
   return (
-    <div className="flex h-screen bg-gradient-to-br from-[#141021] via-[#1C1530] to-[#2B2440]">
-        <aside className="w-64 h-screen"> 
+    <div className="flex h-full bg-gradient-to-br from-[#141021] via-[#1C1530] to-[#2B2440]">
+        <aside className="w-64"> 
           <Sidebar />
         </aside>
         <main className="flex-1">
@@ -32,6 +33,7 @@ export default function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Signup />} />
             <Route path="/game" element={<Game />} />
+            <Route path="/leaderboard" element={<Leaderboard />} />
           </Routes>
         </main>
     </div>

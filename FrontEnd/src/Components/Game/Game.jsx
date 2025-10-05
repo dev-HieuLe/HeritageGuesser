@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import {
   GoogleMap,
   StreetViewPanorama,
@@ -15,6 +15,7 @@ import {
 import axios from "axios";
 import Confetti from "react-confetti";
 import { useWindowSize } from "react-use";
+import { AuthContext } from "../../Context/authContext"; // ✅ add auth context
 
 export default function Game() {
   const [index, setIndex] = useState(0);
@@ -33,6 +34,9 @@ export default function Game() {
   const [isBlurred, setIsBlurred] = useState(true);
   const [timeLeft, setTimeLeft] = useState(180); // 3 minutes in seconds
   const [showConfetti, setShowConfetti] = useState(false); // confetti toggle
+  const [notification, setNotification] = useState(null); // ✅ NEW: level popup
+
+  const { user, setUser } = useContext(AuthContext); // ✅ access auth context
 
   const messagesEndRef = useRef(null);
   const { width, height } = useWindowSize(); // screen size for confetti
@@ -56,7 +60,7 @@ export default function Game() {
     fetchLocations();
   }, []);
 
-  //START NEW ROUND (with blur countdown and timer reset
+  //START NEW ROUND
   const startNewRound = () => {
     setIsBlurred(true);
     setCountdown(3);
@@ -81,7 +85,7 @@ export default function Game() {
     }
   }, [index, locations]);
 
-  // Timer countdown (auto submit when time = 0)
+  // Timer countdown
   useEffect(() => {
     if (!isBlurred && timeLeft > 0) {
       const timer = setInterval(() => {
@@ -104,7 +108,6 @@ export default function Game() {
     setMessages((prev) => [...prev, userMsg]);
     setChatInput("");
     setChatCount((prev) => prev + 1);
-
     setLoadingReply(true);
 
     try {
@@ -125,7 +128,7 @@ export default function Game() {
     }
   };
 
-  //Submit Guess
+  //SUBMIT GUESS
   const handleSubmit = async () => {
     if (locations.length === 0) return;
     const current = locations[index];
@@ -151,6 +154,28 @@ export default function Game() {
 
       const total = nameScore + ageScore;
 
+      // 🎯 LEVEL SYSTEM
+      const levelGain = total / 10;
+      if (user) {
+        const newLevel = (user.level || 0) + levelGain;
+        setUser({ ...user, level: newLevel });
+
+        // backend sync
+        try {
+          await axios.post(
+            `${import.meta.env.VITE_API_BASE_URL}/player/update-level`,
+            { levelGain },
+            { withCredentials: true }
+          );
+        } catch (err) {
+          console.warn("⚠️ Failed to sync level:", err);
+        }
+
+        // 🎉 Notification
+        setNotification(`Level +${levelGain.toFixed(2)}`);
+        setTimeout(() => setNotification(null), 3000);
+      }
+
       setResult({
         total,
         nameScore,
@@ -162,8 +187,8 @@ export default function Game() {
       });
 
       if (total === 10) {
-        setShowConfetti(true); // 🎉 trigger confetti
-        setTimeout(() => setShowConfetti(false), 7000); // stop after 7s
+        setShowConfetti(true);
+        setTimeout(() => setShowConfetti(false), 7000);
       }
     } catch (err) {
       console.error("Check answer failed:", err);
@@ -178,7 +203,7 @@ export default function Game() {
       setResult(null);
       setMessages([]);
       setChatCount(0);
-      startNewRound(); // restart
+      startNewRound();
     } else {
       setFinished(true);
     }
@@ -222,18 +247,25 @@ export default function Game() {
   return (
     <LoadScriptNext googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
       <div className="w-full h-screen flex bg-[#0F0B1A] text-white relative">
-        {/* 🎉 CONFETTI OVERLAY */}
+        {/* ✅ Level Notification */}
+        {notification && (
+          <div className="absolute top-10 right-10 bg-gradient-to-r from-green-500 to-emerald-400 text-white px-6 py-3 rounded-xl font-bold shadow-lg animate-bounce z-50">
+            {notification}
+          </div>
+        )}
+
+        {/* 🎉 Confetti */}
         {showConfetti && (
           <Confetti
             width={width}
             height={height}
-            recycle={false} // play once, not loop forever
-            numberOfPieces={400} // how many confetti
+            recycle={false}
+            numberOfPieces={400}
             gravity={1}
           />
         )}
 
-        {/* TIMER TOP BAR */}
+        {/* Timer */}
         {!finished && (
           <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-[#0F0B1A]  px-4 py-2 rounded-xl text-white font-bold text-lg z-20">
             ⏳ {Math.floor(timeLeft / 60)}:
@@ -241,7 +273,7 @@ export default function Game() {
           </div>
         )}
 
-        {/* BLUR + COUNTDOWN OVERLAY */}
+        {/* Blur + Countdown */}
         {isBlurred && !finished && (
           <div className="absolute inset-0 bg-[#0F0B1A] flex items-center justify-center z-50">
             <span className="text-6xl font-bold text-white animate-pulse">
@@ -250,9 +282,8 @@ export default function Game() {
           </div>
         )}
 
-        {/* LEFT */}
+        {/* LEFT SIDE */}
         <div className="flex-1 flex flex-col items-center">
-          {/* VR Window */}
           <div className="relative w-[95%] h-[70vh] mt-6 rounded-2xl overflow-hidden shadow-xl">
             <GoogleMap
               mapContainerStyle={{ width: "100%", height: "100%" }}
@@ -291,7 +322,7 @@ export default function Game() {
             </GoogleMap>
           </div>
 
-          {/* Guess Section */}
+          {/* GUESS SECTION */}
           <div className="w-[95%] bg-[#1D1633] p-6 shadow-inner rounded-xl mt-6 flex flex-col space-y-6">
             {finished ? (
               <div className="text-center text-xl">🎉 You finished all!</div>
@@ -391,7 +422,7 @@ export default function Game() {
           </div>
         </div>
 
-        {/* RIGHT: Chatbot */}
+        {/* RIGHT SIDE CHAT */}
         <div className="w-[350px] bg-[#1D1633] flex flex-col p-4 border-l border-gray-700">
           <div className="text-sm text-gray-300 mb-2 flex items-center">
             <MessageCircle size={16} className="mr-2" /> AI Assistant
