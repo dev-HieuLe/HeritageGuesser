@@ -1,0 +1,598 @@
+import React, { useState, useEffect, useRef, useContext } from "react";
+import {
+  GoogleMap,
+  StreetViewPanorama,
+  LoadScriptNext,
+} from "@react-google-maps/api";
+import {
+  Send,
+  MapPin,
+  Landmark,
+  MessageCircle,
+  CheckCircle,
+  Bot,
+} from "lucide-react";
+import axios from "axios";
+import Confetti from "react-confetti";
+import { useWindowSize } from "react-use";
+import { AuthContext } from "../../Context/authContext"; // ✅ add auth context
+
+export default function RankPlay() {
+  const [index, setIndex] = useState(0);
+  const [heritage, setHeritage] = useState(""); // name guess
+  const [ageGuess, setAgeGuess] = useState(100); // years old guess via slider
+  const [messages, setMessages] = useState([]);
+  const [chatInput, setChatInput] = useState("");
+  const [chatCount, setChatCount] = useState(0);
+  const [locations, setLocations] = useState([]);
+  const [result, setResult] = useState(null);
+  const [finished, setFinished] = useState(false);
+  const [loadingReply, setLoadingReply] = useState(false);
+
+  // NEW STATES
+  const [countdown, setCountdown] = useState(3);
+  const [isBlurred, setIsBlurred] = useState(true);
+  const [timeLeft, setTimeLeft] = useState(180); // 3 minutes in seconds
+  const [showConfetti, setShowConfetti] = useState(false); // confetti toggle
+  const [notification, setNotification] = useState(null); // ✅ NEW: level popup
+
+  const { user, setUser } = useContext(AuthContext); // ✅ access auth context
+
+  const messagesEndRef = useRef(null);
+  const { width, height } = useWindowSize(); // screen size for confetti
+
+  // Scroll to bottom when messages update
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, loadingReply]);
+
+  useEffect(() => {
+    const fetchLocations = async () => {
+      try {
+        const res = await axios.get(
+          `${import.meta.env.VITE_API_BASE_URL}/locations`
+        );
+        setLocations(res.data);
+      } catch (err) {
+        console.error("Error fetching locations", err);
+      }
+    };
+    fetchLocations();
+  }, []);
+
+  //START NEW ROUND
+  const startNewRound = () => {
+    setIsBlurred(true);
+    setCountdown(3);
+    setTimeLeft(180);
+    setShowConfetti(false);
+
+    let counter = 3;
+    const interval = setInterval(() => {
+      counter--;
+      setCountdown(counter);
+      if (counter === 0) {
+        clearInterval(interval);
+        setIsBlurred(false);
+      }
+    }, 1000);
+  };
+
+  // Trigger new round when index changes
+  useEffect(() => {
+    if (locations.length > 0) {
+      startNewRound();
+    }
+  }, [index, locations]);
+
+  // Timer countdown
+  useEffect(() => {
+    if (!isBlurred && timeLeft > 0) {
+      const timer = setInterval(() => {
+        setTimeLeft((prev) => prev - 1);
+      }, 1000);
+      return () => clearInterval(timer);
+    } else if (timeLeft === 0) {
+      handleSubmit();
+    }
+  }, [isBlurred, timeLeft]);
+
+  //CHAT FUNCTION
+  const sendMessage = async () => {
+    if (locations.length === 0) return;
+    const current = locations[index];
+
+    if (!chatInput.trim() || chatCount >= 10) return;
+
+    const userMsg = { role: "user", text: chatInput.trim() };
+    setMessages((prev) => [...prev, userMsg]);
+    setChatInput("");
+    setChatCount((prev) => prev + 1);
+    setLoadingReply(true);
+
+    try {
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/chat`,
+        { message: userMsg.text, locationId: current.id }
+      );
+
+      const botMsg = { role: "bot", text: res.data.reply };
+      setMessages((prev) => [...prev, botMsg]);
+    } catch {
+      setMessages((prev) => [
+        ...prev,
+        { role: "bot", text: "⚠️ Failed to connect to Gemini API." },
+      ]);
+    } finally {
+      setLoadingReply(false);
+    }
+  };
+
+  //SUBMIT GUESS
+  const handleSubmit = async () => {
+    if (locations.length === 0) return;
+    const current = locations[index];
+
+    try {
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/heritage/check`,
+        {
+          answer: heritage,
+          locationId: current.id,
+        }
+      );
+
+      const { nameScore, similarity } = res.data;
+
+      // 🧮 Age score calculation
+      const diff = Math.abs(Number(ageGuess) - Number(current.years_old));
+      let ageScore = 0;
+      if (diff <= 10) ageScore = 5;
+      else if (diff <= 20) ageScore = 4;
+      else if (diff <= 30) ageScore = 3;
+      else if (diff <= 50) ageScore = 2;
+      else if (diff <= 80) ageScore = 1;
+
+      const total = nameScore + ageScore;
+
+      // 🎯 LEVEL + RANK SYSTEM
+      const levelGain = total / 10;
+
+      // rank names
+      const rankNames = [
+        "Iron",
+        "Bronze",
+        "Silver",
+        "Gold",
+        "Platinum",
+        "Emerald",
+        "Diamond",
+        "Master",
+        "Grandmaster",
+        "Challenger",
+      ];
+
+      if (user) {
+        let rankMessage = null;
+
+        try {
+          // Decide whether this is a win/lose/neutral
+          if (total >= 8) {
+            // WIN -> let backend handle rank progression + level update
+            const r = await axios.post(
+              `${import.meta.env.VITE_API_BASE_URL}/player/update-rank`,
+              { levelGain, result: "win" },
+              { withCredentials: true }
+            );
+
+            const newData = r.data.newData || {};
+            const newRank = Number(newData.rank ?? user.rank ?? 1);
+            const newProgress = Number(
+              newData.rank_progress ?? user.rank_progress ?? 0
+            );
+            const newLevel = Number(
+              newData.level ?? (user.level || 0) + levelGain
+            );
+
+            // Compare old vs new rank to decide notification
+            if ((user.rank || 1) < newRank) {
+              rankMessage = `🏅 Rank Up! You are now ${
+                rankNames[newRank - 1]
+              } (${newRank})`;
+            } else if ((user.rank || 1) > newRank) {
+              rankMessage = `⬇️ Rank Down to ${
+                rankNames[newRank - 1]
+              } (${newRank})`;
+            }
+
+            // Update frontend user from server (server is source of truth)
+            setUser({
+              ...user,
+              level: newLevel,
+              rank: newRank,
+              rank_progress: newProgress,
+            });
+          } else if (total <= 4) {
+            // LOSE -> backend handles rank down + level update
+            const r = await axios.post(
+              `${import.meta.env.VITE_API_BASE_URL}/player/update-rank`,
+              { levelGain, result: "lose" },
+              { withCredentials: true }
+            );
+
+            const newData = r.data.newData || {};
+            const newRank = Number(newData.rank ?? user.rank ?? 1);
+            const newProgress = Number(
+              newData.rank_progress ?? user.rank_progress ?? 0
+            );
+            const newLevel = Number(
+              newData.level ?? (user.level || 0) + levelGain
+            );
+
+            if ((user.rank || 1) < newRank) {
+              rankMessage = `🏅 Rank Up! You are now ${
+                rankNames[newRank - 1]
+              } (${newRank})`;
+            } else if ((user.rank || 1) > newRank) {
+              rankMessage = `⬇️ Rank Down to ${
+                rankNames[newRank - 1]
+              } (${newRank})`;
+            }
+
+            setUser({
+              ...user,
+              level: newLevel,
+              rank: newRank,
+              rank_progress: newProgress,
+            });
+          } else {
+            // NEUTRAL -> only update level on backend
+            await axios.post(
+              `${import.meta.env.VITE_API_BASE_URL}/player/update-level`,
+              { levelGain },
+              { withCredentials: true }
+            );
+
+            const newLevel = (user.level || 0) + levelGain;
+            setUser({ ...user, level: newLevel });
+          }
+
+          // Notification: prefer rankMessage (if rank changed), otherwise show level only
+          if (rankMessage) {
+            setNotification(`${rankMessage} (+${levelGain.toFixed(2)} LV)`);
+          } else {
+            setNotification(`Level +${levelGain.toFixed(2)}`);
+          }
+          setTimeout(() => setNotification(null), 3000);
+        } catch (err) {
+          // fallback: if server call fails, keep optimistic local change for level only
+          console.warn("⚠️ Failed to sync rank/level with server:", err);
+          const optimisticLevel = (user.level || 0) + levelGain;
+          setUser({ ...user, level: optimisticLevel });
+          setNotification(`Level +${levelGain.toFixed(2)}`);
+          setTimeout(() => setNotification(null), 3000);
+        }
+      }
+
+      // 📊 Show result summary (unchanged)
+      setResult({
+        total,
+        nameScore,
+        ageScore,
+        similarity,
+        ageDiff: diff,
+        correctName: current.name,
+        correctAge: current.years_old,
+      });
+
+      // 🎊 Confetti for perfect score
+      if (total === 10) {
+        setShowConfetti(true);
+        setTimeout(() => setShowConfetti(false), 7000);
+      }
+    } catch (err) {
+      console.error("Check answer failed:", err);
+    }
+  };
+
+  const handleContinue = () => {
+    if (index + 1 < locations.length) {
+      setIndex((s) => s + 1);
+      setHeritage("");
+      setAgeGuess(100);
+      setResult(null);
+      setMessages([]);
+      setChatCount(0);
+      startNewRound();
+    } else {
+      setFinished(true);
+    }
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  };
+
+  const getFeedback = (score) => {
+    if (score < 5) {
+      return {
+        title: "❌ Not quite!",
+        color: "text-red-400",
+        description: "Better luck next time!",
+      };
+    } else if (score >= 6 && score <= 7) {
+      return {
+        title: "🟡 You are on the right track!",
+        color: "text-yellow-400",
+        description: "Almost there, keep going!",
+      };
+    } else if (score >= 8 && score <= 9) {
+      return {
+        title: "🔵 You are close!",
+        color: "text-blue-400",
+        description: "Very good attempt!",
+      };
+    } else if (score === 10) {
+      return {
+        title: "🎉 Congratulations!",
+        color: "text-green-400",
+        description: "Perfect guess!",
+      };
+    }
+  };
+
+  return (
+    <LoadScriptNext googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
+      <div className="w-full h-screen flex bg-[#0F0B1A] text-white relative">
+        {/* ✅ Level Notification */}
+        {notification && (
+          <div className="absolute top-10 right-10 bg-gradient-to-r from-green-500 to-emerald-400 text-white px-6 py-3 rounded-xl font-bold shadow-lg animate-bounce z-50">
+            {notification}
+          </div>
+        )}
+
+        {/* 🎉 Confetti */}
+        {showConfetti && (
+          <Confetti
+            width={width}
+            height={height}
+            recycle={false}
+            numberOfPieces={400}
+            gravity={1}
+          />
+        )}
+
+        {/* Timer */}
+        {!finished && (
+          <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-[#0F0B1A]  px-4 py-2 rounded-xl text-white font-bold text-lg z-20">
+            ⏳ {Math.floor(timeLeft / 60)}:
+            {String(timeLeft % 60).padStart(2, "0")}
+          </div>
+        )}
+
+        {/* Blur + Countdown */}
+        {isBlurred && !finished && (
+          <div className="absolute inset-0 bg-[#0F0B1A] flex items-center justify-center z-50">
+            <span className="text-6xl font-bold text-white animate-pulse">
+              {countdown > 0 ? countdown : ""}
+            </span>
+          </div>
+        )}
+
+        {/* LEFT SIDE */}
+        <div className="flex-1 flex flex-col items-center">
+          <div className="relative w-[95%] h-[70vh] mt-6 rounded-2xl overflow-hidden shadow-xl">
+            <GoogleMap
+              mapContainerStyle={{ width: "100%", height: "100%" }}
+              center={
+                locations.length > 0 ? locations[index] : { lat: 0, lng: 0 }
+              }
+              zoom={14}
+              options={{
+                disableDefaultUI: true,
+                gestureHandling: "none",
+                keyboardShortcuts: false,
+                linksControl: true,
+                clickToGo: true,
+              }}
+            >
+              <StreetViewPanorama
+                key={index}
+                position={
+                  locations.length > 0 ? locations[index] : { lat: 0, lng: 0 }
+                }
+                visible={true}
+                options={{
+                  disableDefaultUI: true,
+                  clickToGo: true,
+                  linksControl: true,
+                  addressControl: false,
+                  motionTracking: true,
+                  motionTrackingControl: false,
+                  enableCloseButton: false,
+                }}
+                onLoad={(pano) => {
+                  pano.setPov({ heading: 100, pitch: 0 });
+                  pano.setZoom(1);
+                }}
+              />
+            </GoogleMap>
+          </div>
+
+          {/* GUESS SECTION */}
+          <div className="w-[95%] bg-[#1D1633] p-6 shadow-inner rounded-xl mt-6 flex flex-col space-y-6">
+            {finished ? (
+              <div className="text-center text-xl">🎉 You finished all!</div>
+            ) : result ? (
+              <div className="text-center">
+                {(() => {
+                  const feedback = getFeedback(result.total);
+                  return (
+                    <>
+                      <h2
+                        className={`text-2xl font-bold mb-4 ${feedback.color}`}
+                      >
+                        {feedback.title}
+                      </h2>
+                      <p className="mb-2">{feedback.description}</p>
+                      <p>
+                        Correct:{" "}
+                        <span className="font-semibold">
+                          {result.correctName}
+                        </span>{" "}
+                        ({result.correctAge} years old)
+                      </p>
+                    </>
+                  );
+                })()}
+
+                <div className="mt-4 p-4 bg-gray-800 rounded-lg border border-gray-700 text-left">
+                  <div className="text-cyan-300 font-bold text-lg mb-2">
+                    Your Score: {result.total}/10
+                  </div>
+                  <div className="text-sm text-gray-300">
+                    <div>
+                      <strong>Name:</strong> {result.nameScore}/5 —{" "}
+                      {(result.similarity * 100).toFixed(0)}% similarity
+                    </div>
+                    <div>
+                      <strong>Age:</strong> {result.ageScore}/5 — difference of{" "}
+                      {result.ageDiff} years
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  onClick={handleContinue}
+                  className="mt-6 bg-gradient-to-r from-cyan-500 to-blue-500 px-6 py-3 rounded-xl font-bold shadow-lg"
+                >
+                  Continue
+                </button>
+              </div>
+            ) : (
+              <>
+                <div>
+                  <label className="flex items-center text-sm mb-2">
+                    <MapPin size={16} className="mr-2" /> Name of Heritage
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Type your guess..."
+                    value={heritage}
+                    onChange={(e) => setHeritage(e.target.value)}
+                    className="w-full px-4 py-2 rounded-lg bg-gray-800 text-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="flex items-center text-sm mb-2">
+                    <Landmark size={16} className="mr-2" /> Years Old (guess)
+                  </label>
+                  <div className="flex items-center space-x-4">
+                    <input
+                      type="range"
+                      min="1"
+                      max="1000"
+                      value={ageGuess}
+                      onChange={(e) => setAgeGuess(Number(e.target.value))}
+                      className="flex-1 accent-cyan-400"
+                    />
+                    <input
+                      type="number"
+                      min="1"
+                      max="1000"
+                      value={ageGuess}
+                      onChange={(e) => setAgeGuess(Number(e.target.value))}
+                      className="w-20 rounded px-2 py-1 bg-gray-800 text-white"
+                    />
+                  </div>
+                </div>
+
+                <button
+                  onClick={handleSubmit}
+                  className="flex items-center justify-center bg-gradient-to-r from-green-500 to-emerald-600 px-6 py-3 rounded-xl shadow-lg font-bold transition"
+                >
+                  <CheckCircle className="mr-2" size={18} /> Submit Guess
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* RIGHT SIDE CHAT */}
+        <div className="w-[350px] bg-[#1D1633] flex flex-col p-4 border-l border-gray-700">
+          <div className="text-sm text-gray-300 mb-2 flex items-center">
+            <MessageCircle size={16} className="mr-2" /> AI Assistant
+          </div>
+          <div className="flex-1 overflow-y-auto space-y-3 mb-3">
+            {messages.map((msg, i) => (
+              <div
+                key={i}
+                className={`flex items-start space-x-2 ${
+                  msg.role === "user" ? "justify-end" : "justify-start"
+                }`}
+              >
+                {msg.role === "bot" && (
+                  <div className="w-8 h-8 flex items-center justify-center rounded-full bg-cyan-600">
+                    <Bot size={18} />
+                  </div>
+                )}
+                <div
+                  className={`p-2 rounded-lg max-w-[70%] ${
+                    msg.role === "user"
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-700 text-gray-200"
+                  }`}
+                >
+                  {msg.text}
+                </div>
+              </div>
+            ))}
+
+            {loadingReply && (
+              <div className="flex items-center space-x-2">
+                <div className="w-8 h-8 flex items-center justify-center rounded-full bg-cyan-600">
+                  <Bot size={18} />
+                </div>
+                <div className="flex space-x-1">
+                  <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></span>
+                  <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-150"></span>
+                  <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-300"></span>
+                </div>
+              </div>
+            )}
+
+            <div ref={messagesEndRef} />
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <input
+              type="text"
+              placeholder={
+                chatCount >= 10 ? "Limit reached (10/10)" : "Ask Gemini..."
+              }
+              value={chatInput}
+              onChange={(e) => setChatInput(e.target.value)}
+              onKeyDown={handleKeyPress}
+              disabled={chatCount >= 10}
+              className="flex-1 px-3 py-2 rounded-lg bg-gray-800 text-white"
+            />
+            <button
+              onClick={sendMessage}
+              disabled={chatCount >= 10}
+              className="bg-gradient-to-r from-cyan-500 to-blue-500 p-2 rounded-lg"
+            >
+              <Send size={18} />
+            </button>
+          </div>
+          <div className="text-xs text-gray-400 mt-2 text-center">
+            {chatCount}/10 questions used
+          </div>
+        </div>
+      </div>
+    </LoadScriptNext>
+  );
+}

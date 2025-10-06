@@ -41,7 +41,7 @@ export default function Leaderboard() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center py-12 font-sans text-white bg-[#120D1D]">
+    <div className="min-h-screen flex flex-col items-center justify-center py-12 font-sans text-white bg-[#000221]">
       {/* Title */}
       <div className="text-center mb-8">
         <h1 className="text-4xl font-extrabold tracking-widest text-[#A78BFA] flex items-center justify-center gap-2">
