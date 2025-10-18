@@ -19,3 +19,28 @@ export const getLocations = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch locations" });
   }
 };
+
+export const getRandomLocations = async (req, res) => {
+  // Parse and validate count
+  let count = parseInt(req.query.count, 10);
+  if (isNaN(count) || count <= 0) count = 3; // default fallback
+
+  try {
+    // ✅ Manually inject LIMIT (safe since it's a number)
+    const [rows] = await db.execute(`SELECT * FROM locations ORDER BY RAND() LIMIT ${count}`);
+
+    const currentYear = new Date().getFullYear();
+    const locations = rows.map((loc) => ({
+      ...loc,
+      lat: Number(loc.lat),
+      lng: Number(loc.lng),
+      years_old: loc.built_year ? currentYear - loc.built_year : 0,
+    }));
+
+    res.json(locations);
+  } catch (err) {
+    console.error("getRandomLocations error:", err);
+    res.status(500).json({ error: "Failed to fetch locations" });
+  }
+};
+

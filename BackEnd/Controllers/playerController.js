@@ -4,7 +4,7 @@ import db from "../Config/db.js";
 export const updateLevel = async (req, res) => {
   try {
     const { levelGain } = req.body;
-    const playerId = req.id; // from auth middleware
+    const playerId = req.user.id; // from auth middleware
 
     if (!levelGain || isNaN(levelGain)) {
       return res.status(400).json({ error: "Invalid level gain" });
@@ -26,7 +26,7 @@ export const updateLevel = async (req, res) => {
 export const updateRank = async (req, res) => {
   try {
     const { levelGain, result } = req.body; // result = "win" or "lose"
-    const playerId = req.id; // from auth middleware
+    const playerId = req.user.id; // from auth middleware
 
     if (levelGain === undefined || isNaN(levelGain)) {
       return res.status(400).json({ error: "Invalid level gain" });

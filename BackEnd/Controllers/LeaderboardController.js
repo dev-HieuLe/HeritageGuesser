@@ -6,7 +6,7 @@ export const getLeaderboard = async (req, res) => {
     const [rows] = await db.execute(
       `SELECT id, name, level, \`rank\`, rank_progress 
        FROM users
-       ORDER BY \`rank\` ASC, rank_progress DESC, level DESC
+       ORDER BY \`rank\` DESC, rank_progress DESC, level DESC
        LIMIT 20`
     );
     res.json(rows);

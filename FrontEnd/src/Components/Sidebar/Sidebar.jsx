@@ -1,16 +1,26 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Home, Settings, HelpCircle, Zap } from "lucide-react";
-import { FaMapMarkerAlt, FaUserFriends, FaLayerGroup, FaBookOpen } from "react-icons/fa";
+import { Home, Settings, HelpCircle, Zap, Lightbulb } from "lucide-react";
+import {
+  FaMapMarkerAlt,
+  FaUserFriends,
+  FaLayerGroup,
+  FaBookOpen,
+} from "react-icons/fa";
 
 export default function Sidebar() {
   return (
     <aside className="w-60 backdrop-blur-sm flex flex-col justify-between py-6 h-full">
       <div>
         {/* Logo / Title */}
-        <div className="px-6 pb-8">
+        <div className="flex items-center mb-5">
+          <img
+            src="/LogoFinal.png"
+            alt="Heritage Guesser Logo"
+            className="w-24 h-24 object-contain"
+          />
           <h1 className="text-2xl font-bold text-[#A78BFA] tracking-wide">
-            HERRITAGE GUESSR
+            HERITAGE GUESSR
           </h1>
         </div>
 
@@ -81,7 +91,19 @@ export default function Sidebar() {
             </span>
           </Link>
 
-          {/* 🔥 GUESS NOW button */}
+          <Link
+            to="/tutorial"
+            className="group flex items-center space-x-3 px-6 py-2 hover:bg-[#1D1633] rounded-lg cursor-pointer transition transform hover:scale-105"
+          >
+            <Lightbulb
+              size={21}
+              className="group-hover:scale-110 group-hover:drop-shadow-[0_0_8px_#A78BFA] transition-transform"
+            />
+            <span className="text-md group-hover:scale-110 group-hover:drop-shadow-[0_0_6px_#A78BFA] transition-transform">
+              Tutorial
+            </span>
+          </Link>
+
           <div className="mt-6 px-3">
             <Link
               to="/game"

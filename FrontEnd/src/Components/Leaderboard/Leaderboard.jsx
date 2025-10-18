@@ -1,3 +1,4 @@
+// Leaderboard.jsx
 import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { User } from "lucide-react";
@@ -13,11 +14,14 @@ export default function Leaderboard() {
         withCredentials: true,
       })
       .then((res) => {
-        if (Array.isArray(res.data)) setPlayers(res.data);
+        if (Array.isArray(res.data)) {
+          setPlayers(res.data); // ✅ already sorted by backend
+        }
       })
       .catch((err) => console.error("❌ Leaderboard fetch failed:", err));
   }, []);
 
+  // Gradient colors for top 3 ranks
   const rankColors = {
     1: "from-yellow-400 to-yellow-600",
     2: "from-blue-400 to-blue-600",
@@ -58,7 +62,7 @@ export default function Leaderboard() {
           </div>
           <div className="flex items-center justify-center">Name</div>
           <div className="flex items-center justify-center">ID</div>
-          <div className="flex items-center justify-center">Matches</div>
+          <div className="flex items-center justify-center">Level</div>
         </div>
 
         {/* Rows */}
@@ -86,19 +90,19 @@ export default function Leaderboard() {
               >
                 {/* Rank + Avatar */}
                 <div className="flex items-center gap-4 relative z-20">
-                  {/* Rank number — behind but visible */}
+                  {/* Rank number */}
                   <span
                     className={`absolute font-extrabold select-none ${numberColor}`}
                     style={{
                       fontSize: isChampion ? "2.3rem" : "1.7rem",
-                      left: "-1.6rem", // moved closer so more visible
+                      left: "-1.6rem",
                       top: "50%",
                       transform: "translateY(-50%)",
-                      opacity: isChampion ? 0.6 : 0.45, // more solid
+                      opacity: isChampion ? 0.6 : 0.45,
                       textShadow: isChampion
                         ? "0 0 14px rgba(255,255,0,0.65)"
                         : "0 0 10px rgba(0,0,0,0.3)",
-                      zIndex: 30, // in front of avatar now
+                      zIndex: 30,
                     }}
                   >
                     #{rank}
@@ -146,9 +150,9 @@ export default function Leaderboard() {
                   {p.id ?? "-"}
                 </div>
 
-                {/* Matches */}
+                {/* Level */}
                 <div className="flex items-center justify-center font-semibold text-[#A78BFA] z-10">
-                  {p.matches ?? "-"}
+                  {p.level ?? "-"}
                 </div>
               </div>
             );

@@ -13,6 +13,8 @@ import heritageRoutes from "./Routes/heritageRoutes.js";
 import leaderboardRoutes from "./Routes/LeaderboardRoutes.js";
 import playerRoutes from "./Routes/playerRoutes.js";
 import DiscoverRoutes from "./Routes/discoverRoutes.js";
+import historyRoutes from "./Routes/historyRoutes.js";
+import personalizeRoutes from "./Routes/PersonalizeRoutes.js";
 
 const app = express();
 
@@ -54,6 +56,8 @@ app.use("/api/heritage", heritageRoutes);
 app.use("/api", leaderboardRoutes);
 app.use("/api/player", playerRoutes);
 app.use("/api/discover", DiscoverRoutes);
+app.use("/api/player/history", historyRoutes);
+app.use("/api/personalize", personalizeRoutes);
 
 console.log("NODE_ENV:", process.env.NODE_ENV);
 

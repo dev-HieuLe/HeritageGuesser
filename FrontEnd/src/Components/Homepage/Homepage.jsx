@@ -95,8 +95,16 @@ export default function Homepage() {
           </div>
 
           {/* Right Banner */}
-          <div className="bg-[#1D1633] rounded-xl p-6 flex flex-col justify-between shadow-md">
-            <h2 className="text-2xl font-semibold mb-2">Today's Heritage</h2>
+          <div className="relative bg-[url('/NhaThoLon.png')] bg-cover bg-center rounded-xl p-6 shadow-md overflow-hidden">
+            {/* Blurred overlay covers the whole image */}
+            <div className="absolute inset-0 backdrop-blur-sm bg-white/30"></div>
+
+            {/* Foreground content */}
+            <div className="relative z-10">
+              <h2 className="text-2xl font-semibold mb-2 text-black">
+                Today's Heritage
+              </h2>
+            </div>
           </div>
         </div>
 
@@ -109,58 +117,54 @@ export default function Homepage() {
             </button>
           </div>
           <div className="grid grid-cols-3 gap-6">
-            <div className="relative bg-[url('/Rank.png')] bg-cover bg-center aspect-square rounded-xl overflow-hidden shadow-md hover:scale-105 transition cursor-pointer">
-              {/* Blurred overlay at bottom */}
+            <Link
+              to="/rank"
+              className="relative bg-[url('/Rank.png')] bg-cover bg-center aspect-square rounded-xl overflow-hidden shadow-md hover:scale-105 transition cursor-pointer"
+            >
               <div className="absolute bottom-0 left-0 right-0 h-20 backdrop-blur-xl bg-transparent flex items-end p-4">
-                <span className="text-xl font-semibold text-white">
-                  Rank
-                </span>
+                <span className="text-xl font-semibold text-white">Rank</span>
               </div>
-            </div>
-            <div className="relative bg-[url('/DailyChallenge.png')] bg-cover bg-center aspect-square rounded-xl overflow-hidden shadow-md hover:scale-105 transition cursor-pointer">
-              {/* Blurred overlay at bottom */}
+            </Link>
+            <Link className="relative bg-[url('/DailyChallenge.png')] bg-cover bg-center aspect-square rounded-xl overflow-hidden shadow-md hover:scale-105 transition cursor-pointer">
               <div className="absolute bottom-0 left-0 right-0 h-20 backdrop-blur-xl bg-transparent flex items-end p-4">
                 <span className="text-xl font-semibold text-white">
                   The Daily Challenge
                 </span>
               </div>
-            </div>
-            <div className="relative bg-[url('/LeaderBoard.png')] bg-cover bg-center aspect-square rounded-xl overflow-hidden shadow-md hover:scale-105 transition cursor-pointer">
-              {/* Blurred overlay at bottom */}
+            </Link>
+            <Link
+              to="Leaderboard"
+              className="relative bg-[url('/LeaderBoard.png')] bg-cover bg-center aspect-square rounded-xl overflow-hidden shadow-md hover:scale-105 transition cursor-pointer"
+            >
               <div className="absolute bottom-0 left-0 right-0 h-20 backdrop-blur-xl bg-gray-800 flex items-end p-4">
                 <span className="text-xl font-semibold text-white">
                   LeaderBoard
                 </span>
               </div>
-            </div>
+            </Link>
           </div>
         </div>
 
-        {/* Section: Recommended maps */}
         <div className="mb-10">
           <div className="grid grid-cols-3 gap-6">
-            <div className="relative bg-[url('/Exploring.png')] bg-cover bg-center aspect-square rounded-xl overflow-hidden shadow-md hover:scale-105 transition cursor-pointer">
-              {/* Blurred overlay at bottom */}
+            <Link
+              to="/explore"
+              className="relative bg-[url('/Exploring.png')] bg-cover bg-center aspect-square rounded-xl overflow-hidden shadow-md hover:scale-105 transition cursor-pointer"
+            >
               <div className="absolute bottom-0 left-0 right-0 h-20 backdrop-blur-xl bg-gray-800 flex items-end p-4">
                 <span className="text-xl font-semibold text-white">
                   Explore
                 </span>
               </div>
-            </div>
-            <div className="relative bg-[url('/Study.png')] bg-cover bg-center aspect-square rounded-xl overflow-hidden shadow-md hover:scale-105 transition cursor-pointer">
-              {/* Blurred overlay at bottom */}
+            </Link>
+            <Link to = "/study" className="relative bg-[url('/Study.png')] bg-cover bg-center aspect-square rounded-xl overflow-hidden shadow-md hover:scale-105 transition cursor-pointer">
               <div className="absolute bottom-0 left-0 right-0 h-20 backdrop-blur-xl bg-gray-800 flex items-end p-4">
-                <span className="text-xl font-semibold text-white">
-                  Study
-                </span>
+                <span className="text-xl font-semibold text-white">Study</span>
               </div>
-            </div>
+            </Link>
             <div className="relative bg-[url('/images/heritage1.jpg')] bg-cover bg-center aspect-square rounded-xl overflow-hidden shadow-md hover:scale-105 transition cursor-pointer">
-              {/* Blurred overlay at bottom */}
               <div className="absolute bottom-0 left-0 right-0 h-20 backdrop-blur-xl bg-gray-800 flex items-end p-4">
-                <span className="text-xl font-semibold text-white">
-                  Donate
-                </span>
+                <span className="text-xl font-semibold text-white">Donate</span>
               </div>
             </div>
           </div>

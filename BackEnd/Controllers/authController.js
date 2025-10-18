@@ -111,7 +111,7 @@ export const getPlayer = async (req, res) => {
   try {
     const [rows] = await db.execute(
       "SELECT id, name, email, level, `rank`, rank_progress FROM Users WHERE id = ?",
-      [req.id]
+      [req.user.id]
     );
 
     if (rows.length === 0) {

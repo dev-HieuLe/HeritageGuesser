@@ -1,6 +1,6 @@
 import express from "express";
 import { updateLevel, updateRank } from "../Controllers/playerController.js";
-import { verifyPlayer } from "../Middleware/verifyPlayer.js"; // make sure you have this middleware
+import { verifyPlayer } from "../Middleware/verifyPlayer.js"; 
 const router = express.Router();
 
 // POST /player/update-level

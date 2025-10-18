@@ -8,9 +8,11 @@ export const verifyPlayer = (req, res, next) => {
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) return res.status(401).json({ error: "Token is expired!" });
 
-    req.id = decoded.id;
-    req.name = decoded.name;
-    req.email = decoded.email;
+    req.user = {
+      id: decoded.id,
+      name: decoded.name,
+      email: decoded.email,
+    };
     next();
   });
 

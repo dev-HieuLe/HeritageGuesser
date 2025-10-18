@@ -15,98 +15,116 @@ import {
 import axios from "axios";
 import Confetti from "react-confetti";
 import { useWindowSize } from "react-use";
-import { AuthContext } from "../../Context/authContext"; // ✅ add auth context
+import { AuthContext } from "../../Context/authContext";
 
 export default function RankPlay() {
-  const [index, setIndex] = useState(0);
-  const [heritage, setHeritage] = useState(""); // name guess
-  const [ageGuess, setAgeGuess] = useState(100); // years old guess via slider
+  // gameplay & UI
+  const [heritage, setHeritage] = useState("");
+  const [ageGuess, setAgeGuess] = useState(100);
   const [messages, setMessages] = useState([]);
   const [chatInput, setChatInput] = useState("");
   const [chatCount, setChatCount] = useState(0);
-  const [locations, setLocations] = useState([]);
+
+  // session: 20 locations per round
+  const [sessionLocations, setSessionLocations] = useState([]);
+  const [sessionIndex, setSessionIndex] = useState(0);
+
   const [result, setResult] = useState(null);
   const [finished, setFinished] = useState(false);
   const [loadingReply, setLoadingReply] = useState(false);
 
-  // NEW STATES
+  // ui helpers
   const [countdown, setCountdown] = useState(3);
   const [isBlurred, setIsBlurred] = useState(true);
-  const [timeLeft, setTimeLeft] = useState(180); // 3 minutes in seconds
-  const [showConfetti, setShowConfetti] = useState(false); // confetti toggle
-  const [notification, setNotification] = useState(null); // ✅ NEW: level popup
+  const [timeLeft, setTimeLeft] = useState(180);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [notification, setNotification] = useState(null);
 
-  const { user, setUser } = useContext(AuthContext); // ✅ access auth context
+  const { user, setUser } = useContext(AuthContext);
 
   const messagesEndRef = useRef(null);
-  const { width, height } = useWindowSize(); // screen size for confetti
+  const countdownRef = useRef(null);
+  const timerRef = useRef(null);
+  const { width, height } = useWindowSize();
 
-  // Scroll to bottom when messages update
+  const current = sessionLocations[sessionIndex] || null;
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loadingReply]);
 
+  // initial load - get 20 random locations
   useEffect(() => {
-    const fetchLocations = async () => {
+    const loadInitial = async () => {
       try {
         const res = await axios.get(
-          `${import.meta.env.VITE_API_BASE_URL}/locations`
+          `${import.meta.env.VITE_API_BASE_URL}/locations/random?count=20`
         );
-        setLocations(res.data);
+        setSessionLocations(res.data);
+        setSessionIndex(0);
+        startNewRound();
       } catch (err) {
-        console.error("Error fetching locations", err);
+        console.error("Failed to load locations:", err);
       }
     };
-    fetchLocations();
+    loadInitial();
+
+    return () => {
+      clearInterval(countdownRef.current);
+      clearInterval(timerRef.current);
+    };
   }, []);
 
-  //START NEW ROUND
   const startNewRound = () => {
+    clearInterval(countdownRef.current);
+    clearInterval(timerRef.current);
+
     setIsBlurred(true);
     setCountdown(3);
     setTimeLeft(180);
     setShowConfetti(false);
 
     let counter = 3;
-    const interval = setInterval(() => {
+    countdownRef.current = setInterval(() => {
       counter--;
       setCountdown(counter);
-      if (counter === 0) {
-        clearInterval(interval);
+      if (counter <= 0) {
+        clearInterval(countdownRef.current);
         setIsBlurred(false);
       }
     }, 1000);
   };
 
-  // Trigger new round when index changes
   useEffect(() => {
-    if (locations.length > 0) {
-      startNewRound();
-    }
-  }, [index, locations]);
+    if (sessionLocations.length > 0) startNewRound();
+  }, [sessionIndex, sessionLocations]);
 
-  // Timer countdown
   useEffect(() => {
+    clearInterval(timerRef.current);
+
     if (!isBlurred && timeLeft > 0) {
-      const timer = setInterval(() => {
+      timerRef.current = setInterval(() => {
         setTimeLeft((prev) => prev - 1);
       }, 1000);
-      return () => clearInterval(timer);
-    } else if (timeLeft === 0) {
-      handleSubmit();
+      return () => clearInterval(timerRef.current);
+    } else if (!isBlurred && timeLeft === 0) {
+      if (current && !result) {
+        handleSubmit();
+      }
     }
-  }, [isBlurred, timeLeft]);
+  }, [isBlurred, timeLeft, current, result]);
 
-  //CHAT FUNCTION
+  const [sending, setSending] = useState(false);
+
   const sendMessage = async () => {
-    if (locations.length === 0) return;
-    const current = locations[index];
-
+    if (!current) return;
     if (!chatInput.trim() || chatCount >= 10) return;
+    if (sending) return; // prevent duplicate sends
 
+    setSending(true);
     const userMsg = { role: "user", text: chatInput.trim() };
     setMessages((prev) => [...prev, userMsg]);
-    setChatInput("");
+    setChatInput(""); // clear input immediately
     setChatCount((prev) => prev + 1);
     setLoadingReply(true);
 
@@ -116,25 +134,25 @@ export default function RankPlay() {
         { message: userMsg.text, locationId: current.id }
       );
 
-      const botMsg = { role: "bot", text: res.data.reply };
+      const botMsg = { role: "bot", text: res.data.reply || "No reply" };
       setMessages((prev) => [...prev, botMsg]);
-    } catch {
+    } catch (err) {
+      console.warn("Chat error:", err);
       setMessages((prev) => [
         ...prev,
         { role: "bot", text: "⚠️ Failed to connect to Gemini API." },
       ]);
     } finally {
       setLoadingReply(false);
+      setSending(false);
     }
   };
 
-  //SUBMIT GUESS
   const handleSubmit = async () => {
-    if (locations.length === 0) return;
-    const current = locations[index];
+    if (!current) return;
 
     try {
-      const res = await axios.post(
+      const checkResp = await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/heritage/check`,
         {
           answer: heritage,
@@ -142,10 +160,9 @@ export default function RankPlay() {
         }
       );
 
-      const { nameScore, similarity } = res.data;
+      const { nameScore = 0, similarity = 0 } = checkResp.data || {};
 
-      // 🧮 Age score calculation
-      const diff = Math.abs(Number(ageGuess) - Number(current.years_old));
+      const diff = Math.abs(Number(ageGuess) - Number(current.years_old || 0));
       let ageScore = 0;
       if (diff <= 10) ageScore = 5;
       else if (diff <= 20) ageScore = 4;
@@ -154,11 +171,24 @@ export default function RankPlay() {
       else if (diff <= 80) ageScore = 1;
 
       const total = nameScore + ageScore;
-
-      // 🎯 LEVEL + RANK SYSTEM
       const levelGain = total / 10;
 
-      // rank names
+      try {
+        await axios.post(
+          `${import.meta.env.VITE_API_BASE_URL}/player/history`,
+          {
+            locationId: current.id,
+            score: total,
+            nameScore,
+            ageScore,
+            difficulty: current.difficulty || 1,
+          },
+          { withCredentials: true }
+        );
+      } catch (err) {
+        console.warn("failed to record history:", err);
+      }
+
       const rankNames = [
         "Iron",
         "Bronze",
@@ -174,11 +204,8 @@ export default function RankPlay() {
 
       if (user) {
         let rankMessage = null;
-
         try {
-          // Decide whether this is a win/lose/neutral
           if (total >= 8) {
-            // WIN -> let backend handle rank progression + level update
             const r = await axios.post(
               `${import.meta.env.VITE_API_BASE_URL}/player/update-rank`,
               { levelGain, result: "win" },
@@ -194,7 +221,6 @@ export default function RankPlay() {
               newData.level ?? (user.level || 0) + levelGain
             );
 
-            // Compare old vs new rank to decide notification
             if ((user.rank || 1) < newRank) {
               rankMessage = `🏅 Rank Up! You are now ${
                 rankNames[newRank - 1]
@@ -205,7 +231,6 @@ export default function RankPlay() {
               } (${newRank})`;
             }
 
-            // Update frontend user from server (server is source of truth)
             setUser({
               ...user,
               level: newLevel,
@@ -213,7 +238,6 @@ export default function RankPlay() {
               rank_progress: newProgress,
             });
           } else if (total <= 4) {
-            // LOSE -> backend handles rank down + level update
             const r = await axios.post(
               `${import.meta.env.VITE_API_BASE_URL}/player/update-rank`,
               { levelGain, result: "lose" },
@@ -246,18 +270,15 @@ export default function RankPlay() {
               rank_progress: newProgress,
             });
           } else {
-            // NEUTRAL -> only update level on backend
             await axios.post(
               `${import.meta.env.VITE_API_BASE_URL}/player/update-level`,
               { levelGain },
               { withCredentials: true }
             );
-
             const newLevel = (user.level || 0) + levelGain;
             setUser({ ...user, level: newLevel });
           }
 
-          // Notification: prefer rankMessage (if rank changed), otherwise show level only
           if (rankMessage) {
             setNotification(`${rankMessage} (+${levelGain.toFixed(2)} LV)`);
           } else {
@@ -265,7 +286,6 @@ export default function RankPlay() {
           }
           setTimeout(() => setNotification(null), 3000);
         } catch (err) {
-          // fallback: if server call fails, keep optimistic local change for level only
           console.warn("⚠️ Failed to sync rank/level with server:", err);
           const optimisticLevel = (user.level || 0) + levelGain;
           setUser({ ...user, level: optimisticLevel });
@@ -274,7 +294,6 @@ export default function RankPlay() {
         }
       }
 
-      // 📊 Show result summary (unchanged)
       setResult({
         total,
         nameScore,
@@ -285,7 +304,6 @@ export default function RankPlay() {
         correctAge: current.years_old,
       });
 
-      // 🎊 Confetti for perfect score
       if (total === 10) {
         setShowConfetti(true);
         setTimeout(() => setShowConfetti(false), 7000);
@@ -295,17 +313,30 @@ export default function RankPlay() {
     }
   };
 
-  const handleContinue = () => {
-    if (index + 1 < locations.length) {
-      setIndex((s) => s + 1);
-      setHeritage("");
-      setAgeGuess(100);
-      setResult(null);
-      setMessages([]);
-      setChatCount(0);
-      startNewRound();
-    } else {
-      setFinished(true);
+  // CONTINUE: next location or new 20
+  const handleContinue = async () => {
+    setHeritage("");
+    setAgeGuess(100);
+    setResult(null);
+    setMessages([]);
+    setChatCount(0);
+
+    if (sessionIndex + 1 < sessionLocations.length) {
+      setSessionIndex((s) => s + 1);
+      return;
+    }
+
+    // fetch new 20 random locations
+    try {
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_BASE_URL}/locations/random?count=20`
+      );
+      setSessionLocations(res.data);
+      setSessionIndex(0);
+      setNotification("Next 20 locations loaded");
+      setTimeout(() => setNotification(null), 3000);
+    } catch (err) {
+      console.error("Failed to load next 20 locations:", err);
     }
   };
 
@@ -317,7 +348,7 @@ export default function RankPlay() {
   };
 
   const getFeedback = (score) => {
-    if (score < 5) {
+    if (score <= 5) {
       return {
         title: "❌ Not quite!",
         color: "text-red-400",
@@ -347,14 +378,12 @@ export default function RankPlay() {
   return (
     <LoadScriptNext googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
       <div className="w-full h-screen flex bg-[#0F0B1A] text-white relative">
-        {/* ✅ Level Notification */}
         {notification && (
           <div className="absolute top-10 right-10 bg-gradient-to-r from-green-500 to-emerald-400 text-white px-6 py-3 rounded-xl font-bold shadow-lg animate-bounce z-50">
             {notification}
           </div>
         )}
 
-        {/* 🎉 Confetti */}
         {showConfetti && (
           <Confetti
             width={width}
@@ -365,15 +394,13 @@ export default function RankPlay() {
           />
         )}
 
-        {/* Timer */}
         {!finished && (
-          <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-[#0F0B1A]  px-4 py-2 rounded-xl text-white font-bold text-lg z-20">
+          <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-[#0F0B1A] px-4 py-2 rounded-xl text-white font-bold text-lg z-20">
             ⏳ {Math.floor(timeLeft / 60)}:
             {String(timeLeft % 60).padStart(2, "0")}
           </div>
         )}
 
-        {/* Blur + Countdown */}
         {isBlurred && !finished && (
           <div className="absolute inset-0 bg-[#0F0B1A] flex items-center justify-center z-50">
             <span className="text-6xl font-bold text-white animate-pulse">
@@ -382,13 +409,15 @@ export default function RankPlay() {
           </div>
         )}
 
-        {/* LEFT SIDE */}
+        {/* LEFT MAP + GUESS */}
         <div className="flex-1 flex flex-col items-center">
           <div className="relative w-[95%] h-[70vh] mt-6 rounded-2xl overflow-hidden shadow-xl">
             <GoogleMap
               mapContainerStyle={{ width: "100%", height: "100%" }}
               center={
-                locations.length > 0 ? locations[index] : { lat: 0, lng: 0 }
+                current
+                  ? { lat: current.lat, lng: current.lng }
+                  : { lat: 0, lng: 0 }
               }
               zoom={14}
               options={{
@@ -400,9 +429,11 @@ export default function RankPlay() {
               }}
             >
               <StreetViewPanorama
-                key={index}
+                key={sessionIndex}
                 position={
-                  locations.length > 0 ? locations[index] : { lat: 0, lng: 0 }
+                  current
+                    ? { lat: current.lat, lng: current.lng }
+                    : { lat: 0, lng: 0 }
                 }
                 visible={true}
                 options={{
@@ -415,14 +446,14 @@ export default function RankPlay() {
                   enableCloseButton: false,
                 }}
                 onLoad={(pano) => {
-                  pano.setPov({ heading: 100, pitch: 0 });
+                  const randomHeading = Math.floor(Math.random() * 360);
+                  pano.setPov({ heading: randomHeading, pitch: 0 });
                   pano.setZoom(1);
                 }}
               />
             </GoogleMap>
           </div>
 
-          {/* GUESS SECTION */}
           <div className="w-[95%] bg-[#1D1633] p-6 shadow-inner rounded-xl mt-6 flex flex-col space-y-6">
             {finished ? (
               <div className="text-center text-xl">🎉 You finished all!</div>
@@ -464,6 +495,14 @@ export default function RankPlay() {
                     </div>
                   </div>
                 </div>
+                {current.description && (
+                  <div className="mt-5 mb-4 p-4 bg-gray-800 text-left text-gray-300 rounded-lg border border-gray-700 shadow-inner">
+                    <h3 className="font-bold mb-2 text-cyan-300">
+                      About this Heritage:
+                    </h3>
+                    <p className="whitespace-pre-line">{current.description}</p>
+                  </div>
+                )}
 
                 <button
                   onClick={handleContinue}
@@ -522,7 +561,7 @@ export default function RankPlay() {
           </div>
         </div>
 
-        {/* RIGHT SIDE CHAT */}
+        {/* RIGHT CHAT */}
         <div className="w-[350px] bg-[#1D1633] flex flex-col p-4 border-l border-gray-700">
           <div className="text-sm text-gray-300 mb-2 flex items-center">
             <MessageCircle size={16} className="mr-2" /> AI Assistant

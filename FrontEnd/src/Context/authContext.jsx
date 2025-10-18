@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import axios from "axios";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { User } from "lucide-react";
 
 export const AuthContext = createContext();
@@ -12,6 +12,7 @@ export const AuthProvider = ({ children }) => {
   const [authCheckedOnce, setAuthCheckedOnce] = useState(false);
   const [wasLoggedInBefore, setWasLoggedInBefore] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   // Refresh token if access token expired
   const tryRefreshToken = async () => {
@@ -64,6 +65,9 @@ export const AuthProvider = ({ children }) => {
           alert(
             "⚠️ You are not authorized. Please refresh the page or login again."
           );
+          navigate("/login");
+          setAuth(false);
+          setUser(null);
         }
       } else {
         console.warn("⚠️ Token might be expired, trying refresh...");
