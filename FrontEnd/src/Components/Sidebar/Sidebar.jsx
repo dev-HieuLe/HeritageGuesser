@@ -10,7 +10,7 @@ import {
 
 export default function Sidebar() {
   return (
-    <aside className="w-60 backdrop-blur-sm flex flex-col justify-between py-6 h-full">
+    <aside className="w-52 backdrop-blur-sm flex flex-col justify-between py-6 h-full">
       <div>
         {/* Logo / Title */}
         <div className="flex items-center mb-5">

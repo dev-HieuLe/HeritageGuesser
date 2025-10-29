@@ -17,7 +17,7 @@ export default function Homepage() {
   }
 
   return (
-    <div className="h-screen flex flex-1 flex-col  text-white font-sans">
+    <div className="h-screen flex flex-1 flex-col text-white font-sans">
       {/* Main Content */}
       <main className="flex-1 px-8 py-6 overflow-y-auto">
         {/* Top Search + Profile */}
