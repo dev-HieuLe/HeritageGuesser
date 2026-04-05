@@ -25,6 +25,11 @@ export default function RankPlay() {
   const [chatInput, setChatInput] = useState("");
   const [chatCount, setChatCount] = useState(0);
 
+  // 🔥 DAILY LIMIT SYSTEM
+  const MAX_DAILY_PLAYS = 5;
+  const [canPlay, setCanPlay] = useState(true);
+  const [playsLeft, setPlaysLeft] = useState(MAX_DAILY_PLAYS);
+
   // session: 20 locations per round
   const [sessionLocations, setSessionLocations] = useState([]);
   const [sessionIndex, setSessionIndex] = useState(0);
@@ -48,6 +53,47 @@ export default function RankPlay() {
   const { width, height } = useWindowSize();
 
   const current = sessionLocations[sessionIndex] || null;
+  const getTodayData = () => {
+    const today = new Date().toDateString();
+    const data = JSON.parse(localStorage.getItem("rankGameUsage")) || {};
+
+    if (data.date !== today) {
+      const newData = { date: today, count: 0 };
+      localStorage.setItem("rankGameUsage", JSON.stringify(newData));
+      return newData;
+    }
+
+    return data;
+  };
+
+  const updateLimitState = () => {
+    const data = getTodayData();
+    const remaining = MAX_DAILY_PLAYS - data.count;
+
+    setPlaysLeft(remaining);
+    setCanPlay(remaining > 0);
+
+    if (remaining <= 0) {
+      clearInterval(countdownRef.current);
+      setIsBlurred(true);
+      setCountdown(0);
+    }
+  };
+
+  const increaseUsage = () => {
+    const data = getTodayData();
+    data.count += 1;
+
+    localStorage.setItem("rankGameUsage", JSON.stringify(data));
+
+    const remaining = MAX_DAILY_PLAYS - data.count;
+
+    setPlaysLeft(remaining);
+    setCanPlay(remaining > 0);
+
+    setNotification(`🎮 Plays left: ${remaining}`);
+    setTimeout(() => setNotification(null), 2500);
+  };
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -55,18 +101,33 @@ export default function RankPlay() {
 
   // initial load - get 20 random locations
   useEffect(() => {
+    updateLimitState();
+
     const loadInitial = async () => {
       try {
         const res = await axios.get(
-          `${import.meta.env.VITE_API_BASE_URL}/locations/random?count=20`
+          `${import.meta.env.VITE_API_BASE_URL}/locations/random?count=20`,
         );
         setSessionLocations(res.data);
         setSessionIndex(0);
-        startNewRound();
+
+        // ✅ ONLY START IF CAN PLAY
+        const data = getTodayData();
+        const remaining = MAX_DAILY_PLAYS - data.count;
+
+        if (remaining > 0) {
+          setCanPlay(true);
+          startNewRound();
+        } else {
+          setCanPlay(false);
+          setNotification("🚫 Daily limit reached");
+          setTimeout(() => setNotification(null), 3000);
+        }
       } catch (err) {
         console.error("Failed to load locations:", err);
       }
     };
+
     loadInitial();
 
     return () => {
@@ -76,6 +137,32 @@ export default function RankPlay() {
   }, []);
 
   const startNewRound = () => {
+    const data = getTodayData();
+    const remaining = MAX_DAILY_PLAYS - data.count;
+
+    if (remaining <= 0) {
+      setCanPlay(false);
+      setIsBlurred(true); // keep overlay
+      setCountdown(0);
+
+      setNotification("🚫 No plays left today");
+      setTimeout(() => setNotification(null), 3000);
+
+      return;
+    }
+
+    // ✅ increment usage
+    data.count += 1;
+    localStorage.setItem("rankGameUsage", JSON.stringify(data));
+
+    const newRemaining = MAX_DAILY_PLAYS - data.count;
+
+    setPlaysLeft(newRemaining);
+    setCanPlay(newRemaining > 0);
+
+    setNotification(`🎮 Plays left: ${newRemaining}`);
+    setTimeout(() => setNotification(null), 2500);
+
     clearInterval(countdownRef.current);
     clearInterval(timerRef.current);
 
@@ -96,8 +183,12 @@ export default function RankPlay() {
   };
 
   useEffect(() => {
-    if (sessionLocations.length > 0) startNewRound();
-  }, [sessionIndex, sessionLocations]);
+    if (!canPlay) return;
+    if (!sessionLocations.length) return;
+    if (!isBlurred) return;
+
+    startNewRound();
+  }, [sessionIndex, canPlay, sessionLocations]);
 
   useEffect(() => {
     clearInterval(timerRef.current);
@@ -131,7 +222,7 @@ export default function RankPlay() {
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/chat`,
-        { message: userMsg.text, locationId: current.id }
+        { message: userMsg.text, locationId: current.id },
       );
 
       const botMsg = { role: "bot", text: res.data.reply || "No reply" };
@@ -157,7 +248,7 @@ export default function RankPlay() {
         {
           answer: heritage,
           locationId: current.id,
-        }
+        },
       );
 
       const { nameScore = 0, similarity = 0 } = checkResp.data || {};
@@ -183,7 +274,7 @@ export default function RankPlay() {
             ageScore,
             difficulty: current.difficulty || 1,
           },
-          { withCredentials: true }
+          { withCredentials: true },
         );
       } catch (err) {
         console.warn("failed to record history:", err);
@@ -209,16 +300,16 @@ export default function RankPlay() {
             const r = await axios.post(
               `${import.meta.env.VITE_API_BASE_URL}/player/update-rank`,
               { levelGain, result: "win" },
-              { withCredentials: true }
+              { withCredentials: true },
             );
 
             const newData = r.data.newData || {};
             const newRank = Number(newData.rank ?? user.rank ?? 1);
             const newProgress = Number(
-              newData.rank_progress ?? user.rank_progress ?? 0
+              newData.rank_progress ?? user.rank_progress ?? 0,
             );
             const newLevel = Number(
-              newData.level ?? (user.level || 0) + levelGain
+              newData.level ?? (user.level || 0) + levelGain,
             );
 
             if ((user.rank || 1) < newRank) {
@@ -241,16 +332,16 @@ export default function RankPlay() {
             const r = await axios.post(
               `${import.meta.env.VITE_API_BASE_URL}/player/update-rank`,
               { levelGain, result: "lose" },
-              { withCredentials: true }
+              { withCredentials: true },
             );
 
             const newData = r.data.newData || {};
             const newRank = Number(newData.rank ?? user.rank ?? 1);
             const newProgress = Number(
-              newData.rank_progress ?? user.rank_progress ?? 0
+              newData.rank_progress ?? user.rank_progress ?? 0,
             );
             const newLevel = Number(
-              newData.level ?? (user.level || 0) + levelGain
+              newData.level ?? (user.level || 0) + levelGain,
             );
 
             if ((user.rank || 1) < newRank) {
@@ -273,7 +364,7 @@ export default function RankPlay() {
             await axios.post(
               `${import.meta.env.VITE_API_BASE_URL}/player/update-level`,
               { levelGain },
-              { withCredentials: true }
+              { withCredentials: true },
             );
             const newLevel = (user.level || 0) + levelGain;
             setUser({ ...user, level: newLevel });
@@ -329,7 +420,7 @@ export default function RankPlay() {
     // fetch new 20 random locations
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_API_BASE_URL}/locations/random?count=20`
+        `${import.meta.env.VITE_API_BASE_URL}/locations/random?count=20`,
       );
       setSessionLocations(res.data);
       setSessionIndex(0);
@@ -378,6 +469,37 @@ export default function RankPlay() {
   return (
     <LoadScriptNext googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
       <div className="w-full h-screen flex bg-[#0F0B1A] text-white relative">
+        {/* 🔥 LIMIT OVERLAY */}
+
+        {!canPlay ? (
+          <div className="w-full h-screen flex items-center justify-center bg-black text-white">
+            <div className="text-center">
+              <h2 className="text-3xl text-red-400 font-bold mb-4">
+                Daily Limit Reached
+              </h2>
+              <p>You can only play {MAX_DAILY_PLAYS} games per day.</p>
+              <p className="text-gray-400 mt-2">Come back tomorrow.</p>
+            </div>
+          </div>
+        ) : (
+          <div className="absolute inset-0 bg-black z-50 flex items-center justify-center">
+            <div className="text-center">
+              <h2 className="text-3xl text-red-400 font-bold mb-4">
+                Daily Limit Reached
+              </h2>
+              <p>You can only play {MAX_DAILY_PLAYS} games per day.</p>
+              <p className="text-gray-400 mt-2">Come back tomorrow.</p>
+            </div>
+          </div>
+        )}
+
+        {/* ✅ Plays left indicator */}
+        {canPlay && (
+          <div className="absolute top-4 left-4 text-sm text-gray-300">
+            🎮 Plays left: {playsLeft}
+          </div>
+        )}
+
         {notification && (
           <div className="absolute top-10 right-10 bg-gradient-to-r from-green-500 to-emerald-400 text-white px-6 py-3 rounded-xl font-bold shadow-lg animate-bounce z-50">
             {notification}
@@ -406,6 +528,11 @@ export default function RankPlay() {
             <span className="text-6xl font-bold text-white animate-pulse">
               {countdown > 0 ? countdown : ""}
             </span>
+          </div>
+        )}
+        {canPlay && (
+          <div className="absolute top-4 left-4 text-sm text-gray-300">
+            🎮 Plays left: {playsLeft}
           </div>
         )}
 

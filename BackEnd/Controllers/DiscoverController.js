@@ -1,69 +1,70 @@
 // Controllers/DiscoverController.js
-import db from "../Config/db.js";
 import axios from "axios";
+
+// 🧠 In-memory store
+const usageMap = new Map();
 
 export const searchDiscover = async (req, res) => {
   const q = (req.query.query || "").trim();
-  console.log("🎯 searchDiscover triggered with query:", q);
+  const userId = req.user?.id || req.ip; // fallback to IP
 
   if (!q) return res.status(400).json({ error: "Query is required" });
 
   try {
-    // 1️⃣ Check MySQL first
-    const like = `%${q}%`;
-    const [rows] = await db.execute(
-      `SELECT id, name, region, difficulty, description, lat, lng, built_year, aliases
-       FROM locations
-       WHERE LOWER(name) = LOWER(?) 
-          OR LOWER(name) LIKE LOWER(?) 
-          OR LOWER(aliases) LIKE LOWER(?)
-       LIMIT 1`,
-      [q, like, like]
-    );
+    const today = new Date().toISOString().split("T")[0];
 
-    if (rows.length > 0) {
-      console.log("✅ Found in database:", rows[0].name);
-      return res.json({ source: "db", place: rows[0] });
+    // Initialize user record
+    if (!usageMap.has(userId)) {
+      usageMap.set(userId, { date: today, count: 0 });
     }
 
-    // 2️⃣ If not found, fallback to Google
+    const userData = usageMap.get(userId);
+
+    // Reset if new day
+    if (userData.date !== today) {
+      userData.date = today;
+      userData.count = 0;
+    }
+
+    // 🛑 LIMIT CHECK
+    if (userData.count >= 4) {
+      return res.status(429).json({
+        error: "Daily Street View limit reached (4/day)",
+      });
+    }
+
+    // 🔍 Google API call
     const GOOGLE_KEY = process.env.GOOGLE_MAPS_API_KEY;
-    if (!GOOGLE_KEY) {
-      return res.status(500).json({ error: "Google API key not configured" });
-    }
 
-    console.log("🌐 Fetching from Google Maps API...");
     const { data } = await axios.get(
       `https://maps.googleapis.com/maps/api/geocode/json`,
       {
         params: { address: q, key: GOOGLE_KEY },
-      }
+      },
     );
 
     if (!data.results || data.results.length === 0) {
-      console.warn(`⚠️ No Google results for: ${q}`);
-      return res.status(404).json({
-        source: "google",
-        error: "No results found",
-      });
+      return res.status(404).json({ error: "No results found" });
     }
 
     const first = data.results[0];
-    const lat = first.geometry?.location?.lat;
-    const lng = first.geometry?.location?.lng;
-    const formatted_address = first.formatted_address;
+
+    // ✅ INCREMENT USAGE
+    userData.count++;
 
     return res.json({
-      source: "google",
       place: {
-        name: first.address_components?.[0]?.long_name || formatted_address || q,
-        formatted_address,
-        lat,
-        lng,
+        name:
+          first.address_components?.[0]?.long_name ||
+          first.formatted_address ||
+          q,
+        lat: first.geometry.location.lat,
+        lng: first.geometry.location.lng,
       },
+      remaining: 4 - userData.count,
     });
   } catch (err) {
-    console.error("❌ Discover search error:", err.message);
-    res.status(500).json({ error: "Server error while searching" });
+    console.error("Discover error:", err.message);
+    res.status(500).json({ error: "Server error" });
   }
 };

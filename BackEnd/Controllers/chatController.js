@@ -4,6 +4,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
+console.log("Gemini key loaded:", process.env.GEMINI_API_KEY?.slice(0, 8));
 
 export const sendMessage = async (req, res) => {
   try {
@@ -14,7 +15,7 @@ export const sendMessage = async (req, res) => {
     if (locationId) {
       const [rows] = await db.execute(
         "SELECT name, region, built_year, difficulty, description FROM locations WHERE id = ?",
-        [locationId]
+        [locationId],
       );
 
       if (rows.length > 0) {
