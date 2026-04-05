@@ -26,7 +26,7 @@ export default function RankPlay() {
   const [chatCount, setChatCount] = useState(0);
 
   // 🔥 DAILY LIMIT SYSTEM
-  const MAX_DAILY_PLAYS = 10;
+  const MAX_DAILY_PLAYS = 50;
   const [canPlay, setCanPlay] = useState(true);
   const [playsLeft, setPlaysLeft] = useState(MAX_DAILY_PLAYS);
 
@@ -78,21 +78,6 @@ export default function RankPlay() {
       setIsBlurred(true);
       setCountdown(0);
     }
-  };
-
-  const increaseUsage = () => {
-    const data = getTodayData();
-    data.count += 1;
-
-    localStorage.setItem("rankGameUsage", JSON.stringify(data));
-
-    const remaining = MAX_DAILY_PLAYS - data.count;
-
-    setPlaysLeft(remaining);
-    setCanPlay(remaining > 0);
-
-    setNotification(`🎮 Plays left: ${remaining}`);
-    setTimeout(() => setNotification(null), 2500);
   };
 
   useEffect(() => {
@@ -159,8 +144,7 @@ export default function RankPlay() {
 
     setPlaysLeft(newRemaining);
     setCanPlay(newRemaining > 0);
-
-    setNotification(`🎮 Plays left: ${newRemaining}`);
+    setNotification(`🎮 New Round! Plays left: ${newRemaining}`);
     setTimeout(() => setNotification(null), 2500);
 
     clearInterval(countdownRef.current);
@@ -471,8 +455,8 @@ export default function RankPlay() {
       <div className="w-full h-screen flex bg-[#0F0B1A] text-white relative">
         {/* 🔥 LIMIT OVERLAY */}
 
-        {!canPlay ? (
-          <div className="w-full h-screen flex items-center justify-center bg-black text-white">
+        {!canPlay && (
+          <div className="w-full h-screen flex items-center justify-center bg-black text-white z-50000000">
             <div className="text-center">
               <h2 className="text-3xl text-red-400 font-bold mb-4">
                 Daily Limit Reached
@@ -480,23 +464,6 @@ export default function RankPlay() {
               <p>You can only play {MAX_DAILY_PLAYS} games per day.</p>
               <p className="text-gray-400 mt-2">Come back tomorrow.</p>
             </div>
-          </div>
-        ) : (
-          <div className="absolute inset-0 bg-black z-50 flex items-center justify-center">
-            <div className="text-center">
-              <h2 className="text-3xl text-red-400 font-bold mb-4">
-                Daily Limit Reached
-              </h2>
-              <p>You can only play {MAX_DAILY_PLAYS} games per day.</p>
-              <p className="text-gray-400 mt-2">Come back tomorrow.</p>
-            </div>
-          </div>
-        )}
-
-        {/* ✅ Plays left indicator */}
-        {canPlay && (
-          <div className="absolute top-4 left-4 text-sm text-gray-300">
-            🎮 Plays left: {playsLeft}
           </div>
         )}
 
@@ -524,14 +491,14 @@ export default function RankPlay() {
         )}
 
         {isBlurred && !finished && (
-          <div className="absolute inset-0 bg-[#0F0B1A] flex items-center justify-center z-50">
+          <div className="absolute inset-0 bg-[#0F0B1A] flex items-center justify-center z-50000000">
             <span className="text-6xl font-bold text-white animate-pulse">
               {countdown > 0 ? countdown : ""}
             </span>
           </div>
         )}
         {canPlay && (
-          <div className="absolute top-4 left-4 text-sm text-gray-300">
+          <div className="absolute left-4 text-lg text-gray-300 z-50000000">
             🎮 Plays left: {playsLeft}
           </div>
         )}
