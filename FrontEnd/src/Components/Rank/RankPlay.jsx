@@ -26,7 +26,7 @@ export default function RankPlay() {
   const [chatCount, setChatCount] = useState(0);
 
   // 🔥 DAILY LIMIT SYSTEM
-  const MAX_DAILY_PLAYS = 5;
+  const MAX_DAILY_PLAYS = 10;
   const [canPlay, setCanPlay] = useState(true);
   const [playsLeft, setPlaysLeft] = useState(MAX_DAILY_PLAYS);
 
