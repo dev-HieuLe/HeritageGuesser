@@ -13,11 +13,13 @@ import StudyPage from "./Components/Study/Studypage";
 import Tutorial from "./Components/Tutorial/Tutorial";
 import PageWrapper from "./Components/Animations/PageWrapper";
 
+import "leaflet/dist/leaflet.css";
+
 export default function App() {
   const location = useLocation();
 
   const isAuthPage = ["/login", "/register", "/forgot-password"].includes(
-    location.pathname
+    location.pathname,
   );
 
   if (isAuthPage) {
