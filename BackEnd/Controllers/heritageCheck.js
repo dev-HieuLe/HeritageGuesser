@@ -8,6 +8,13 @@ export const checkAnswer = async (req, res) => {
   try {
     const { answer, locationId } = req.body;
 
+    if (!answer || typeof answer !== "string" || answer.trim().length === 0)
+      return res.status(400).json({ error: "Answer is required" });
+    if (answer.length > 200)
+      return res.status(400).json({ error: "Answer too long (max 200 characters)" });
+    if (!locationId || !Number.isInteger(Number(locationId)))
+      return res.status(400).json({ error: "Valid locationId is required" });
+
     const [rows] = await db.execute("SELECT * FROM locations WHERE id = ?", [
       locationId,
     ]);

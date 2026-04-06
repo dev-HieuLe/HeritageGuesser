@@ -4,6 +4,14 @@ import axios from "axios";
 // 🧠 In-memory store
 const usageMap = new Map();
 
+// Purge stale entries once per hour to prevent memory leak
+setInterval(() => {
+  const today = new Date().toISOString().split("T")[0];
+  for (const [key, val] of usageMap) {
+    if (val.date !== today) usageMap.delete(key);
+  }
+}, 60 * 60 * 1000);
+
 export const searchDiscover = async (req, res) => {
   const q = (req.query.query || "").trim();
   const userId = req.user?.id || req.ip; // fallback to IP

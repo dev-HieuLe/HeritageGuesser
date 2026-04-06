@@ -9,6 +9,14 @@ const isProd = process.env.NODE_ENV === "production";
 export const register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
+
+    if (!name || typeof name !== "string" || name.trim().length < 2 || name.trim().length > 50)
+      return res.status(400).json({ error: "Name must be between 2 and 50 characters" });
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+      return res.status(400).json({ error: "Invalid email address" });
+    if (!password || password.length < 8)
+      return res.status(400).json({ error: "Password must be at least 8 characters" });
+
     const hash = await bcrypt.hash(password, SALT_ROUNDS);
 
     // 👇 include level, rank, rank_progress with default 0
@@ -62,6 +70,10 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
+
+    if (!email || !password)
+      return res.status(400).json({ error: "Email and password are required" });
+
     const [rows] = await db.execute("SELECT * FROM Users WHERE email = ?", [
       email,
     ]);

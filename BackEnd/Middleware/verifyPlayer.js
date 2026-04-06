@@ -15,6 +15,4 @@ export const verifyPlayer = (req, res, next) => {
     };
     next();
   });
-
-  console.log("Token from cookie:", req.cookies.token);
 };

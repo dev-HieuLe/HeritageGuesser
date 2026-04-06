@@ -23,11 +23,14 @@ export const getLocations = async (req, res) => {
 export const getRandomLocations = async (req, res) => {
   // Parse and validate count
   let count = parseInt(req.query.count, 10);
-  if (isNaN(count) || count <= 0) count = 3; // default fallback
+  if (isNaN(count) || count <= 0) count = 3;
+  if (count > 20) count = 20; // cap to prevent abuse
 
   try {
-    // ✅ Manually inject LIMIT (safe since it's a number)
-    const [rows] = await db.execute(`SELECT * FROM locations ORDER BY RAND() LIMIT ${count}`);
+    const [rows] = await db.execute(
+      "SELECT * FROM locations ORDER BY RAND() LIMIT ?",
+      [count]
+    );
 
     const currentYear = new Date().getFullYear();
     const locations = rows.map((loc) => ({

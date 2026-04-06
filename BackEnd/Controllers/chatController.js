@@ -10,6 +10,11 @@ export const sendMessage = async (req, res) => {
   try {
     const { message, locationId } = req.body;
 
+    if (!message || typeof message !== "string" || message.trim().length === 0)
+      return res.status(400).json({ error: "Message is required" });
+    if (message.length > 500)
+      return res.status(400).json({ error: "Message too long (max 500 characters)" });
+
     // 1. Load location data if provided
     let locationContext = "";
     if (locationId) {

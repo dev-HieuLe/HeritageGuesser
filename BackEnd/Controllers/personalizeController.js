@@ -7,6 +7,15 @@ const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
 // 🧠 In-memory cache (resets on server restart)
 const personalizeCache = new Map();
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+// Purge expired cache entries every 10 minutes
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, val] of personalizeCache) {
+    if (now - val.time > CACHE_TTL) personalizeCache.delete(key);
+  }
+}, 10 * 60 * 1000);
 
 // 🕐 Rate-limit cooldown memory
 let lastRateLimitTime = 0;

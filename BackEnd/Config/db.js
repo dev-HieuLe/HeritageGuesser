@@ -6,7 +6,7 @@ dotenv.config();
 const db = await mysql.createPool({
   host: process.env.DB_HOST || "localhost",
   user: process.env.DB_USER || "root",
-  password: process.env.DB_PASSWORD || "!mao1501",
+  password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME || "heritagedb",
 });
 
