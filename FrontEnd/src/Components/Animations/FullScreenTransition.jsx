@@ -29,7 +29,7 @@ export default function FullScreenTransition({ children, locationKey }) {
   }, [locationKey]);
 
   return (
-    <div className="absolute inset-0 overflow-hidden">
+    <div className="absolute inset-0 overflow-y-auto">
       {/* === PAGE CONTENT === */}
       <div
         className={`transition-opacity duration-300 ${
@@ -41,7 +41,7 @@ export default function FullScreenTransition({ children, locationKey }) {
 
       {/* === INSTANT DARK COVER === */}
       {isCovered && (
-        <div className="fixed inset-0 bg-black/90 z-[9997]" />
+        <div className="fixed inset-0 bg-black z-[9997]" />
       )}
 
       {/* === PANEL ANIMATION === */}
@@ -55,7 +55,7 @@ export default function FullScreenTransition({ children, locationKey }) {
               animate={{ scaleY: 1 }}
               exit={{ scaleY: 0 }}
               transition={{ duration: 0.25, ease: [0.8, 0, 0.2, 1] }}
-              className="fixed top-0 right-0 w-full h-full bg-gradient-to-br from-[#4F46E5] via-[#8B5CF6] to-[#22D3EE] z-[9999]"
+              className="fixed top-0 right-0 w-full h-full bg-gradient-to-br from-[#e9c349] to-[#e9c349] z-[9999]"
               style={{
                 clipPath: "polygon(100% 0, 0 0, 100% 100%)",
               }}
@@ -72,7 +72,7 @@ export default function FullScreenTransition({ children, locationKey }) {
                 ease: [0.8, 0, 0.2, 1],
                 delay: 0.25,
               }}
-              className="fixed bottom-0 left-0 w-full h-full bg-gradient-to-tr from-[#22D3EE] via-[#8B5CF6] to-[#4F46E5] z-[9998]"
+              className="fixed bottom-0 left-0 w-full h-full bg-gradient-to-tr from-[#e9c349] to-[#e9c349] z-[9998]"
               style={{
                 clipPath: "polygon(0 100%, 100% 100%, 0 0)",
               }}

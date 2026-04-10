@@ -1,1 +1,288 @@
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap');
 @import "tailwindcss";
+
+:root {
+  --color-background: #12140e;
+  --color-surface: #12140e;
+  --color-surface-dim: #12140e;
+  --color-surface-bright: #383a33;
+  --color-surface-container-lowest: #0d0f09;
+  --color-surface-container-low: #1a1c16;
+  --color-surface-container: #1e201a;
+  --color-surface-container-high: #292b24;
+  --color-surface-container-highest: #34362e;
+  --color-surface-variant: #34362e;
+  --color-on-surface: #e3e3d9;
+  --color-on-surface-variant: #c0c8c3;
+  --color-outline: #8a938d;
+  --color-outline-variant: #414944;
+  --color-primary: #a2d1bb;
+  --color-on-primary: #073829;
+  --color-primary-container: #0f3d2e;
+  --color-primary-fixed: #beedd7;
+  --color-primary-fixed-dim: #a2d1bb;
+  --color-inverse-primary: #3b6756;
+  --color-secondary: #ffb4a9;
+  --color-on-secondary: #690002;
+  --color-secondary-container: #bb0308;
+  --color-on-secondary-container: #ffc8c0;
+  --color-tertiary: #e9c349;
+  --color-on-tertiary: #3c2f00;
+  --color-tertiary-container: #cba72f;
+  --color-tertiary-fixed: #ffe088;
+  --color-tertiary-fixed-dim: #e9c349;
+  --color-on-tertiary-fixed: #241a00;
+  --color-error: #ffb4ab;
+  --color-on-error: #690005;
+  --color-error-container: #93000a;
+  --color-on-error-container: #ffdad6;
+  --color-sidebar: #0f3d2e;
+  --shadow-sidebar: 4px 0 24px rgba(0, 0, 0, 0.3);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  background-color: var(--color-background);
+  color: var(--color-on-surface);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-surface-container-low);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-outline-variant);
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-outline);
+}
+
+/* Glass panel utility */
+.glass-panel {
+  background: rgba(30, 32, 26, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* Dong Son decorative background */
+.dong-son-bg {
+  background-image: url("data:image/svg+xml,%3Csvg width='400' height='400' viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M200 0L210.5 140.5L351 151L239.5 239.5L250 380L160.5 289.5L50 300L139.5 210.5L0 200L140.5 189.5L151 49L239.5 160.5L380 150L289.5 239.5L300 350L210.5 260.5L200 400L189.5 259.5L49 249L160.5 160.5L150 20L239.5 110.5L350 100L260.5 189.5L400 200L259.5 210.5L249 351L160.5 239.5L20 250L110.5 160.5L100 50L189.5 139.5L200 0Z' fill='%23e9c349' fill-opacity='0.03'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 80%;
+}
+
+/* Dot grid texture */
+.dot-grid {
+  background-image: radial-gradient(circle at 2px 2px, rgba(162, 209, 187, 0.05) 1px, transparent 0);
+  background-size: 40px 40px;
+}
+
+/* Leaflet overrides */
+.leaflet-container {
+  background: #1a1c16 !important;
+  font-family: 'Be Vietnam Pro', sans-serif !important;
+  /* Isolate Leaflet's internal z-index stacking so map elements never appear above sidebar/navbar */
+  isolation: isolate;
+  z-index: 0;
+}
+.leaflet-popup-content-wrapper {
+  background: #1e201a !important;
+  color: #e3e3d9 !important;
+  border: 1px solid #414944 !important;
+  border-radius: 4px !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4) !important;
+}
+.leaflet-popup-tip {
+  background: #1e201a !important;
+}
+.leaflet-popup-close-button {
+  color: #a2d1bb !important;
+}
+
+/* ===== RESPONSIVE SYSTEM ===== */
+
+/* Sidebar: fixed overlay, starts below navbar, hidden on mobile, always visible on desktop */
+.sidebar-nav {
+  position: fixed !important;
+  left: 0;
+  top: 64px;
+  height: calc(100vh - 64px);
+  z-index: 40;
+  transform: translateX(-256px);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.sidebar-nav.sidebar-open {
+  transform: translateX(0);
+}
+@media (min-width: 640px) {
+  .sidebar-nav {
+    top: 73px;
+    height: calc(100vh - 73px);
+  }
+}
+@media (min-width: 768px) {
+  .sidebar-nav {
+    /* no forced open — controlled by sidebarOpen state in App.jsx */
+  }
+}
+
+/* Discover page responsive */
+@media (max-width: 767px) {
+  .discover-grid {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .discover-map-col {
+    width: 100% !important;
+  }
+  .discover-sidebar-col {
+    border-left: none !important;
+    border-top: 1px solid rgba(65,73,68,0.4) !important;
+    width: 100% !important;
+    max-height: 420px;
+  }
+  .discover-map-height {
+    height: calc(45vh - 28px) !important; /* subtract half the navbar height on mobile */
+  }
+}
+
+/* Study page responsive */
+@media (max-width: 767px) {
+  .study-grid {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .study-right-sidebar {
+    border-left: none !important;
+    border-top: 1px solid rgba(65,73,68,0.4) !important;
+  }
+}
+@media (max-width: 639px) {
+  .study-cards-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Leaderboard responsive */
+@media (max-width: 639px) {
+  .lb-podium {
+    gap: 1rem !important;
+  }
+  .lb-table-header,
+  .lb-table-row {
+    grid-template-columns: 32px 1fr 64px !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+  .lb-col-tier {
+    display: none !important;
+  }
+  .lb-avatar {
+    width: 2rem !important;
+    height: 2rem !important;
+  }
+}
+
+/* Game / RankPlay responsive bottom bar */
+@media (max-width: 639px) {
+  .game-input-bar {
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+  .game-input-name {
+    width: 100% !important;
+    order: 1;
+  }
+  .game-input-age {
+    flex: 1 !important;
+    min-width: 0 !important;
+    width: auto !important;
+    order: 2;
+  }
+  .game-btn-chat {
+    order: 3;
+  }
+  .game-btn-submit {
+    flex: 1 !important;
+    justify-content: center !important;
+    order: 4;
+  }
+}
+
+/* RankPlay input row responsive */
+@media (max-width: 767px) {
+  .rankplay-input-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+  }
+  .rankplay-input-panel {
+    flex-direction: column !important;
+    gap: 0 !important;
+  }
+  .rankplay-input-divider {
+    display: none !important;
+  }
+  .rankplay-year-input {
+    width: 100% !important;
+    padding: 8px 16px !important;
+    border-top: 1px solid rgba(65,73,68,0.3) !important;
+  }
+  .rankplay-guess-btn {
+    border-radius: 0 0 1rem 1rem !important;
+    width: 100% !important;
+    justify-content: center !important;
+  }
+  .rankplay-hint-btn {
+    width: 100% !important;
+    height: 52px !important;
+    border-radius: 1rem !important;
+  }
+  .rankplay-side-panel {
+    width: calc(100vw - 32px) !important;
+    right: 16px !important;
+  }
+}
+
+/* General section responsive padding helpers */
+.resp-px {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+@media (min-width: 768px) {
+  .resp-px {
+    padding-left: 4rem;
+    padding-right: 4rem;
+  }
+}
+@media (min-width: 1024px) {
+  .resp-px {
+    padding-left: 6rem;
+    padding-right: 6rem;
+  }
+}
+
+/* Prevent horizontal overflow site-wide */
+html, body {
+  overflow-x: hidden;
+}
+
+/* Touch-friendly tap targets */
+@media (max-width: 767px) {
+  button, a, input, select {
+    touch-action: manipulation;
+  }
+}

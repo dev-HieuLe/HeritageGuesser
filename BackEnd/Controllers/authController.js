@@ -10,12 +10,21 @@ export const register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    if (!name || typeof name !== "string" || name.trim().length < 2 || name.trim().length > 50)
-      return res.status(400).json({ error: "Name must be between 2 and 50 characters" });
+    if (
+      !name ||
+      typeof name !== "string" ||
+      name.trim().length < 2 ||
+      name.trim().length > 50
+    )
+      return res
+        .status(400)
+        .json({ error: "Name must be between 2 and 50 characters" });
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
       return res.status(400).json({ error: "Invalid email address" });
     if (!password || password.length < 8)
-      return res.status(400).json({ error: "Password must be at least 8 characters" });
+      return res
+        .status(400)
+        .json({ error: "Password must be at least 8 characters" });
 
     const hash = await bcrypt.hash(password, SALT_ROUNDS);
 
@@ -36,7 +45,7 @@ export const register = async (req, res) => {
       process.env.JWT_REFRESH_SECRET,
       {
         expiresIn: "7d",
-      }
+      },
     );
 
     res.cookie("token", accessToken, {
@@ -94,7 +103,7 @@ export const login = async (req, res) => {
     const refreshToken = jwt.sign(
       { id, email, name },
       process.env.JWT_REFRESH_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "7d" },
     );
 
     res.cookie("refreshToken", refreshToken, {
@@ -123,7 +132,7 @@ export const getPlayer = async (req, res) => {
   try {
     const [rows] = await db.execute(
       "SELECT id, name, email, level, `rank`, rank_progress FROM Users WHERE id = ?",
-      [req.user.id]
+      [req.user.id],
     );
 
     if (rows.length === 0) {
@@ -135,7 +144,7 @@ export const getPlayer = async (req, res) => {
       id: rows[0].id,
       name: rows[0].name,
       email: rows[0].email,
-      level: rows[0].level, 
+      level: rows[0].level,
       rank: rows[0].rank,
       rank_progress: rows[0].rank_progress,
     });
@@ -181,7 +190,7 @@ export const refreshToken = (req, res) => {
       const newAccessToken = jwt.sign(
         { id: user.id, email: user.email, name },
         process.env.JWT_SECRET,
-        { expiresIn: "15m" }
+        { expiresIn: "15m" },
       );
       res.cookie("token", newAccessToken, {
         httpOnly: true,
@@ -189,6 +198,6 @@ export const refreshToken = (req, res) => {
         secure: isProd,
       });
       return res.json({ status: "Success" });
-    }
+    },
   );
 };

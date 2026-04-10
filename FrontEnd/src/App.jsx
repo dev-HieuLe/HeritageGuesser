@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import Homepage from "./Components/Homepage/Homepage";
@@ -12,100 +13,66 @@ import Discover from "./Components/Discover/Discover";
 import StudyPage from "./Components/Study/Studypage";
 import Tutorial from "./Components/Tutorial/Tutorial";
 import PageWrapper from "./Components/Animations/PageWrapper";
+import Navbar from "./Components/Navbar";
 
 import "leaflet/dist/leaflet.css";
 
 export default function App() {
   const location = useLocation();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const ease = "all 0.3s cubic-bezier(0.4,0,0.2,1)";
 
-  const isAuthPage = ["/login", "/register", "/forgot-password"].includes(
-    location.pathname,
-  );
-
-  if (isAuthPage) {
+  // Full-screen game pages — no navbar or sidebar
+  const isGamePage = ["/game", "/game/rank"].includes(location.pathname);
+  if (isGamePage) {
     return (
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Signup />} />
+      <Routes location={location} key={location.pathname}>
+        <Route path="/game" element={<Game />} />
+        <Route path="/game/rank" element={<RankPlay />} />
       </Routes>
     );
   }
 
-  return (
-    <div className="flex h-screen w-screen overflow-hidden bg-gradient-to-br from-[#000221] via-[#000221] to-[#2B2440]">
-      {/* Sidebar (fixed width) */}
-      <aside className="w-64 shrink-0 border-r border-[#2B2B44]/40 z-20 h-full">
-        <Sidebar />
-      </aside>
+  // Homepage manages its own navbar and sidebar
+  if (location.pathname === "/") {
+    return (
+      <Routes>
+        <Route path="/" element={<PageWrapper><Homepage /></PageWrapper>} />
+      </Routes>
+    );
+  }
 
-      {/* Main content area */}
-      <div className="relative flex-1 h-full overflow-hidden">
+  // All other pages: shared navbar + sidebar + content offset
+  return (
+    <div className="min-h-screen" style={{ backgroundColor: "#12140e" }}>
+      {/* Navbar fixed at top */}
+      <Navbar onMenuClick={() => setSidebarOpen((v) => !v)} />
+
+      {/* Mobile sidebar backdrop */}
+      {sidebarOpen && (
+        <div
+          className="md:hidden fixed inset-0 z-40 bg-black/60"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      {/* Sidebar — starts below navbar via CSS */}
+      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+
+      {/* Main content — slides right when sidebar is open */}
+      <div
+        className="pt-16 sm:pt-[73px] min-h-screen overflow-y-auto"
+        style={{ marginLeft: sidebarOpen ? "256px" : "0px", transition: ease, scrollPaddingTop: "128px" }}
+      >
         <AnimatePresence mode="wait" initial={false}>
           <Routes location={location} key={location.pathname}>
-            <Route
-              path="/"
-              element={
-                <PageWrapper>
-                  <Homepage />
-                </PageWrapper>
-              }
-            />
-            <Route
-              path="/rank"
-              element={
-                <PageWrapper>
-                  <RankDashboard />
-                </PageWrapper>
-              }
-            />
-            <Route
-              path="/game"
-              element={
-                <PageWrapper>
-                  <Game />
-                </PageWrapper>
-              }
-            />
-            <Route
-              path="/leaderboard"
-              element={
-                <PageWrapper>
-                  <Leaderboard />
-                </PageWrapper>
-              }
-            />
-            <Route
-              path="/game/rank"
-              element={
-                <PageWrapper>
-                  <RankPlay />
-                </PageWrapper>
-              }
-            />
-            <Route
-              path="/explore"
-              element={
-                <PageWrapper>
-                  <Discover />
-                </PageWrapper>
-              }
-            />
-            <Route
-              path="/study"
-              element={
-                <PageWrapper>
-                  <StudyPage />
-                </PageWrapper>
-              }
-            />
-            <Route
-              path="/tutorial"
-              element={
-                <PageWrapper>
-                  <Tutorial />
-                </PageWrapper>
-              }
-            />
+            <Route path="/login"       element={<PageWrapper><Login /></PageWrapper>} />
+            <Route path="/register"    element={<PageWrapper><Signup /></PageWrapper>} />
+            <Route path="/rank"        element={<PageWrapper><RankDashboard /></PageWrapper>} />
+            <Route path="/leaderboard" element={<PageWrapper><Leaderboard /></PageWrapper>} />
+            <Route path="/explore"     element={<PageWrapper><Discover /></PageWrapper>} />
+            <Route path="/study"       element={<PageWrapper><StudyPage /></PageWrapper>} />
+            <Route path="/tutorial"    element={<PageWrapper><Tutorial /></PageWrapper>} />
           </Routes>
         </AnimatePresence>
       </div>

@@ -1,7 +1,7 @@
 import { createContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
-import { User } from "lucide-react";
+import AuthToast from "../Components/UI/AuthToast";
 
 export const AuthContext = createContext();
 
@@ -11,6 +11,7 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [authCheckedOnce, setAuthCheckedOnce] = useState(false);
   const [wasLoggedInBefore, setWasLoggedInBefore] = useState(false);
+  const [authNotification, setAuthNotification] = useState(null);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -62,9 +63,7 @@ export const AuthProvider = ({ children }) => {
     } catch (err) {
       if (err.response?.status === 401) {
         if (showAlert) {
-          alert(
-            "⚠️ You are not authorized. Please refresh the page or login again."
-          );
+          setAuthNotification("You are not authorized. Please log in to continue.");
           navigate("/login");
           setAuth(false);
           setUser(null);
@@ -135,10 +134,16 @@ export const AuthProvider = ({ children }) => {
         authCheckedOnce,
         wasLoggedInBefore,
         setWasLoggedInBefore,
-        logout, // ✅ added
+        logout,
       }}
     >
       {children}
+      {authNotification && (
+        <AuthToast
+          message={authNotification}
+          onClose={() => setAuthNotification(null)}
+        />
+      )}
     </AuthContext.Provider>
   );
 };

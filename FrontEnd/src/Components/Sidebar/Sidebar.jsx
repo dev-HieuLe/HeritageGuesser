@@ -1,153 +1,152 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { Home, Settings, HelpCircle, Zap, Lightbulb } from "lucide-react";
-import {
-  FaMapMarkerAlt,
-  FaUserFriends,
-  FaLayerGroup,
-  FaBookOpen,
-} from "react-icons/fa";
+import { useContext } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { AuthContext } from "../../Context/authContext";
+import { useLang } from "../../Context/languageContext";
+import t from "../../translations";
 
-export default function Sidebar() {
+const rankNames = [
+  "Iron",
+  "Bronze",
+  "Silver",
+  "Gold",
+  "Platinum",
+  "Emerald",
+  "Diamond",
+  "Master",
+  "Grandmaster",
+  "Challenger",
+];
+
+const ease = "all 0.3s cubic-bezier(0.4,0,0.2,1)";
+
+export default function Sidebar({ isOpen = false, onClose = () => {} }) {
+  const location = useLocation();
+  const { auth, user } = useContext(AuthContext);
+  const { lang, toggleLang } = useLang();
+  const tx = t[lang];
+
+  const navItems = [
+    { to: "/", label: tx.sidebar.sanctuary, icon: "home" },
+    { to: "/rank", label: tx.sidebar.PlayRank, icon: "history_edu" },
+    { to: "/leaderboard", label: tx.sidebar.globalRanks, icon: "leaderboard" },
+    { to: "/explore", label: tx.sidebar.atlas, icon: "explore" },
+    { to: "/study", label: tx.sidebar.academy, icon: "school" },
+    { to: "/tutorial", label: tx.sidebar.tutorial, icon: "help_center" },
+  ];
+
+  const rankIndex = user?.rank
+    ? Math.min(user.rank - 1, rankNames.length - 1)
+    : 0;
+  const rankName = rankNames[rankIndex] || "Iron";
+
+  const displayName = auth && user?.name ? user.name : "The Archivist";
+  const displaySub =
+    auth && user ? tx.sidebar.rankLabel(rankName) : tx.sidebar.imperialScholar;
+  const initials = displayName.slice(0, 2).toUpperCase();
+
   return (
-    <aside className="w-52 backdrop-blur-sm flex flex-col justify-between py-6 h-full">
-      <div>
-        {/* Logo / Title */}
-        <div className="flex items-center mb-5">
-          <img
-            src="/LogoFinal.png"
-            alt="Heritage Guesser Logo"
-            className="w-24 h-24 object-contain"
-          />
-          <h1 className="text-2xl font-bold text-[#A78BFA] tracking-wide">
-            HERITAGE GUESSR
-          </h1>
+    <aside
+      className={`sidebar-nav${isOpen ? " sidebar-open" : ""} flex flex-col overflow-y-auto overflow-x-hidden`}
+      style={{
+        width: "256px",
+        backgroundColor: "#0e1513",
+        boxShadow: "4px 0 24px rgba(0,0,0,0.35)",
+        borderRight: "1px solid rgba(65,73,68,0.15)",
+      }}
+    >
+      {/* Mobile close button */}
+      <button
+        onClick={onClose}
+        className="md:hidden absolute top-4 right-4 z-10 bg-transparent border-none cursor-pointer p-1 rounded-lg flex items-center justify-center transition-colors duration-150 hover:bg-white/[0.06]"
+        style={{ color: "rgba(162,209,187,0.6)" }}
+        aria-label="Close menu"
+      >
+        <span
+          className="material-symbols-outlined"
+          style={{ fontSize: "22px" }}
+        >
+          close
+        </span>
+      </button>
+
+      {/* ── User block ── */}
+      <div className="px-6 pt-6 pb-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-[#242b29] border border-[rgba(65,73,68,0.3)] flex items-center justify-center shrink-0">
+            <span className="text-[13px] font-bold text-[#e9c349] select-none">
+              {initials}
+            </span>
+          </div>
+          <div className="min-w-0">
+            <div className="font-black text-[#e9c349] text-[14px] whitespace-nowrap overflow-hidden text-ellipsis">
+              {displayName}
+            </div>
+            <div className="text-[10px] text-[#c0c8c3] uppercase tracking-[0.15em] mt-0.5">
+              {displaySub}
+            </div>
+          </div>
         </div>
+      </div>
 
-        {/* Navigation */}
-        <nav className="space-y-2 text-amber-50">
-          <Link
-            to="/"
-            className="group flex items-center space-x-3 px-6 py-2 hover:bg-[#1D1633] rounded-lg cursor-pointer transition transform hover:scale-105"
-          >
-            <Home
-              size={25}
-              className="group-hover:scale-110 group-hover:drop-shadow-[0_0_8px_#A78BFA] transition-transform"
-            />
-            <span className="text-md group-hover:scale-110 group-hover:drop-shadow-[0_0_6px_#A78BFA] transition-transform">
-              Home
-            </span>
-          </Link>
+      {/* ── Nav ── */}
+      <nav className="flex-1 px-2 py-2">
+        {navItems.map((item) => {
+          const isActive = location.pathname === item.to;
+          return (
+            <Link
+              key={item.to}
+              to={item.to}
+              onClick={onClose}
+              style={{ transition: ease }}
+              className={`flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-medium no-underline mb-1 border-l-4 ${
+                isActive
+                  ? "text-[#a2d1bb] bg-[#0f3d2e] border-[#e9c349]"
+                  : "text-[#c0c8c3] bg-transparent border-transparent hover:bg-white/[0.05] hover:translate-x-1"
+              }`}
+            >
+              <span className="material-symbols-outlined text-[22px]">
+                {item.icon}
+              </span>
+              <span>{item.label}</span>
+            </Link>
+          );
+        })}
+      </nav>
 
-          <Link
-            to="/rank"
-            className="group flex items-center space-x-3 px-6 py-2 hover:bg-[#1D1633] rounded-lg cursor-pointer transition transform hover:scale-105"
-          >
-            <FaUserFriends
-              size={22}
-              className="group-hover:scale-110 group-hover:drop-shadow-[0_0_8px_#A78BFA] transition-transform"
-            />
-            <span className="text-md group-hover:scale-110 group-hover:drop-shadow-[0_0_6px_#A78BFA] transition-transform">
-              Rank
-            </span>
-          </Link>
+      {/* ── Bottom ── */}
+      <div className="p-4">
+        <Link
+          to="/game"
+          onClick={onClose}
+          className="block w-full p-3 bg-[rgba(233,195,73,0.1)] border border-[rgba(233,195,73,0.2)] text-[#e9c349] text-[12px] font-black uppercase tracking-[0.15em] text-center no-underline rounded-xl mb-4 transition-colors duration-150 hover:bg-[rgba(233,195,73,0.2)] box-border"
+        >
+          {tx.sidebar.dailyQuest}
+        </Link>
 
-          <Link
-            to="/leaderboard"
-            className="group flex items-center space-x-3 px-6 py-2 hover:bg-[#1D1633] rounded-lg cursor-pointer transition transform hover:scale-105"
+        <div className="border-t border-white/[0.05] pt-3 flex flex-col gap-0.5">
+          {/* Language toggle */}
+          <button
+            onClick={toggleLang}
+            className="w-full flex items-center gap-3 px-4 py-2 rounded-xl text-[#c0c8c3] text-[12px] font-medium bg-transparent border-none cursor-pointer transition-colors duration-150 hover:bg-white/[0.05]"
+            style={{ textAlign: "left" }}
           >
-            <FaLayerGroup
-              size={20}
-              className="group-hover:scale-110 group-hover:drop-shadow-[0_0_8px_#A78BFA] transition-transform"
-            />
-            <span className="text-md group-hover:scale-110 group-hover:drop-shadow-[0_0_6px_#A78BFA] transition-transform">
-              Leader Board
+            <span className="material-symbols-outlined text-[18px]">
+              language
             </span>
-          </Link>
-
-          <Link
-            to="/explore"
-            className="group flex items-center space-x-3 px-6 py-2 hover:bg-[#1D1633] rounded-lg cursor-pointer transition transform hover:scale-105"
-          >
-            <FaMapMarkerAlt
-              size={21}
-              className="group-hover:scale-110 group-hover:drop-shadow-[0_0_8px_#A78BFA] transition-transform"
-            />
-            <span className="text-md group-hover:scale-110 group-hover:drop-shadow-[0_0_6px_#A78BFA] transition-transform">
-              Explore
-            </span>
-          </Link>
-
-          <Link
-            to="/study"
-            className="group flex items-center space-x-3 px-6 py-2 hover:bg-[#1D1633] rounded-lg cursor-pointer transition transform hover:scale-105"
-          >
-            <FaBookOpen
-              size={21}
-              className="group-hover:scale-110 group-hover:drop-shadow-[0_0_8px_#A78BFA] transition-transform"
-            />
-            <span className="text-md group-hover:scale-110 group-hover:drop-shadow-[0_0_6px_#A78BFA] transition-transform">
-              Study
-            </span>
-          </Link>
+            {lang === "en" ? "Tiếng Việt" : "English"}
+          </button>
 
           <Link
             to="/tutorial"
-            className="group flex items-center space-x-3 px-6 py-2 hover:bg-[#1D1633] rounded-lg cursor-pointer transition transform hover:scale-105"
+            onClick={onClose}
+            className="flex items-center gap-3 px-4 py-2 rounded-xl text-[#c0c8c3] text-[12px] font-medium no-underline transition-colors duration-150 hover:bg-white/[0.05]"
           >
-            <Lightbulb
-              size={21}
-              className="group-hover:scale-110 group-hover:drop-shadow-[0_0_8px_#A78BFA] transition-transform"
-            />
-            <span className="text-md group-hover:scale-110 group-hover:drop-shadow-[0_0_6px_#A78BFA] transition-transform">
-              Tutorial
+            <span className="material-symbols-outlined text-[18px]">
+              contact_support
             </span>
+            {tx.sidebar.support}
           </Link>
-
-          <div className="mt-6 px-3">
-            <Link
-              to="/game"
-              className="group w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-[#3B82F6] via-[#06B6D4] to-[#22D3EE] hover:from-[#60A5FA] hover:via-[#22D3EE] hover:to-[#67E8F9] text-white font-bold py-3 rounded-xl shadow-lg shadow-cyan-900/40 transition transform hover:scale-110 hover:shadow-cyan-500/50"
-            >
-              <Zap
-                size={18}
-                className="animate-pulse group-hover:scale-125 group-hover:drop-shadow-[0_0_8px_#67E8F9] transition-transform"
-              />
-              <span className="group-hover:scale-110 group-hover:drop-shadow-[0_0_6px_#67E8F9] transition-transform">
-                GUESS NOW
-              </span>
-            </Link>
-          </div>
-        </nav>
-      </div>
-
-      {/* Bottom Items */}
-      <div className="space-y-2 px-3 text-white">
-        <Link
-          to="/settings"
-          className="group flex items-center space-x-3 px-3 py-2 hover:bg-[#1D1633] rounded-lg cursor-pointer transition transform hover:scale-105"
-        >
-          <Settings
-            size={25}
-            className="group-hover:scale-110 group-hover:drop-shadow-[0_0_8px_#A78BFA] transition-transform"
-          />
-          <span className="text-sm group-hover:scale-110 group-hover:drop-shadow-[0_0_6px_#A78BFA] transition-transform">
-            Settings
-          </span>
-        </Link>
-
-        <Link
-          to="/support"
-          className="group flex items-center space-x-3 px-3 py-2 hover:bg-[#1D1633] rounded-lg cursor-pointer transition transform hover:scale-105"
-        >
-          <HelpCircle
-            size={25}
-            className="group-hover:scale-110 group-hover:drop-shadow-[0_0_8px_#A78BFA] transition-transform"
-          />
-          <span className="text-sm group-hover:scale-110 group-hover:drop-shadow-[0_0_6px_#A78BFA] transition-transform">
-            Support
-          </span>
-        </Link>
+        </div>
       </div>
     </aside>
   );
