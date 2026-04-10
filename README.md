@@ -412,3 +412,46 @@ npm run dev            # starts on port 5173, proxies /api → port 8081
 
 ### 5. Open the app
 Navigate to `http://localhost:5173`
+
+---
+
+## Contact
+
+For questions, collaboration inquiries, or feedback about Heritage Guessr:
+
+**Le Trung Hieu** — Lead Developer & Project Author  
+Delta Global School, Ho Chi Minh City, Vietnam  
+Email: [lthieu@stu.dgs.org.vn](mailto:lthieu@stu.dgs.org.vn)
+
+This project was conceived and built at **Delta Global School (DGS)** as part of an initiative to preserve and promote Vietnamese cultural heritage through technology. Heritage Guessr is currently being piloted at Delta Global School and Luong Van Can High School, reaching over 600 students.
+
+---
+
+## License & Ownership
+
+Copyright © 2025 Le Trung Hieu and the Heritage Guessr Team. All rights reserved.
+
+All source code, design, written content, AI logic, and associated assets in this repository were created and are owned by **Le Trung Hieu** and contributors of the Heritage Guessr project, developed at **Delta Global School, Ho Chi Minh City, Vietnam**.
+
+### Terms of Use
+
+- **Personal / educational use** — You may view and study this codebase for personal learning or educational purposes.
+- **No redistribution** — You may not copy, republish, sell, or distribute this code or any derivative of it without explicit written permission from the author.
+- **No commercial use** — This project may not be used for commercial purposes without prior written consent.
+- **No cloning or rebranding** — Creating competing products or services substantially derived from this codebase is prohibited.
+- **Attribution required** — Any permitted use must include clear attribution to the original project and author.
+
+### Third-Party Services
+
+This project integrates third-party APIs and libraries, each subject to their own terms:
+- [Google Maps Platform Terms of Service](https://cloud.google.com/maps-platform/terms)
+- [Google Gemini API Terms](https://ai.google.dev/gemini-api/terms)
+- [Hugging Face Terms of Service](https://huggingface.co/terms-of-service)
+
+### Disclaimer
+
+Heritage Guessr is provided as-is for educational and cultural promotion purposes. The authors make no warranty regarding accuracy of historical data. Heritage information is sourced from verified databases and cross-referenced where possible, but users should consult official sources for academic or professional use.
+
+---
+
+*Lan tỏa, kết nối và gìn giữ — Spread, connect, and preserve.*
