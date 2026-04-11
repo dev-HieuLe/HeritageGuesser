@@ -16,6 +16,7 @@ export default function Navbar({ onMenuClick }) {
     { label: tx.nav.leaderboard, to: "/leaderboard" },
     { label: tx.nav.rank,        to: "/rank" },
     { label: tx.nav.study,       to: "/study" },
+    { label: tx.nav.contribute,  to: "/contribute" },
     { label: tx.nav.tutorial,    to: "/tutorial" },
   ];
 

@@ -12,6 +12,7 @@ import Leaderboard from "./Components/Leaderboard/Leaderboard";
 import Discover from "./Components/Discover/Discover";
 import StudyPage from "./Components/Study/Studypage";
 import Tutorial from "./Components/Tutorial/Tutorial";
+import ContributeHeritage from "./Components/Contribute/ContributeHeritage";
 import PageWrapper from "./Components/Animations/PageWrapper";
 import Navbar from "./Components/Navbar";
 
@@ -73,6 +74,7 @@ export default function App() {
             <Route path="/explore"     element={<PageWrapper><Discover /></PageWrapper>} />
             <Route path="/study"       element={<PageWrapper><StudyPage /></PageWrapper>} />
             <Route path="/tutorial"    element={<PageWrapper><Tutorial /></PageWrapper>} />
+            <Route path="/contribute"  element={<PageWrapper><ContributeHeritage /></PageWrapper>} />
           </Routes>
         </AnimatePresence>
       </div>

@@ -31,6 +31,7 @@ export default function Sidebar({ isOpen = false, onClose = () => {} }) {
     { to: "/leaderboard", label: tx.sidebar.globalRanks, icon: "leaderboard" },
     { to: "/explore", label: tx.sidebar.atlas, icon: "explore" },
     { to: "/study", label: tx.sidebar.academy, icon: "school" },
+    { to: "/contribute", label: tx.sidebar.contribute, icon: "add_location_alt" },
     { to: "/tutorial", label: tx.sidebar.tutorial, icon: "help_center" },
   ];
 

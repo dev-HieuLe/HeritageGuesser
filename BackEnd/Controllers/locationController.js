@@ -27,9 +27,8 @@ export const getRandomLocations = async (req, res) => {
   if (count > 20) count = 20; // cap to prevent abuse
 
   try {
-    const [rows] = await db.execute(
-      "SELECT * FROM locations ORDER BY RAND() LIMIT ?",
-      [count]
+    const [rows] = await db.query(
+      `SELECT * FROM locations ORDER BY RAND() LIMIT ${count}`
     );
 
     const currentYear = new Date().getFullYear();

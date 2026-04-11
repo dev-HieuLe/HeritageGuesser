@@ -10,7 +10,7 @@ export const updateLevel = async (req, res) => {
       return res.status(400).json({ error: "Invalid level gain" });
     }
 
-    await db.execute("UPDATE Users SET level = level + ? WHERE id = ?", [
+    await db.execute("UPDATE users SET level = level + ? WHERE id = ?", [
       levelGain,
       playerId,
     ]);
@@ -39,8 +39,8 @@ export const updateRank = async (req, res) => {
 
     // Get current player data
     const [rows] = await db.execute(
-      "SELECT `rank`, rank_progress, level FROM Users WHERE id = ?",
-      [playerId]
+      "SELECT `rank`, rank_progress, level FROM users WHERE id = ?",
+      [playerId],
     );
 
     if (rows.length === 0) {
@@ -74,8 +74,8 @@ export const updateRank = async (req, res) => {
 
     // Update level, rank, and progress
     await db.execute(
-      "UPDATE Users SET level = level + ?, `rank` = ?, rank_progress = ? WHERE id = ?",
-      [levelGain, rank, rank_progress, playerId]
+      "UPDATE users SET level = level + ?, `rank` = ?, rank_progress = ? WHERE id = ?",
+      [levelGain, rank, rank_progress, playerId],
     );
 
     res.json({

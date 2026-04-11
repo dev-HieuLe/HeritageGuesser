@@ -30,8 +30,8 @@ export const register = async (req, res) => {
 
     // 👇 include level, rank, rank_progress with default 0
     const sql = `
-      INSERT INTO Users (name, email, password, level, \`rank\`, rank_progress)
-      VALUES (?, ?, ?, 0, 0, 0)
+      INSERT INTO users (name, email, password, level, \`rank\`, rank_progress)
+      VALUES (?, ?, ?, 0, 1, 0)
     `;
 
     const [result] = await db.execute(sql, [name, email, hash]);
@@ -61,16 +61,16 @@ export const register = async (req, res) => {
 
     return res.status(201).json({
       status: "Success",
-      user: { name, email, id, level: 0, rank: 0, rank_progress: 0 },
+      user: { name, email, id, level: 0, rank: 1, rank_progress: 0 },
     });
   } catch (err) {
-    console.error("Duplicate error message:", err.message);
+    console.error("Register error:", err.message);
     if (err.message.includes("for key 'users.email'")) {
       return res.status(409).json({ error: "Email already registered!" });
     } else if (err.message.includes("for key 'users.name'")) {
       return res.status(409).json({ error: "Name already taken!" });
     } else {
-      return res.status(409).json({ error: "Account already exists" });
+      return res.status(500).json({ error: "Server error" });
     }
   }
 };
@@ -83,7 +83,7 @@ export const login = async (req, res) => {
     if (!email || !password)
       return res.status(400).json({ error: "Email and password are required" });
 
-    const [rows] = await db.execute("SELECT * FROM Users WHERE email = ?", [
+    const [rows] = await db.execute("SELECT * FROM users WHERE email = ?", [
       email,
     ]);
 
@@ -131,7 +131,7 @@ export const login = async (req, res) => {
 export const getPlayer = async (req, res) => {
   try {
     const [rows] = await db.execute(
-      "SELECT id, name, email, level, `rank`, rank_progress FROM Users WHERE id = ?",
+      "SELECT id, name, email, level, `rank`, rank_progress FROM users WHERE id = ?",
       [req.user.id],
     );
 
@@ -182,7 +182,7 @@ export const refreshToken = (req, res) => {
     async (err, user) => {
       if (err) return res.status(403).json({ error: "Invalid refresh token" });
 
-      const [rows] = await db.execute("SELECT name FROM Users WHERE id = ?", [
+      const [rows] = await db.execute("SELECT name FROM users WHERE id = ?", [
         user.id,
       ]);
       const name = rows[0].name;

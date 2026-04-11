@@ -15,6 +15,7 @@ import playerRoutes from "./Routes/playerRoutes.js";
 import DiscoverRoutes from "./Routes/discoverRoutes.js";
 import historyRoutes from "./Routes/historyRoutes.js";
 import personalizeRoutes from "./Routes/PersonalizeRoutes.js";
+import contributeLocationRoutes from "./Routes/contributeLocationRoutes.js";
 
 const app = express();
 
@@ -58,6 +59,7 @@ app.use("/api/player", playerRoutes);
 app.use("/api/discover", DiscoverRoutes);
 app.use("/api/player/history", historyRoutes);
 app.use("/api/personalize", personalizeRoutes);
+app.use("/api/contribute", contributeLocationRoutes);
 
 console.log("NODE_ENV:", process.env.NODE_ENV);
 

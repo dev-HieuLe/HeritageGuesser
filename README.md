@@ -16,6 +16,7 @@ HeritageGuesser drops you into a Google Street View of a real Vietnamese UNESCO 
 - [Database Schema](#database-schema)
 - [Environment Variables](#environment-variables)
 - [Getting Started](#getting-started)
+- [Contributing Heritage Sites](#contributing-heritage-sites)
 
 ---
 
@@ -31,6 +32,7 @@ HeritageGuesser drops you into a Google Street View of a real Vietnamese UNESCO 
 - **Bilingual UI** — Full English / Vietnamese toggle across all pages.
 - **Leaderboard** — Top 20 players with podium display and rank tiers.
 - **Secure Auth** — JWT access + refresh tokens stored in httpOnly cookies. Bcrypt password hashing.
+- **Community Contributions** — Authenticated users can submit new heritage sites via Google Maps URL. Gemini auto-generates cultural metadata (description, era, region, difficulty). Submissions enter a pending review queue before going live.
 
 ---
 
@@ -55,28 +57,30 @@ HeritageGuesser/
 │   ├── Config/
 │   │   └── db.js                       # MySQL connection pool
 │   ├── Controllers/
-│   │   ├── authController.js           # Register, login, logout, token refresh, get player
-│   │   ├── chatController.js           # Toto AI chat (Gemini)
-│   │   ├── DiscoverController.js       # Google Geocoding for Street View discovery
-│   │   ├── heritageCheck.js            # Forwards guess to NLP server for scoring
-│   │   ├── historyController.js        # Record game results in player_history
-│   │   ├── LeaderboardController.js    # Top 20 players query
-│   │   ├── locationController.js       # Get all / random heritage locations
-│   │   ├── personalizeController.js    # Gemini-powered location recommendations
-│   │   └── playerController.js         # Update player level and rank
+│   │   ├── authController.js                 # Register, login, logout, token refresh, get player
+│   │   ├── chatController.js                 # Toto AI chat (Gemini)
+│   │   ├── contributeLocationController.js   # Submit / list community heritage contributions
+│   │   ├── DiscoverController.js             # Google Geocoding for Street View discovery
+│   │   ├── heritageCheck.js                  # Forwards guess to NLP server for scoring
+│   │   ├── historyController.js              # Record game results in player_history
+│   │   ├── LeaderboardController.js          # Top 20 players query
+│   │   ├── locationController.js             # Get all / random heritage locations
+│   │   ├── personalizeController.js          # Gemini-powered location recommendations
+│   │   └── playerController.js               # Update player level and rank
 │   ├── Middleware/
-│   │   ├── errorHandler.js             # Global Express error handler
-│   │   └── verifyPlayer.js             # JWT authentication middleware
+│   │   ├── errorHandler.js                   # Global Express error handler
+│   │   └── verifyPlayer.js                   # JWT authentication middleware
 │   ├── Routes/
-│   │   ├── authRoutes.js               # /register /login /logout /player /refresh-token
-│   │   ├── chatRoutes.js               # /chat
-│   │   ├── discoverRoutes.js           # /discover/search
-│   │   ├── heritageRoutes.js           # /heritage/check
-│   │   ├── historyRoutes.js            # /player/history
-│   │   ├── LeaderboardRoutes.js        # /leaderboard
-│   │   ├── locationRoutes.js           # /locations /locations/random
-│   │   ├── PersonalizeRoutes.js        # /personalize/next-set
-│   │   └── playerRoutes.js             # /player/update-level /player/update-rank
+│   │   ├── authRoutes.js                     # /register /login /logout /player /refresh-token
+│   │   ├── chatRoutes.js                     # /chat
+│   │   ├── contributeLocationRoutes.js        # /contribute
+│   │   ├── discoverRoutes.js                 # /discover/search
+│   │   ├── heritageRoutes.js                 # /heritage/check
+│   │   ├── historyRoutes.js                  # /player/history
+│   │   ├── LeaderboardRoutes.js              # /leaderboard
+│   │   ├── locationRoutes.js                 # /locations /locations/random
+│   │   ├── PersonalizeRoutes.js              # /personalize/next-set
+│   │   └── playerRoutes.js                   # /player/update-level /player/update-rank
 │   ├── server.js                       # Express entry point (port 8081)
 │   ├── package.json
 │   └── .env                            # Backend secrets (see Environment Variables)
@@ -91,6 +95,8 @@ HeritageGuesser/
 │   │   │   ├── Animations/
 │   │   │   │   ├── FullScreenTransition.jsx  # Full-screen loading overlay
 │   │   │   │   └── PageWrapper.jsx           # Framer Motion page transitions
+│   │   │   ├── Contribute/
+│   │   │   │   └── ContributeHeritage.jsx    # Community heritage submission & history
 │   │   │   ├── Discover/
 │   │   │   │   └── Discover.jsx              # Geocoding + Street View explorer
 │   │   │   ├── Game/
@@ -175,6 +181,12 @@ Type any address or landmark into a search bar. The app geocodes it via Google M
 ### Tutorial (`/tutorial`)
 Step-by-step onboarding walkthrough explaining how to play, how scoring works, and how to use Toto. Available in both English and Vietnamese.
 
+### Contribute (`/contribute`)
+Community heritage submission portal. Authenticated users can:
+- Submit a new heritage site by name + Google Maps URL. Coordinates are extracted automatically.
+- Optionally add a cultural description; Gemini fills in any missing metadata (era, region, difficulty, aliases).
+- Track all their past submissions with live status badges: **Pending**, **Approved**, or **Declined**.
+
 ### Login (`/login`) & Register (`/register`)
 Auth forms with client-side validation, error toasts via `AuthToast`, and redirect to the homepage on success.
 
@@ -244,6 +256,13 @@ Auth forms with client-side validation, error toasts via `AuthToast`, and redire
 |--------|----------|------|-------------|
 | `GET` | `/personalize/next-set` | Yes | Returns 3 AI-recommended location IDs based on player's last 30 games. Cached 5 min. |
 
+### Contributions
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| `POST` | `/contribute` | Yes | Body: `{ name, mapsUrl, userDescription? }`. Extracts coordinates from Maps URL, calls Gemini for metadata, saves as `pending`. |
+| `GET` | `/contribute` | Yes | Returns all submissions made by the authenticated user, ordered by date descending. |
+
 ### NLP Server (internal)
 
 | Method | Endpoint | Description |
@@ -258,14 +277,14 @@ Auth forms with client-side validation, error toasts via `AuthToast`, and redire
 
 ### `Users`
 ```sql
-CREATE TABLE Users (
+CREATE TABLE users (
   id            INT PRIMARY KEY AUTO_INCREMENT,
   name          VARCHAR(50)  UNIQUE NOT NULL,
   email         VARCHAR(255) UNIQUE NOT NULL,
-  password      VARCHAR(255) NOT NULL,         -- bcrypt hash
-  level         INT DEFAULT 0,
-  `rank`        INT DEFAULT 1,                 -- 1–10 (see tier table)
-  rank_progress INT DEFAULT 0                  -- 0–4 stars within tier
+  password      VARCHAR(255) NOT NULL,                      -- bcrypt hash
+  level         INT NOT NULL DEFAULT 0 CHECK (level >= 0),
+  `rank`        INT NOT NULL DEFAULT 1 CHECK (`rank` BETWEEN 1 AND 10),   -- 1–10 (see tier table)
+  rank_progress INT NOT NULL DEFAULT 0 CHECK (rank_progress BETWEEN 0 AND 5)
 );
 ```
 
@@ -300,6 +319,26 @@ CREATE TABLE player_history (
   date_played TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id)     REFERENCES Users(id),
   FOREIGN KEY (location_id) REFERENCES locations(id)
+);
+```
+
+### `contribute_location`
+```sql
+CREATE TABLE contribute_location (
+  id          INT PRIMARY KEY AUTO_INCREMENT,
+  name        VARCHAR(255) NOT NULL,
+  description TEXT,
+  lat         DECIMAL(10, 8) NOT NULL,
+  lng         DECIMAL(11, 8) NOT NULL,
+  user_id     INT NOT NULL,
+  built_year  INT,
+  aliases     VARCHAR(500),
+  region      VARCHAR(100),
+  era         VARCHAR(100),
+  difficulty  INT CHECK (difficulty BETWEEN 1 AND 3),
+  status      ENUM('pending', 'accepted', 'rejected') NOT NULL DEFAULT 'pending',
+  created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id)
 );
 ```
 
@@ -412,6 +451,18 @@ npm run dev            # starts on port 5173, proxies /api → port 8081
 
 ### 5. Open the app
 Navigate to `http://localhost:5173`
+
+---
+
+## Contributing Heritage Sites
+
+Any logged-in user can expand the game's archive directly from the `/contribute` page.
+
+1. **Find** the heritage site on [Google Maps](https://maps.google.com) and navigate to its Street View.
+2. **Copy** the full URL from the browser address bar — it must contain `@lat,lng` coordinates.
+3. **Submit** the URL and site name via the form. Optionally add a cultural description.
+4. **Gemini** auto-generates the era, region, difficulty, and aliases.
+5. **Wait for review** — curators approve or decline each submission. Status is visible on your contributions panel.
 
 ---
 
