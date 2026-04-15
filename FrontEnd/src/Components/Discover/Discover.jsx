@@ -719,6 +719,243 @@ const locations = [
     type: "Cultural",
     updatedAt: "2026-04-08",
   },
+  {
+    name: "Nhà thờ Gỗ Kon Tum",
+    alternateNames: [
+      "Nhà thờ Chính tòa Kon Tum",
+      "Kon Tum Cathedral",
+      "Kon Tum Wooden Church",
+    ],
+    yearLabel: "1913-1918",
+    yearStart: 1913,
+    yearEnd: 1918,
+    description:
+      "Nhà thờ Gỗ Kon Tum là một công trình hiếm ở Tây Nguyên vì nó kết hợp rõ nét kiến trúc Roman của châu Âu với hình thức nhà sàn và hoa văn bản địa Ba Na. Khởi công năm 1913 và hoàn thành năm 1918, công trình không chỉ là trung tâm tôn giáo mà còn là một dấu mốc giao thoa văn hóa rất sớm giữa truyền giáo, thủ công mộc và đời sống bản địa vùng cao. Chất liệu gỗ cà chít, tường đất trộn rơm và không gian nhà rông trong khuôn viên khiến nơi này trở thành một biểu tượng âm thầm nhưng giàu bản sắc của Kon Tum.",
+    region: "Central",
+    googleMapsUrl:
+      "https://www.google.com/maps/search/?api=1&query=14.34505,108.013223",
+    position: [14.34505, 108.013223],
+    lat: 14.34505,
+    lng: 108.013223,
+    imageUrl:
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Nh%C3%A0%20th%E1%BB%9D%20g%E1%BB%97%20Kon%20Tum.jpg",
+    type: "Cultural",
+    updatedAt: "2026-04-11",
+  },
+  {
+    name: "Nhà rông Kon Klor",
+    alternateNames: [
+      "Nhà rông KonK'lor",
+      "Kon Klor Rong House",
+      "Kon Klor Communal House",
+    ],
+    yearLabel:
+      "2011 (nhà rông hiện tại; kế thừa không gian cộng đồng truyền thống Ba Na)",
+    yearStart: 2011,
+    yearEnd: 2011,
+    description:
+      "Nhà rông Kon Klor là một biểu tượng cộng đồng tiêu biểu của người Ba Na giữa lòng Kon Tum. Dù công trình hiện nay được khánh thành lại năm 2011, giá trị của nó không nằm ở tuổi đời vật chất mà ở chức năng văn hóa: đây là nơi gắn với lễ hội, cồng chiêng, sinh hoạt làng và tinh thần cố kết cộng đồng của cư dân Tây Nguyên. Mái cao vút, vật liệu gỗ tre nứa và vị trí gần sông Đắk Bla khiến công trình vừa nổi bật về hình khối vừa giữ được hồn làng truyền thống. Đây là một địa điểm lowkey nhưng có ý nghĩa biểu tượng rất lớn với văn hóa Ba Na.",
+    region: "Central",
+    googleMapsUrl:
+      "https://www.google.com/maps/search/?api=1&query=14.3480813,108.0341535",
+    position: [14.3480813, 108.0341535],
+    lat: 14.3480813,
+    lng: 108.0341535,
+    imageUrl:
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Nh%C3%A0%20r%C3%B4ng%20Kon%20Klor%20Kon%20Tum.png",
+    type: "Cultural",
+    updatedAt: "2026-04-11",
+  },
+  {
+    name: "Chùa Sắc tứ Khải Đoan",
+    alternateNames: [
+      "Chùa Khải Đoan",
+      "Sắc tứ Khải Đoan tự",
+      "Khai Doan Pagoda",
+    ],
+    yearLabel: "1951-1953",
+    yearStart: 1951,
+    yearEnd: 1953,
+    description:
+      "Chùa Sắc tứ Khải Đoan là ngôi chùa lớn và quan trọng nhất của Buôn Ma Thuột, đồng thời là ngôi chùa cuối cùng ở Việt Nam được ban sắc dưới chế độ quân chủ. Chùa được xây từ năm 1951, đến năm 1953 được sắc phong, nên ngoài giá trị tôn giáo còn mang ý nghĩa lịch sử ở giai đoạn giao thời rất đặc biệt của đất nước. Kiến trúc chùa hòa trộn ảnh hưởng cung đình Huế với vật liệu và không gian cao nguyên, tạo ra một bản sắc rất riêng. Đây là địa điểm không ồn ào như các danh thắng lớn nhưng có chiều sâu văn hóa đặc biệt của Phật giáo Tây Nguyên.",
+    region: "Central",
+    googleMapsUrl:
+      "https://www.google.com/maps/search/?api=1&query=12.6823396,108.0384264",
+    position: [12.6823396, 108.0384264],
+    lat: 12.6823396,
+    lng: 108.0384264,
+    imageUrl:
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Khai%20doan%20pagoda.jpg",
+    type: "Cultural",
+    updatedAt: "2026-04-11",
+  },
+  {
+    name: "Nhà đày Buôn Ma Thuột",
+    alternateNames: [
+      "Buôn Ma Thuột Exile House",
+      "Nhà lao Buôn Ma Thuột",
+      "Buon Ma Thuot Prison",
+    ],
+    yearLabel: "1930-1931",
+    yearStart: 1930,
+    yearEnd: 1931,
+    description:
+      "Nhà đày Buôn Ma Thuột là một trong những “địa chỉ đỏ” ít được nói tới rộng rãi hơn Côn Đảo hay Hỏa Lò, nhưng có ý nghĩa rất lớn trong lịch sử cách mạng Việt Nam. Công trình do thực dân Pháp xây dựng trong giai đoạn 1930-1931 để lưu đày tù chính trị Trung Kỳ lên vùng cao nguyên xa xôi. Chính trong không gian khắc nghiệt đó, nhiều hoạt động tổ chức, học tập và đấu tranh đã diễn ra, biến nơi giam giữ thành một điểm kết nối tư tưởng cách mạng. Đây là một di tích lowkey, giàu chiều sâu lịch sử và đặc biệt quan trọng với ký ức chính trị của Tây Nguyên.",
+    region: "Central",
+    googleMapsUrl:
+      "https://www.google.com/maps/search/?api=1&query=12.6768332,108.0471762",
+    position: [12.6768332, 108.0471762],
+    lat: 12.6768332,
+    lng: 108.0471762,
+    imageUrl:
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Bu%C3%B4n%20Ma%20Thu%E1%BB%99t%20-%20buildings%20at%20Exile%20House%20former%20prison%20Apr%202024%2001.jpg",
+    type: "Cultural",
+    updatedAt: "2026-04-11",
+  },
+  {
+    name: "Hồ T'Nưng",
+    alternateNames: [
+      "Biển Hồ Pleiku",
+      "Hồ Ea Nueng",
+      "Hồ Tơ Nuêng",
+      "Pleiku Lake",
+    ],
+    yearLabel:
+      "Hồ miệng núi lửa tự nhiên; được xếp hạng danh lam thắng cảnh năm 1988",
+    yearStart: 1988,
+    yearEnd: null,
+    description:
+      "Hồ T'Nưng, thường gọi là Biển Hồ Pleiku, là hồ miệng núi lửa nổi tiếng của Gia Lai nhưng vẫn giữ được cảm giác trầm và kín hơn nhiều điểm du lịch đại chúng khác. Giá trị của nơi này không chỉ nằm ở cảnh quan mà còn ở lớp truyền thuyết Gia Rai gắn với “biển trên núi”, với ký ức về một buôn làng chìm xuống lòng hồ. Chính vì vậy, T'Nưng vừa là thắng cảnh tự nhiên vừa là không gian văn hóa của cư dân bản địa quanh Pleiku. Đây là một điểm lowkey nhưng rất giàu biểu tượng, phù hợp tiêu chí cảnh quan mang chiều sâu văn hóa.",
+    region: "Central",
+    googleMapsUrl:
+      "https://www.google.com/maps/search/?api=1&query=14.0403219,108.0000308",
+    position: [14.0403219, 108.0000308],
+    lat: 14.0403219,
+    lng: 108.0000308,
+    imageUrl:
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Ho%20T%27Nung%20%282%29.jpg",
+    type: "Natural",
+    updatedAt: "2026-04-11",
+  },
+  {
+    name: "Dinh thự họ Vương",
+    alternateNames: [
+      "Nhà Vương",
+      "Dinh vua Mèo",
+      "Hmong King's Palace",
+      "Vuong Family Mansion",
+    ],
+    yearLabel: "1898-1903",
+    yearStart: 1898,
+    yearEnd: 1903,
+    description:
+      "Dinh thự họ Vương ở Sà Phìn là một di tích đặc biệt của vùng cực Bắc vì nó gắn với quyền lực của dòng họ Vương, một thế lực người H’Mông từng có ảnh hưởng rất lớn trên cao nguyên đá Đồng Văn. Công trình được khởi công năm 1898 và hoàn thành năm 1903, kết hợp kỹ thuật bản địa H’Mông, bố cục tứ hợp viện kiểu Hoa và một số yếu tố phòng thủ mang màu sắc Pháp. Dù thường được du khách gọi là “dinh vua Mèo”, giá trị sâu hơn của nơi này là nó lưu giữ ký ức về cấu trúc quyền lực biên viễn, về bản sắc H’Mông và lịch sử giao thoa vùng biên.",
+    region: "North",
+    googleMapsUrl:
+      "https://www.google.com/maps/search/?api=1&query=23.2563055,105.262111",
+    position: [23.2563055, 105.262111],
+    lat: 23.2563055,
+    lng: 105.262111,
+    imageUrl:
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Dinh%20th%E1%BB%B1%20vua%20M%C3%A8o%20h%E1%BB%8D%20V%C6%B0%C6%A1ng%20-%20Vuong%E2%80%99s%20Palace%2C%20%C4%90%E1%BB%93ng%20V%C4%83n.jpg",
+    type: "Cultural",
+    updatedAt: "2026-04-11",
+  },
+  {
+    name: "Phố cổ Đồng Văn",
+    alternateNames: [
+      "Dong Van Old Town",
+      "Dong Van Ancient Quarter",
+      "Phố cổ Đồng Văn",
+    ],
+    yearLabel: "Đầu thế kỷ 20 (hạt nhân kiến trúc hiện còn)",
+    yearStart: 1900,
+    yearEnd: null,
+    description:
+      "Phố cổ Đồng Văn là một khu phố nhỏ nhưng rất giàu sức gợi, phản ánh quá trình cộng cư lâu dài của người Mông, Tày, Hoa và các nhóm cư dân miền núi đá Hà Giang. Phần lõi hiện còn chủ yếu hình thành từ đầu thế kỷ 20, với chợ đá thập niên 1920 và nhiều nếp nhà trình tường, ngói âm dương tồn tại qua hơn một thế kỷ. Điều đáng quý ở đây là phố cổ vẫn gắn với nhịp sống thật của cư dân vùng cao, không hoàn toàn bị “bảo tàng hóa”. Vì thế, đây là một địa điểm lowkey nhưng có giá trị cao về kiến trúc, đời sống và giao lưu văn hóa biên viễn.",
+    region: "North",
+    googleMapsUrl:
+      "https://www.google.com/maps/search/?api=1&query=23.27967,105.36078",
+    position: [23.27967, 105.36078],
+    lat: 23.27967,
+    lng: 105.36078,
+    imageUrl:
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Dong%20Van%20old%20town.jpg",
+    type: "Cultural",
+    updatedAt: "2026-04-11",
+  },
+  {
+    name: "Khu di tích Pác Bó",
+    alternateNames: [
+      "Khu di tích Chủ tịch Hồ Chí Minh tại Cao Bằng",
+      "Pac Bo Historical Site",
+      "Hang Cốc Bó - Suối Lê Nin",
+    ],
+    yearLabel:
+      "1941 (gắn với thời điểm Hồ Chí Minh trở về hoạt động cách mạng)",
+    yearStart: 1941,
+    yearEnd: null,
+    description:
+      "Pác Bó là một trong những địa điểm có ý nghĩa chính trị - lịch sử rất lớn nhưng lại thường được cảm nhận như một không gian núi rừng lặng lẽ ở Cao Bằng. Nơi đây gắn với thời điểm đầu năm 1941, khi Hồ Chí Minh trở về nước sau nhiều năm hoạt động ở nước ngoài và sống, làm việc tại hang Cốc Bó bên suối Lê Nin. Chính sự giản dị của cảnh quan khiến ý nghĩa lịch sử ở đây càng rõ hơn: một bước ngoặt lớn của cách mạng Việt Nam bắt đầu từ một điểm rất nhỏ, rất kín. Đây là địa danh lowkey nhưng mang giá trị biểu tượng quốc gia mạnh mẽ.",
+    region: "North",
+    googleMapsUrl:
+      "https://www.google.com/maps/search/?api=1&query=22.97786,106.050356",
+    position: [22.97786, 106.050356],
+    lat: 22.97786,
+    lng: 106.050356,
+    imageUrl:
+      "https://commons.wikimedia.org/wiki/Special:FilePath/P%C3%A1c%20B%C3%B3.jpg",
+    type: "Cultural",
+    updatedAt: "2026-04-11",
+  },
+  {
+    name: "Bãi đá cổ Sa Pa",
+    alternateNames: [
+      "Sapa Ancient Rock Field",
+      "Mường Hoa Ancient Rock Field",
+      "Bãi đá cổ Mường Hoa",
+    ],
+    yearLabel:
+      "Di tích khắc đá cổ; được phát hiện khoa học năm 1925, xếp hạng quốc gia năm 1994",
+    yearStart: 1925,
+    yearEnd: null,
+    description:
+      "Bãi đá cổ Sa Pa ở thung lũng Mường Hoa là một trong những di tích khảo cổ bí ẩn nhất của miền núi phía Bắc. Trên hàng trăm khối đá phân bố giữa ruộng bậc thang và bản làng có những ký hiệu, sơ đồ và hình khắc mà đến nay vẫn chưa được giải mã trọn vẹn. Dù được phát hiện khoa học từ năm 1925, giá trị của bãi đá nằm ở việc nó mở ra một lớp lịch sử sâu hơn nhiều so với hình ảnh du lịch quen thuộc của Sa Pa hiện đại. Đây là địa điểm lowkey theo nghĩa rất thật: ít ồn ào, nhưng chứa đựng chiều sâu khảo cổ và trí tưởng tượng văn hóa rất lớn.",
+    region: "North",
+    googleMapsUrl:
+      "https://www.google.com/maps/search/?api=1&query=22.30083,103.90222",
+    position: [22.30083, 103.90222],
+    lat: 22.30083,
+    lng: 103.90222,
+    imageUrl:
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Da%20co%20Sa%20Pa.jpg",
+    type: "Cultural",
+    updatedAt: "2026-04-11",
+  },
+  {
+    name: "Ruộng bậc thang Hoàng Su Phì",
+    alternateNames: [
+      "Hoang Su Phi Terraced Fields",
+      "Ruộng bậc thang Bản Phùng - Bản Luốc - Thông Nguyên",
+      "Ruộng bậc thang Hoàng Su Phì",
+    ],
+    yearLabel:
+      "Cảnh quan canh tác hàng trăm năm; được công nhận danh thắng quốc gia năm 2012",
+    yearStart: 2012,
+    yearEnd: null,
+    description:
+      "Ruộng bậc thang Hoàng Su Phì là một cảnh quan canh tác được tạo dựng qua nhiều thế hệ của các cộng đồng Dao, La Chí, Nùng, Tày, H’Mông và nhiều nhóm cư dân khác ở vùng núi cao Hà Giang. Dù chỉ được công nhận danh thắng quốc gia từ năm 2012, bản thân hệ thống ruộng có lịch sử lâu hơn nhiều, phản ánh kỹ năng trị thủy, phân tầng đất dốc và tổ chức đời sống nông nghiệp bền bỉ trên sườn núi. So với Mù Cang Chải, Hoàng Su Phì vẫn lowkey hơn, nhưng về chiều sâu văn hóa lao động và bản sắc cộng đồng thì đây là một trong những cảnh quan giàu ý nghĩa nhất miền núi phía Bắc.",
+    region: "North",
+    googleMapsUrl:
+      "https://www.google.com/maps/search/?api=1&query=22.6994125,104.6556406",
+    position: [22.6994125, 104.6556406],
+    lat: 22.6994125,
+    lng: 104.6556406,
+    imageUrl:
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Ru%E1%BB%99ng%20b%E1%BA%ADc%20thang%20%E1%BB%9F%20Ho%C3%A0ng%20Su%20Ph%C3%AC.jpg",
+    type: "Cultural",
+    updatedAt: "2026-04-11",
+  },
 ];
 
 const regions = ["All", "North", "Central", "South"];
@@ -749,7 +986,7 @@ export default function Discover() {
       style={{ backgroundColor: "#12140e", color: "#e3e3d9" }}
     >
       <header
-        className="flex justify-between items-center px-4 sm:px-10 py-3 sm:py-5 sticky top-16 sm:top-[73px] z-30"
+        className="flex justify-between items-center px-4 sm:px-10 py-3 sm:py-5 sticky  z-30"
         style={{
           backgroundColor: "#12140e",
           borderBottom: "1px solid rgba(65,73,68,0.4)",
@@ -806,7 +1043,7 @@ export default function Discover() {
       </header>
 
       <div
-        className="discover-grid grid grid-cols-3 gap-0"
+        className="discover-grid grid grid-cols-3 gap-0 mt-20"
         style={{ minHeight: "calc(100vh - 153px)", paddingTop: "8px" }}
       >
         <div className="discover-map-col col-span-2 p-3 sm:p-6">

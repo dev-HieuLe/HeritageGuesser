@@ -11,16 +11,16 @@ export default function FullScreenTransition({ children, locationKey }) {
     setIsAnimating(true);
     setIsCovered(true); // instantly darken screen
 
-    // 🟡 Step 2: after panels fully close (~0.3s), swap content
+    // 🟡 Step 2: after panels fully close (~0.28s), swap content
     const swapTimer = setTimeout(() => {
       setDisplayChildren(children);
-    }, 350);
+    }, 280);
 
-    // 🟢 Step 3: after panels open again (~1s), remove cover
+    // 🟢 Step 3: after panels open again (~0.75s), remove cover
     const endTimer = setTimeout(() => {
       setIsAnimating(false);
       setIsCovered(false);
-    }, 1000);
+    }, 750);
 
     return () => {
       clearTimeout(swapTimer);
@@ -29,7 +29,7 @@ export default function FullScreenTransition({ children, locationKey }) {
   }, [locationKey]);
 
   return (
-    <div className="absolute inset-0 overflow-y-auto">
+    <div>
       {/* === PAGE CONTENT === */}
       <div
         className={`transition-opacity duration-300 ${
@@ -54,7 +54,7 @@ export default function FullScreenTransition({ children, locationKey }) {
               initial={{ scaleY: 0, originY: 0, originX: 1 }}
               animate={{ scaleY: 1 }}
               exit={{ scaleY: 0 }}
-              transition={{ duration: 0.25, ease: [0.8, 0, 0.2, 1] }}
+              transition={{ duration: 0.28, ease: [0.8, 0, 0.2, 1] }}
               className="fixed top-0 right-0 w-full h-full bg-gradient-to-br from-[#e9c349] to-[#e9c349] z-[9999]"
               style={{
                 clipPath: "polygon(100% 0, 0 0, 100% 100%)",
@@ -68,9 +68,9 @@ export default function FullScreenTransition({ children, locationKey }) {
               animate={{ scaleY: 1 }}
               exit={{ scaleY: 0 }}
               transition={{
-                duration: 0.45,
+                duration: 0.35,
                 ease: [0.8, 0, 0.2, 1],
-                delay: 0.25,
+                delay: 0.18,
               }}
               className="fixed bottom-0 left-0 w-full h-full bg-gradient-to-tr from-[#e9c349] to-[#e9c349] z-[9998]"
               style={{

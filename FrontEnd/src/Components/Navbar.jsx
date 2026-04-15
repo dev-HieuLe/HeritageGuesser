@@ -5,19 +5,19 @@ import { useLang } from "../Context/languageContext";
 import t from "../translations";
 
 export default function Navbar({ onMenuClick }) {
-  const { auth, logout } = useContext(AuthContext);
+  const { auth, logout, user } = useContext(AuthContext);
   const { lang, toggleLang } = useLang();
   const tx = t[lang];
   const location = useLocation();
 
   const navLinks = [
-    { label: tx.nav.home,        to: "/" },
-    { label: tx.nav.explore,     to: "/explore" },
+    { label: tx.nav.home, to: "/" },
+    { label: tx.nav.rank, to: "/rank" },
     { label: tx.nav.leaderboard, to: "/leaderboard" },
-    { label: tx.nav.rank,        to: "/rank" },
-    { label: tx.nav.study,       to: "/study" },
-    { label: tx.nav.contribute,  to: "/contribute" },
-    { label: tx.nav.tutorial,    to: "/tutorial" },
+    { label: tx.nav.explore, to: "/explore" },
+    { label: tx.nav.study, to: "/study" },
+    { label: tx.nav.contribute, to: "/contribute" },
+    { label: tx.nav.tutorial, to: "/tutorial" },
   ];
 
   return (
@@ -27,7 +27,8 @@ export default function Navbar({ onMenuClick }) {
         background: "rgba(14,21,19,0.60)",
         backdropFilter: "blur(32px)",
         WebkitBackdropFilter: "blur(32px)",
-        boxShadow: "0 8px 40px rgba(0,0,0,0.35), inset 0 -1px 0 rgba(162,209,187,0.08)",
+        boxShadow:
+          "0 8px 40px rgba(0,0,0,0.35), inset 0 -1px 0 rgba(162,209,187,0.08)",
       }}
     >
       {/* Left: Hamburger + Logo */}
@@ -37,7 +38,12 @@ export default function Navbar({ onMenuClick }) {
           className="bg-transparent border-none cursor-pointer text-[#a2d1bb] p-[6px] flex items-center rounded-lg transition-colors duration-150 hover:bg-white/[0.08]"
           aria-label="Toggle sidebar"
         >
-          <span className="material-symbols-outlined" style={{ fontSize: "26px" }}>menu</span>
+          <span
+            className="material-symbols-outlined"
+            style={{ fontSize: "26px" }}
+          >
+            menu
+          </span>
         </button>
         <Link to="/" style={{ textDecoration: "none" }}>
           <span
@@ -75,15 +81,47 @@ export default function Navbar({ onMenuClick }) {
         })}
       </div>
 
-      {/* Right: Language + Auth */}
+      {/* Right: Points + Language + Auth */}
       <div className="flex items-center gap-2 sm:gap-3">
+        {auth && user && (
+          <Link
+            to="/settings"
+            className="no-underline hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-lg transition-colors duration-150 hover:bg-white/[0.06]"
+            style={{
+              background: "rgba(233,195,73,0.08)",
+              border: "1px solid rgba(233,195,73,0.2)",
+            }}
+            title="Your points"
+          >
+            <span
+              className="material-symbols-outlined"
+              style={{
+                color: "#e9c349",
+                fontSize: "16px",
+                fontVariationSettings: "'FILL' 1",
+              }}
+            >
+              stars
+            </span>
+            <span
+              style={{ color: "#e9c349", fontWeight: 800, fontSize: "13px" }}
+            >
+              {(user.points ?? 0).toLocaleString()}
+            </span>
+          </Link>
+        )}
         <button
           onClick={toggleLang}
           className="bg-transparent border border-[rgba(162,209,187,0.2)] cursor-pointer text-[#a2d1bb] px-3 py-2 flex items-center gap-1.5 rounded-lg font-bold uppercase tracking-widest transition-colors duration-150 hover:bg-white/[0.06] hover:border-[rgba(162,209,187,0.4)]"
           style={{ fontSize: "12px" }}
           aria-label="Toggle language"
         >
-          <span className="material-symbols-outlined" style={{ fontSize: "16px" }}>language</span>
+          <span
+            className="material-symbols-outlined"
+            style={{ fontSize: "16px" }}
+          >
+            language
+          </span>
           {lang === "en" ? "VI" : "EN"}
         </button>
 
@@ -93,7 +131,12 @@ export default function Navbar({ onMenuClick }) {
             className="bg-transparent border border-[rgba(162,209,187,0.2)] cursor-pointer text-[#a2d1bb] px-4 py-2 flex items-center gap-2 rounded-lg font-semibold transition-colors duration-150 hover:bg-white/[0.06] hover:border-[rgba(162,209,187,0.4)]"
             style={{ fontSize: "13px" }}
           >
-            <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>logout</span>
+            <span
+              className="material-symbols-outlined"
+              style={{ fontSize: "18px" }}
+            >
+              logout
+            </span>
             <span className="hidden sm:inline">{tx.nav.logout}</span>
           </button>
         ) : (
@@ -102,7 +145,12 @@ export default function Navbar({ onMenuClick }) {
             className="border border-[rgba(233,195,73,0.35)] text-[#e9c349] px-4 py-2 flex items-center gap-2 rounded-lg font-semibold no-underline transition-colors duration-150 hover:bg-[rgba(233,195,73,0.08)] hover:border-[rgba(233,195,73,0.7)]"
             style={{ fontSize: "13px" }}
           >
-            <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>login</span>
+            <span
+              className="material-symbols-outlined"
+              style={{ fontSize: "18px" }}
+            >
+              login
+            </span>
             <span className="hidden sm:inline">{tx.nav.signIn}</span>
           </Link>
         )}

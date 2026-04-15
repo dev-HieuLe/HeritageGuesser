@@ -69,6 +69,12 @@ html, body, #root {
   background: var(--color-outline);
 }
 
+/* Points toast slide-in animation */
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
 /* Glass panel utility */
 .glass-panel {
   background: rgba(30, 32, 26, 0.7);

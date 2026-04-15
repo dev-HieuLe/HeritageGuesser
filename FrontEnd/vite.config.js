@@ -5,6 +5,8 @@ import tailwindcss from "@tailwindcss/vite";
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  // Treat .vrm files as static assets so `import url from '*.vrm?url'` works
+  assetsInclude: ["**/*.vrm"],
   server: {
     host: "0.0.0.0", // cho phép truy cập từ domain ngoài
     port: 5173,

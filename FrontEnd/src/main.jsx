@@ -3,6 +3,7 @@ import { StrictMode } from "react";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
+import { GoogleReCaptchaProvider } from "react-google-recaptcha-v3";
 import App from "./App.jsx";
 import "./index.css";
 import { AuthProvider } from "./Context/authContext";
@@ -13,7 +14,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <BrowserRouter>
       <LanguageProvider>
         <AuthProvider>
-          <App />
+          <GoogleReCaptchaProvider reCaptchaKey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}>
+            <App />
+          </GoogleReCaptchaProvider>
         </AuthProvider>
       </LanguageProvider>
     </BrowserRouter>

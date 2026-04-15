@@ -22,7 +22,7 @@ const ease = "all 0.3s cubic-bezier(0.4,0,0.2,1)";
 export default function Sidebar({ isOpen = false, onClose = () => {} }) {
   const location = useLocation();
   const { auth, user } = useContext(AuthContext);
-  const { lang, toggleLang } = useLang();
+  const { lang } = useLang();
   const tx = t[lang];
 
   const navItems = [
@@ -73,10 +73,19 @@ export default function Sidebar({ isOpen = false, onClose = () => {} }) {
       {/* ── User block ── */}
       <div className="px-6 pt-6 pb-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-[#242b29] border border-[rgba(65,73,68,0.3)] flex items-center justify-center shrink-0">
-            <span className="text-[13px] font-bold text-[#e9c349] select-none">
-              {initials}
-            </span>
+          <div className="w-10 h-10 rounded-full bg-[#242b29] border border-[rgba(65,73,68,0.3)] flex items-center justify-center shrink-0 overflow-hidden">
+            {user?.avatar_url ? (
+              <img
+                src={user.avatar_url}
+                alt={displayName}
+                referrerPolicy="no-referrer"
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <span className="text-[13px] font-bold text-[#e9c349] select-none">
+                {initials}
+              </span>
+            )}
           </div>
           <div className="min-w-0">
             <div className="font-black text-[#e9c349] text-[14px] whitespace-nowrap overflow-hidden text-ellipsis">
@@ -125,17 +134,16 @@ export default function Sidebar({ isOpen = false, onClose = () => {} }) {
         </Link>
 
         <div className="border-t border-white/[0.05] pt-3 flex flex-col gap-0.5">
-          {/* Language toggle */}
-          <button
-            onClick={toggleLang}
-            className="w-full flex items-center gap-3 px-4 py-2 rounded-xl text-[#c0c8c3] text-[12px] font-medium bg-transparent border-none cursor-pointer transition-colors duration-150 hover:bg-white/[0.05]"
-            style={{ textAlign: "left" }}
+          <Link
+            to="/settings"
+            onClick={onClose}
+            className="flex items-center gap-3 px-4 py-2 rounded-xl text-[#c0c8c3] text-[12px] font-medium no-underline transition-colors duration-150 hover:bg-white/[0.05]"
           >
             <span className="material-symbols-outlined text-[18px]">
-              language
+              settings
             </span>
-            {lang === "en" ? "Tiếng Việt" : "English"}
-          </button>
+            {tx.sidebar.settings}
+          </Link>
 
           <Link
             to="/tutorial"

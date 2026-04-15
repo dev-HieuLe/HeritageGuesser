@@ -4,7 +4,10 @@ import axios from "axios";
 import Confetti from "react-confetti";
 import { useWindowSize } from "react-use";
 import { AuthContext } from "../../Context/authContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import AvatarCanvas from "../Avatar/AvatarCanvas";
+import { useGeminiTTS } from "../../hooks/useGeminiTTS";
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 
 const rankNames = [
   "Iron", "Bronze", "Silver", "Gold", "Platinum",
@@ -30,9 +33,7 @@ export default function RankPlay() {
   const [heritage, setHeritage] = useState("");
   const [ageGuess, setAgeGuess] = useState("");
   const [messages, setMessages] = useState([]);
-  const [chatInput, setChatInput] = useState("");
   const [chatCount, setChatCount] = useState(0);
-  const [showChat, setShowChat] = useState(true);
 
   const MAX_DAILY_PLAYS = 50;
   const [canPlay, setCanPlay] = useState(true);
@@ -51,14 +52,34 @@ export default function RankPlay() {
   const [showConfetti, setShowConfetti] = useState(false);
   const [rankChangeMsg, setRankChangeMsg] = useState(null);
   const [timesUp, setTimesUp] = useState(false);
+  const [roundKey, setRoundKey] = useState(0); // increments each round to force StreetView remount
 
-  const { user, setUser } = useContext(AuthContext);
+  const { user, setUser, authCheckedOnce, showPointsToast, claimDailyCheckin, addPoints } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  // Redirect unauthenticated users to login
+  useEffect(() => {
+    if (authCheckedOnce && !user) {
+      navigate("/login", { replace: true });
+    }
+  }, [authCheckedOnce, user, navigate]);
 
   const messagesEndRef = useRef(null);
   const countdownRef = useRef(null);
   const timerRef = useRef(null);
   const { width, height } = useWindowSize();
   const [sending, setSending] = useState(false);
+
+  // ── Avatar TTS ─────────────────────────────────────────────────────────────
+  const { speak, stop: stopSpeech, isSpeaking } = useGeminiTTS();
+  const { executeRecaptcha } = useGoogleReCaptcha();
+  const [lastBotText, setLastBotText] = useState("");
+  const [isWaitingToSpeak, setIsWaitingToSpeak] = useState(false);
+
+  // Clear waiting state the moment audio actually starts
+  useEffect(() => {
+    if (isSpeaking) setIsWaitingToSpeak(false);
+  }, [isSpeaking]);
 
   const current = sessionLocations[sessionIndex] || null;
 
@@ -92,11 +113,17 @@ export default function RankPlay() {
   }, [messages, loadingReply]);
 
   useEffect(() => {
+    // Wait for reCAPTCHA to finish loading before attempting the fetch.
+    // Without this guard, executeRecaptcha is null on first render and the
+    // backend rejects the request with 400 (missing token).
+    if (!executeRecaptcha) return;
+
     updateLimitState();
     const loadInitial = async () => {
       try {
+        const token = await executeRecaptcha("load_game");
         const res = await axios.get(
-          `${import.meta.env.VITE_API_BASE_URL}/locations/random?count=20`
+          `${import.meta.env.VITE_API_BASE_URL}/locations/random?count=20&recaptchaToken=${token}`
         );
         const shuffled = res.data.sort(() => Math.random() - 0.5);
         setSessionLocations(shuffled);
@@ -111,7 +138,7 @@ export default function RankPlay() {
     };
     loadInitial();
     return () => { clearInterval(countdownRef.current); clearInterval(timerRef.current); };
-  }, [user?.id]);
+  }, [user?.id, executeRecaptcha]);
 
   const startNewRound = () => {
     const data = getTodayData();
@@ -126,6 +153,7 @@ export default function RankPlay() {
 
     clearInterval(countdownRef.current);
     clearInterval(timerRef.current);
+    stopSpeech(); // silence avatar between rounds
     setIsBlurred(true);
     setCountdown(3);
     setTimeLeft(120);
@@ -155,23 +183,28 @@ export default function RankPlay() {
     }
   }, [isBlurred, timeLeft, current, result]);
 
-  const sendMessage = async () => {
-    if (!current || !chatInput.trim() || chatCount >= 10 || sending) return;
+  const sendAvatarMessage = async (text) => {
+    if (!current || !text.trim() || chatCount >= 10 || sending) return;
     setSending(true);
-    const userMsg = { role: "user", text: chatInput.trim() };
+    setIsWaitingToSpeak(true);
+    const userMsg = { role: "user", text: text.trim() };
     setMessages((prev) => [...prev, userMsg]);
-    setChatInput("");
     setChatCount((p) => p + 1);
     setLoadingReply(true);
     try {
+      const recaptchaToken = executeRecaptcha ? await executeRecaptcha("chat") : null;
       const res = await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/chat`,
-        { message: userMsg.text, locationId: current.id },
+        { message: text.trim(), locationId: current.id, recaptchaToken },
         { withCredentials: true }
       );
-      setMessages((prev) => [...prev, { role: "bot", text: res.data.reply || "No reply" }]);
+      const reply = res.data.reply || "No reply";
+      setMessages((prev) => [...prev, { role: "bot", text: reply }]);
+      setLastBotText(reply);
+      speak(reply);
     } catch {
       setMessages((prev) => [...prev, { role: "bot", text: "Failed to reach The Archivist." }]);
+      setIsWaitingToSpeak(false);
     } finally {
       setLoadingReply(false);
       setSending(false);
@@ -182,9 +215,10 @@ export default function RankPlay() {
     if (!current) return;
     clearInterval(timerRef.current);
     try {
+      const token = executeRecaptcha ? await executeRecaptcha("guess") : null;
       const checkResp = await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/heritage/check`,
-        { answer: heritage, locationId: current.id },
+        { answer: heritage, locationId: current.id, recaptchaToken: token },
         { withCredentials: true }
       );
       const { nameScore = 0, similarity = 0 } = checkResp.data || {};
@@ -208,6 +242,11 @@ export default function RankPlay() {
       } catch {}
 
       if (user) {
+        // Optimistic: always show +5 toast and update points immediately
+        showPointsToast(5, "Game Complete");
+        setUser((u) => u ? { ...u, points: (u.points || 0) + 5 } : u);
+        if (claimDailyCheckin()) addPoints(10, "Daily Check-in");
+
         try {
           const endpoint = total >= 8 ? "win" : total <= 4 ? "lose" : null;
           if (endpoint) {
@@ -225,18 +264,22 @@ export default function RankPlay() {
             else if ((user.rank || 1) > newRank) setRankChangeMsg(`Rank Down → ${rankNames[newRank - 1]}`);
             else setRankChangeMsg(null);
 
-            setUser({ ...user, level: newLevel, rank: newRank, rank_progress: newProgress });
+            // Confirm rank/level from server; points already handled optimistically
+            setUser((u) => u ? { ...u, level: newLevel, rank: newRank, rank_progress: newProgress } : u);
+            if (newData.points > 0) setUser((u) => u ? { ...u, points: newData.points } : u);
           } else {
-            await axios.post(
+            const lvlRes = await axios.post(
               `${import.meta.env.VITE_API_BASE_URL}/player/update-level`,
               { levelGain },
               { withCredentials: true }
             );
-            setUser({ ...user, level: (user.level || 0) + levelGain });
+            setUser((u) => u ? { ...u, level: (u.level || 0) + levelGain } : u);
+            if (lvlRes.data.points > 0) setUser((u) => u ? { ...u, points: lvlRes.data.points } : u);
             setRankChangeMsg(null);
           }
         } catch {
-          setUser({ ...user, level: (user.level || 0) + levelGain });
+          // Rank/level update failed — points were already updated optimistically
+          setUser((u) => u ? { ...u, level: (u.level || 0) + levelGain } : u);
         }
       }
 
@@ -257,18 +300,21 @@ export default function RankPlay() {
     setMessages([]);
     setChatCount(0);
     setRankChangeMsg(null);
-    setShowChat(false);
 
     const nextIndex = sessionIndex + 1;
 
     // Re-fetch a fresh random batch when the current one is exhausted
     if (nextIndex >= sessionLocations.length) {
       try {
+        const token = executeRecaptcha ? await executeRecaptcha("next_round") : null;
         const res = await axios.get(
-          `${import.meta.env.VITE_API_BASE_URL}/locations/random?count=20`
+          `${import.meta.env.VITE_API_BASE_URL}/locations/random?count=20${token ? `&recaptchaToken=${token}` : ""}`
         );
-        setSessionLocations(res.data.sort(() => Math.random() - 0.5));
+        const fresh = res.data.sort(() => Math.random() - 0.5);
+        setSessionLocations(fresh);
         setSessionIndex(0);
+        // Use a unique round key so StreetViewPanorama always remounts
+        setRoundKey((k) => k + 1);
       } catch (err) {
         console.error("Failed to reload locations:", err);
         setFinished(true);
@@ -276,13 +322,10 @@ export default function RankPlay() {
       }
     } else {
       setSessionIndex(nextIndex);
+      setRoundKey((k) => k + 1);
     }
 
     startNewRound();
-  };
-
-  const handleKeyPress = (e) => {
-    if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
   };
 
   const mins = Math.floor(timeLeft / 60);
@@ -304,6 +347,16 @@ export default function RankPlay() {
         style={{ backgroundColor: "#0e1513", fontFamily: "'Be Vietnam Pro', sans-serif" }}
       >
         {showConfetti && <Confetti width={width} height={height} recycle={false} numberOfPieces={400} />}
+
+        {/* ── VRM Avatar overlay — bottom-right, speaks bot replies ── */}
+        <AvatarCanvas
+          isSpeaking={isSpeaking}
+          spokenText={lastBotText}
+          messages={messages}
+          loadingReply={loadingReply}
+          isLoading={isWaitingToSpeak}
+          onSendMessage={sendAvatarMessage}
+        />
 
         {/* ── TOP NAV (Homepage-style) ── */}
         <nav
@@ -412,7 +465,7 @@ export default function RankPlay() {
               options={{ disableDefaultUI: true, gestureHandling: "none", keyboardShortcuts: false }}
             >
               <StreetViewPanorama
-                key={sessionIndex}
+                key={`${roundKey}-${sessionIndex}`}
                 position={{ lat: current.lat, lng: current.lng }}
                 visible
                 options={{
@@ -811,210 +864,11 @@ export default function RankPlay() {
                   </div>
                 </div>
 
-                {/* Hint / Archivist Toggle */}
-                <button
-                  onClick={() => setShowChat((p) => !p)}
-                  className="rankplay-hint-btn flex items-center justify-center rounded-2xl transition-all shrink-0"
-                  style={{
-                    width: "56px",
-                    height: "56px",
-                    ...glassPanel,
-                    border: showChat ? "1px solid rgba(233,195,73,0.4)" : "1px solid rgba(162,209,187,0.12)",
-                    cursor: "pointer",
-                  }}
-                >
-                  <span
-                    className="material-symbols-outlined"
-                    style={{ color: "#e9c349", fontSize: "24px", transition: "transform 0.2s" }}
-                  >
-                    lightbulb
-                  </span>
-                </button>
               </div>
             )}
           </section>
         )}
 
-        {/* ── AI SIDE PANEL TOGGLE TRIGGER (floating, when panel is closed) ── */}
-        {!isBlurred && !finished && canPlay && !result && (
-          <button
-            onClick={() => setShowChat((p) => !p)}
-            className="fixed z-50 flex items-center justify-center rounded-2xl transition-all"
-            style={{
-              top: "160px",
-              right: "24px",
-              width: "56px",
-              height: "56px",
-              ...glassPanel,
-              border: "1px solid rgba(162,209,187,0.3)",
-              cursor: "pointer",
-              opacity: showChat ? 0 : 1,
-              pointerEvents: showChat ? "none" : "auto",
-              transform: showChat ? "scale(0.8)" : "scale(1)",
-              transition: "all 0.4s cubic-bezier(0.4,0,0.2,1)",
-              boxShadow: "0 4px 16px rgba(0,0,0,0.3)",
-            }}
-          >
-            <span className="material-symbols-outlined" style={{ color: "#a2d1bb", fontSize: "22px" }}>
-              auto_awesome
-            </span>
-          </button>
-        )}
-
-        {/* ── AI SIDE PANEL ── */}
-        <aside
-          className="rankplay-side-panel fixed z-50 flex flex-col gap-4"
-          style={{
-            top: "60px",
-            right: "16px",
-            bottom: "150px",
-            width: "min(320px, calc(100vw - 32px))",
-            transform: showChat ? "translateX(0)" : "translateX(calc(100% + 24px))",
-            transition: "transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
-          }}
-        >
-          {/* Main chat panel */}
-          <div
-            className="rounded-3xl p-6 flex-1 flex flex-col relative"
-            style={{
-              ...glassPanel,
-              border: "1px solid rgba(162,209,187,0.1)",
-              boxShadow: "0px 24px 48px rgba(0,0,0,0.4)",
-            }}
-          >
-            {/* Close button */}
-            <button
-              onClick={() => setShowChat(false)}
-              className="absolute top-4 right-4 transition-colors"
-              style={{ color: "rgba(192,200,195,0.5)", background: "none", border: "none", cursor: "pointer" }}
-            >
-              <span className="material-symbols-outlined" style={{ fontSize: "20px" }}>close_fullscreen</span>
-            </button>
-
-            {/* Header */}
-            <div className="flex items-center gap-3 mb-6">
-              <div
-                className="w-10 h-10 rounded-full flex items-center justify-center relative"
-                style={{ backgroundColor: "#1a211f" }}
-              >
-                <span style={{ fontSize: "20px", lineHeight: 1 }}>🐢</span>
-                <div className="absolute inset-0 rounded-full" style={{ background: "rgba(162,209,187,0.2)", filter: "blur(12px)" }} />
-              </div>
-              <div>
-                <h2 className="font-black" style={{ color: "#e3e3de", fontSize: "14px", fontFamily: "'Be Vietnam Pro', sans-serif" }}>Toto</h2>
-                <p className="font-black uppercase tracking-tighter" style={{ color: "#a2d1bb", fontSize: "10px" }}>
-                  Your Heritage Buddy · {chatCount}/10
-                </p>
-              </div>
-            </div>
-
-            {/* Messages */}
-            <div className="flex-1 overflow-y-auto space-y-3 pr-1" style={{ scrollbarWidth: "none" }}>
-              {messages.length === 0 && (
-                <div
-                  className="p-4 rounded-2xl"
-                  style={{ backgroundColor: "rgba(26,33,31,0.8)", borderLeft: "2px solid rgba(162,209,187,0.4)" }}
-                >
-                  <p style={{ color: "rgba(192,200,195,0.8)", fontSize: "13px", lineHeight: "1.6" }}>
-                    Hey there! I'm <span style={{ color: "#a2d1bb", fontWeight: "700" }}>Toto</span> 🐢 — slow and steady, but full of secrets! Ask me anything and I'll drop some clues about this place's <span style={{ color: "#a2d1bb", fontWeight: "700" }}>history, architecture, and dynasty.</span>
-                  </p>
-                </div>
-              )}
-              {messages.map((msg, i) => (
-                <div key={i} style={{ display: "flex", justifyContent: msg.role === "user" ? "flex-end" : "flex-start" }}>
-                  <div
-                    className="px-4 py-3 rounded-2xl"
-                    style={{
-                      maxWidth: "85%",
-                      backgroundColor: msg.role === "user" ? "rgba(36,44,41,0.9)" : "rgba(26,33,31,0.8)",
-                      borderLeft: msg.role === "bot" ? "2px solid rgba(162,209,187,0.4)" : "none",
-                      borderRadius: msg.role === "user" ? "16px 16px 4px 16px" : "16px 16px 16px 4px",
-                      color: msg.role === "user" ? "#e3e3de" : "rgba(192,200,195,0.9)",
-                      fontSize: "13px",
-                      lineHeight: "1.5",
-                    }}
-                  >
-                    {msg.text}
-                  </div>
-                </div>
-              ))}
-              {loadingReply && (
-                <div style={{ display: "flex", justifyContent: "flex-start" }}>
-                  <div
-                    className="px-4 py-3 rounded-2xl"
-                    style={{ backgroundColor: "rgba(26,33,31,0.8)", borderLeft: "2px solid rgba(162,209,187,0.4)", borderRadius: "16px 16px 16px 4px" }}
-                  >
-                    <div className="flex gap-1 items-center">
-                      {[0, 1, 2].map((i) => (
-                        <div
-                          key={i}
-                          className="w-1.5 h-1.5 rounded-full"
-                          style={{ backgroundColor: "#a2d1bb", animation: `pulse 1s infinite ${i * 0.2}s` }}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-              <div ref={messagesEndRef} />
-            </div>
-
-            {/* Input */}
-            <div className="mt-5 relative">
-              <input
-                value={chatInput}
-                onChange={(e) => setChatInput(e.target.value)}
-                onKeyDown={handleKeyPress}
-                disabled={chatCount >= 10 || sending}
-                placeholder={chatCount >= 10 ? "Chat limit reached" : "Ask about this era..."}
-                className="w-full rounded-xl py-3 pl-4 pr-10 outline-none"
-                style={{
-                  backgroundColor: "rgba(9,16,14,0.8)",
-                  border: "1px solid rgba(65,73,68,0.3)",
-                  color: "#e3e3de",
-                  fontSize: "13px",
-                  fontFamily: "'Be Vietnam Pro', sans-serif",
-                  transition: "border-color 0.2s",
-                }}
-              />
-              <button
-                onClick={sendMessage}
-                disabled={chatCount >= 10 || sending}
-                className="absolute right-2 top-1/2 -translate-y-1/2"
-                style={{ color: "#a2d1bb", background: "none", border: "none", cursor: chatCount >= 10 ? "not-allowed" : "pointer" }}
-              >
-                <span className="material-symbols-outlined" style={{ fontSize: "20px" }}>auto_fix</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Global rank micro-card */}
-          <div
-            className="rounded-2xl p-4 flex items-center justify-between"
-            style={{
-              ...glassPanel,
-              border: "1px solid rgba(233,195,73,0.1)",
-            }}
-          >
-            <div className="flex items-center gap-3">
-              <div
-                className="w-8 h-8 rounded-full flex items-center justify-center"
-                style={{ border: "1px solid rgba(233,195,73,0.3)", backgroundColor: "#1a211f" }}
-              >
-                <span className="material-symbols-outlined" style={{ color: "#a2d1bb", fontSize: "16px" }}>person</span>
-              </div>
-              <span className="font-black uppercase tracking-widest" style={{ color: "rgba(192,200,195,0.7)", fontSize: "11px" }}>
-                {user ? currentRankName : "Scholar"}
-              </span>
-            </div>
-            <div className="flex items-center gap-1" style={{ color: "#e9c349" }}>
-              <span className="font-black" style={{ fontSize: "14px" }}>
-                {user ? `${user.rank_progress || 0}/5` : "0/5"}
-              </span>
-              <span className="material-symbols-outlined" style={{ fontSize: "14px", fontVariationSettings: "'FILL' 1" }}>hotel_class</span>
-            </div>
-          </div>
-        </aside>
 
         {/* Floating particles */}
         <div className="fixed inset-0 pointer-events-none z-10">

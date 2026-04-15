@@ -16,6 +16,7 @@ import DiscoverRoutes from "./Routes/discoverRoutes.js";
 import historyRoutes from "./Routes/historyRoutes.js";
 import personalizeRoutes from "./Routes/PersonalizeRoutes.js";
 import contributeLocationRoutes from "./Routes/contributeLocationRoutes.js";
+import ttsRoutes from "./Routes/ttsRoutes.js";
 
 const app = express();
 
@@ -47,7 +48,27 @@ app.use(
 // Global middleware
 app.use(express.json());
 app.use(cookieParser());
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc:  ["'self'"],
+        scriptSrc:   ["'self'", "'unsafe-inline'", "https://maps.googleapis.com", "https://maps.gstatic.com", "https://www.google.com", "https://www.gstatic.com", "https://www.recaptcha.net"],
+        frameSrc:    ["'self'", "https://*.google.com", "https://*.googleapis.com", "https://*.gstatic.com", "https://www.recaptcha.net", "https://recaptcha.google.com"],
+        imgSrc:      ["'self'", "data:", "blob:", "https://*.googleapis.com", "https://*.gstatic.com", "https://*.google.com", "https://streetviewpixels-pa.googleapis.com", "https://lh3.googleusercontent.com"],
+        connectSrc:  ["'self'", "https://*.googleapis.com", "https://*.google.com", "https://www.google.com", "https://www.recaptcha.net"],
+        styleSrc:    ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+        fontSrc:     ["'self'", "https://fonts.gstatic.com", "data:"],
+        workerSrc:   ["blob:"],
+        objectSrc:   ["'none'"],
+        mediaSrc:    ["'self'", "blob:", "data:"],
+      },
+    },
+    // Google Maps uses cross-origin resources; this must be disabled
+    crossOriginEmbedderPolicy: false,
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+  })
+);
 
 // Routes
 app.use("/api", authRoutes);
@@ -60,6 +81,7 @@ app.use("/api/discover", DiscoverRoutes);
 app.use("/api/player/history", historyRoutes);
 app.use("/api/personalize", personalizeRoutes);
 app.use("/api/contribute", contributeLocationRoutes);
+app.use("/api", ttsRoutes);
 
 console.log("NODE_ENV:", process.env.NODE_ENV);
 

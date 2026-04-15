@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import Homepage from "./Components/Homepage/Homepage";
@@ -11,8 +11,11 @@ import Game from "./Components/Game/Game";
 import Leaderboard from "./Components/Leaderboard/Leaderboard";
 import Discover from "./Components/Discover/Discover";
 import StudyPage from "./Components/Study/Studypage";
+import LessonDetail from "./Components/Study/LessonDetail";
 import Tutorial from "./Components/Tutorial/Tutorial";
 import ContributeHeritage from "./Components/Contribute/ContributeHeritage";
+import Settings from "./Components/Settings/Settings";
+import AuthCallback from "./Components/AuthCallback";
 import PageWrapper from "./Components/Animations/PageWrapper";
 import Navbar from "./Components/Navbar";
 
@@ -20,8 +23,24 @@ import "leaflet/dist/leaflet.css";
 
 export default function App() {
   const location = useLocation();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(location.pathname === "/study");
   const ease = "all 0.3s cubic-bezier(0.4,0,0.2,1)";
+
+  // Auto-open sidebar when navigating to /study, leave it alone on other pages
+  useEffect(() => {
+    if (location.pathname === "/study") {
+      setSidebarOpen(true);
+    }
+  }, [location.pathname]);
+
+  // OAuth callback — no navbar, no sidebar
+  if (location.pathname === "/auth/callback") {
+    return (
+      <Routes>
+        <Route path="/auth/callback" element={<AuthCallback />} />
+      </Routes>
+    );
+  }
 
   // Full-screen game pages — no navbar or sidebar
   const isGamePage = ["/game", "/game/rank"].includes(location.pathname);
@@ -73,8 +92,10 @@ export default function App() {
             <Route path="/leaderboard" element={<PageWrapper><Leaderboard /></PageWrapper>} />
             <Route path="/explore"     element={<PageWrapper><Discover /></PageWrapper>} />
             <Route path="/study"       element={<PageWrapper><StudyPage /></PageWrapper>} />
+            <Route path="/study/:id"   element={<PageWrapper><LessonDetail /></PageWrapper>} />
             <Route path="/tutorial"    element={<PageWrapper><Tutorial /></PageWrapper>} />
             <Route path="/contribute"  element={<PageWrapper><ContributeHeritage /></PageWrapper>} />
+            <Route path="/settings"   element={<PageWrapper><Settings /></PageWrapper>} />
           </Routes>
         </AnimatePresence>
       </div>
