@@ -55,7 +55,7 @@ export default function Navbar({ onMenuClick }) {
               userSelect: "none",
             }}
           >
-            Heritage Guesser
+            Heritage Guessr
           </span>
         </Link>
       </div>

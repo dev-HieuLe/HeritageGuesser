@@ -372,7 +372,7 @@ export default function RankPlay() {
           <div className="flex items-center gap-3 sm:gap-6">
             <Link to="/" style={{ textDecoration: "none" }}>
               <span style={{ color: "#e9c349", fontSize: "16px", fontWeight: "700", letterSpacing: "-0.03em" }}>
-                Heritage Guesser
+                Heritage Guessr
               </span>
             </Link>
             <div className="hidden md:flex items-center gap-8">

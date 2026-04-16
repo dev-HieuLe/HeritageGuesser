@@ -155,7 +155,7 @@ export default function Tutorial() {
           style={{ fontSize: "clamp(32px, 6vw, 64px)" }}
         >
           {heading}{" "}
-          <span className="text-[#e9c349] italic">Heritage Guesser</span>
+          <span className="text-[#e9c349] italic">Heritage Guessr</span>
         </h1>
         <p className="text-[15px] sm:text-[17px] text-[#c0c8c3] leading-relaxed max-w-[560px]">
           {lang === "en"

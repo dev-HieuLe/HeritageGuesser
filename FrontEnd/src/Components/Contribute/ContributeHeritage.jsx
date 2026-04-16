@@ -720,7 +720,7 @@ export default function ContributeHeritage() {
                   {
                     icon: "pending_actions",
                     title: "Review Process",
-                    desc: "Each submission is reviewed by our curators. Accepted sites are added to the Heritage Guesser game world.",
+                    desc: "Each submission is reviewed by our curators. Accepted sites are added to the Heritage Guessr game world.",
                   },
                 ].map((card) => (
                   <div

@@ -130,7 +130,7 @@ const Signup = () => {
       >
         <div className="w-full max-w-[380px] mx-auto">
           <div className="mb-8 text-center">
-            <h2 className="font-black text-2xl tracking-tight" style={{ color: "#e9c349" }}>Heritage Guesser</h2>
+            <h2 className="font-black text-2xl tracking-tight" style={{ color: "#e9c349" }}>Heritage Guessr</h2>
             <p className="uppercase tracking-widest mt-1" style={{ fontSize: "10px", color: "rgba(162,209,187,0.4)" }}>
               {tx.subtitle}
             </p>

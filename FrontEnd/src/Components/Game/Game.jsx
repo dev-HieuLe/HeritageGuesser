@@ -278,7 +278,7 @@ export default function Game() {
           style={{ background: "linear-gradient(to bottom, rgba(15,61,46,0.95), transparent)" }}
         >
           <Link to="/" style={{ color: "#a2d1bb", fontWeight: "900", fontSize: "16px", textDecoration: "none" }}>
-            Heritage Guesser
+            Heritage Guessr
           </Link>
 
           {/* Timer */}

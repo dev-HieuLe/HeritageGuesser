@@ -67,8 +67,8 @@ export default function Homepage() {
   const FAQ_ITEMS = [
     {
       icon: Compass,
-      q: "What is Heritage Guesser?",
-      a: "Heritage Guesser is a Vietnamese heritage knowledge game. Each round places you inside a real Street View panorama of a heritage site — your job is to identify its name and estimate how old it is. There is no map pin. It is a test of cultural knowledge, not geography.",
+      q: "What is Heritage Guessr?",
+      a: "Heritage Guessr is a Vietnamese heritage knowledge game. Each round places you inside a real Street View panorama of a heritage site — your job is to identify its name and estimate how old it is. There is no map pin. It is a test of cultural knowledge, not geography.",
     },
     {
       icon: MapPin,
@@ -217,7 +217,7 @@ export default function Homepage() {
               letterSpacing: "-0.04em",
             }}
           >
-            Heritage Guesser
+            Heritage Guessr
           </span>
         </div>
 
@@ -757,7 +757,7 @@ export default function Homepage() {
                 <em className="text-[#a2d1bb] italic">Questions</em>
               </h2>
               <p className="mt-4 text-[14px] sm:text-[16px] text-[#c0c8c3] max-w-[480px] mx-auto leading-relaxed">
-                Everything you need to know about Heritage Guesser.
+                Everything you need to know about Heritage Guessr.
               </p>
             </motion.div>
 
@@ -979,7 +979,7 @@ export default function Homepage() {
           <div className="flex flex-col sm:flex-row justify-between items-center gap-6 sm:gap-8 flex-wrap">
             <div className="text-center sm:text-left">
               <div className="text-[17px] sm:text-[18px] font-black text-[#e9c349] mb-2">
-                Heritage Guesser
+                Heritage Guessr
               </div>
               <p className="text-[12px] text-[#c0c8c3]">
                 {tx.footer.copyright}
