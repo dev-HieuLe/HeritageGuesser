@@ -1,10 +1,12 @@
 import db from "../Config/db.js";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import OpenAI from "openai";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+const openai = new OpenAI({
+  baseURL: "https://api.deepinfra.com/v1/openai",
+  apiKey: process.env.ZAI_API_KEY,
+});
 
-console.log("Gemini key loaded:", process.env.GEMINI_API_KEY?.slice(0, 8));
+console.log("ZAI key loaded:", process.env.ZAI_API_KEY?.slice(0, 8));
 
 export const sendMessage = async (req, res) => {
   try {
@@ -40,7 +42,7 @@ Relevant location info from database:
 
     // 2. Build prompt
     const prompt = `
-      SUPER IMPORTANT: YOUR ANSWER CANT EXCEDE 25 words. 
+      SUPER IMPORTANT: YOUR ANSWER CANT EXCEED 30 words.
       You are Savannah, a friendly vietnamese local friend that will guide the user through guessing a heritage location in Vietnam. The user will ask you questions about the heritage, and you will answer based on the following rules:
 
       Rules:
@@ -60,9 +62,12 @@ Relevant location info from database:
 
     `;
 
-    // 3. Call Gemini
-    const result = await model.generateContent(prompt);
-    const reply = result.response.text();
+    // 3. Call ZAI
+    const completion = await openai.chat.completions.create({
+      messages: [{ role: "user", content: prompt }],
+      model: "zai-org/GLM-5.1",
+    });
+    const reply = completion.choices[0].message.content;
 
     res.json({ reply });
   } catch (err) {

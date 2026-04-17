@@ -420,7 +420,7 @@ JWT_REFRESH_SECRET=your_jwt_refresh_secret
 
 # APIs
 GOOGLE_MAPS_API_KEY=your_google_maps_api_key
-GEMINI_API_KEY=your_gemini_api_key
+GEMINI_TTS_API_KEY=your_gemini_tts_api_key
 
 # Google OAuth (via Supabase)
 SUPABASE_URL=https://your-project.supabase.co

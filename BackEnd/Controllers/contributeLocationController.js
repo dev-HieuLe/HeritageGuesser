@@ -1,8 +1,10 @@
 import db from "../Config/db.js";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import OpenAI from "openai";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+const openai = new OpenAI({
+  baseURL: "https://api.deepinfra.com/v1/openai",
+  apiKey: process.env.ZAI_API_KEY,
+});
 
 /**
  * Parse lat/lng from a Google Maps URL.
@@ -118,8 +120,11 @@ Please provide structured metadata about this location in valid JSON format ONLY
 }
 `.trim();
 
-    const result = await model.generateContent(prompt);
-    const raw = result.response.text().trim();
+    const completion = await openai.chat.completions.create({
+      messages: [{ role: "user", content: prompt }],
+      model: "zai-org/GLM-5.1",
+    });
+    const raw = completion.choices[0].message.content.trim();
 
     // Strip possible markdown fences
     const cleaned = raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
@@ -140,7 +145,7 @@ Please provide structured metadata about this location in valid JSON format ONLY
       ? parsed.difficulty
       : 2;
   } catch (err) {
-    console.error("Gemini metadata generation failed:", err.message);
+    console.error("ZAI metadata generation failed:", err.message);
     // Non-fatal: proceed with whatever we have; description may be empty
     if (!metadata.description) {
       metadata.description = `${name.trim()} is a heritage site submitted for review.`;

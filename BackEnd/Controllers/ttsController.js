@@ -22,7 +22,7 @@ const VOICE_NAME       = "Despina"; // prebuilt Gemini TTS voice
 let _ai = null;
 function getAI() {
   if (!_ai) {
-    _ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+    _ai = new GoogleGenAI({ apiKey: process.env.GEMINI_TTS_API_KEY });
   }
   return _ai;
 }
@@ -116,8 +116,8 @@ export async function synthesizeSpeech(req, res) {
   if (text.length > 2000) {
     return res.status(400).json({ error: "text too long (max 2000 chars)" });
   }
-  if (!process.env.GEMINI_API_KEY) {
-    return res.status(503).json({ error: "TTS service not configured — missing GEMINI_API_KEY" });
+  if (!process.env.GEMINI_TTS_API_KEY) {
+    return res.status(503).json({ error: "TTS service not configured — missing GEMINI_TTS_API_KEY" });
   }
 
   console.info(`[TTS] Gemini voice=${VOICE_NAME} chars=${text.length}`);
@@ -141,7 +141,7 @@ export async function synthesizeSpeech(req, res) {
     console.error(`[TTS] Gemini failed after ${MAX_RETRIES} attempts:`, status, err.message);
 
     if (status === 401 || status === 403) {
-      return res.status(503).json({ error: "TTS auth failed — check GEMINI_API_KEY" });
+      return res.status(503).json({ error: "TTS auth failed — check GEMINI_TTS_API_KEY" });
     }
     if (status === 429) {
       return res.status(429).json({ error: "TTS rate limit exceeded" });

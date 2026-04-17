@@ -7,7 +7,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
  * Falls back to browser SpeechSynthesis automatically on any server error.
  *
  * Voice: Despina — handles both Vietnamese and English natively.
- * No separate API key needed — reuses the existing GEMINI_API_KEY from .env.
+ * No separate API key needed — reuses the existing GEMINI_TTS_API_KEY from .env.
  *
  * Returns { speak, stop, isSpeaking }
  * ─────────────────────────────────────────────────────────────────────────────
