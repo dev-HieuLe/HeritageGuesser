@@ -4,6 +4,9 @@ const RECAPTCHA_VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify";
 const SCORE_THRESHOLD = 0.5;
 
 export const verifyRecaptcha = async (req, res, next) => {
+  // Skip reCAPTCHA for mobile clients
+  if (req.body?.type === "mobile") return next();
+
   const recaptchaToken = req.body?.recaptchaToken || req.query?.recaptchaToken;
 
   if (!recaptchaToken) {

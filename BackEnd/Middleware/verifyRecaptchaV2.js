@@ -3,6 +3,9 @@ import axios from "axios";
 const RECAPTCHA_VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify";
 
 export const verifyRecaptchaV2 = async (req, res, next) => {
+  // Skip reCAPTCHA for mobile clients
+  if (req.body?.type === "mobile") return next();
+
   const { recaptchaToken } = req.body;
 
   if (!recaptchaToken) {

@@ -1,7 +1,13 @@
 import jwt from "jsonwebtoken";
 
 export const verifyPlayer = (req, res, next) => {
-  const token = req.cookies.token;
+  // Support both cookie (web) and Bearer token (Android)
+  const authHeader = req.headers.authorization;
+  const token =
+    (authHeader && authHeader.startsWith("Bearer ")
+      ? authHeader.slice(7)
+      : null) || req.cookies.token;
+
   if (!token)
     return res.status(401).json({ status: "Error", message: "No token" });
 
