@@ -92,8 +92,8 @@ async function generateWithRetry(ai, text) {
       lastErr = err;
       const status = err.status ?? err.statusCode ?? 500;
 
-      // Don't retry on auth/quota errors — they won't resolve
-      if (status === 401 || status === 403 || status === 429) throw err;
+      // Don't retry on permanent errors — they won't resolve
+      if (status === 400 || status === 401 || status === 403 || status === 429) throw err;
 
       // 500 from Gemini preview = transient — retry with backoff
       if (attempt < MAX_RETRIES) {
@@ -123,9 +123,11 @@ export async function synthesizeSpeech(req, res) {
   console.info(`[TTS] Gemini voice=${VOICE_NAME} chars=${text.length}`);
 
   try {
+    const ttsStart  = Date.now();
     const b64data   = await generateWithRetry(getAI(), text.trim());
     const pcmBuffer = Buffer.from(b64data, "base64");
     const wavBuffer = buildWav(pcmBuffer);
+    console.info(`[TTS] Gemini response time: ${Date.now() - ttsStart}ms | wav=${wavBuffer.length}bytes`);
 
     res.set({
       "Content-Type":   "audio/wav",

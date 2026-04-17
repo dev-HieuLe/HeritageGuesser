@@ -3,7 +3,7 @@ import OpenAI from "openai";
 
 const openai = new OpenAI({
   baseURL: "https://api.deepinfra.com/v1/openai",
-  apiKey: process.env.ZAI_API_KEY,
+  apiKey: process.env.DEEPINFRA_API_KEY,
 });
 
 /**
@@ -88,7 +88,7 @@ export const submitContribution = async (req, res) => {
     return res.status(400).json({ error: "Extracted coordinates are out of valid range." });
   }
 
-  // --- Gemini metadata generation ---
+  // --- Gemini 2.5 Flash metadata generation ---
   let metadata = {
     description: userDescription?.trim() || "",
     era: null,
@@ -122,7 +122,7 @@ Please provide structured metadata about this location in valid JSON format ONLY
 
     const completion = await openai.chat.completions.create({
       messages: [{ role: "user", content: prompt }],
-      model: "zai-org/GLM-5.1",
+      model: process.env.DEEPINFRA_GEMMA_MODEL || "google/gemma-4-26B-A4B-it",
     });
     const raw = completion.choices[0].message.content.trim();
 
@@ -145,7 +145,7 @@ Please provide structured metadata about this location in valid JSON format ONLY
       ? parsed.difficulty
       : 2;
   } catch (err) {
-    console.error("ZAI metadata generation failed:", err.message);
+    console.error("Gemini metadata generation failed:", err.message);
     // Non-fatal: proceed with whatever we have; description may be empty
     if (!metadata.description) {
       metadata.description = `${name.trim()} is a heritage site submitted for review.`;

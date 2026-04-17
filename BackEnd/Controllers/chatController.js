@@ -3,10 +3,10 @@ import OpenAI from "openai";
 
 const openai = new OpenAI({
   baseURL: "https://api.deepinfra.com/v1/openai",
-  apiKey: process.env.ZAI_API_KEY,
+  apiKey: process.env.DEEPINFRA_API_KEY,
 });
 
-console.log("ZAI key loaded:", process.env.ZAI_API_KEY?.slice(0, 8));
+console.log("Gemma key loaded:", process.env.DEEPINFRA_API_KEY?.slice(0, 8));
 
 export const sendMessage = async (req, res) => {
   try {
@@ -62,12 +62,14 @@ Relevant location info from database:
 
     `;
 
-    // 3. Call ZAI
+    // 3. Call Gemini (chat model)
+    const chatStart = Date.now();
     const completion = await openai.chat.completions.create({
       messages: [{ role: "user", content: prompt }],
-      model: "zai-org/GLM-5.1",
+      model: process.env.DEEPINFRA_GEMMA_MODEL || "google/gemma-4-26B-A4B-it",
     });
     const reply = completion.choices[0].message.content;
+    console.info(`[Chat] Gemini response time: ${Date.now() - chatStart}ms | chars=${reply.length}`);
 
     res.json({ reply });
   } catch (err) {

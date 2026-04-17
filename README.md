@@ -421,6 +421,9 @@ JWT_REFRESH_SECRET=your_jwt_refresh_secret
 # APIs
 GOOGLE_MAPS_API_KEY=your_google_maps_api_key
 GEMINI_TTS_API_KEY=your_gemini_tts_api_key
+ZAI_API_KEY=your_zai_api_key
+GEMMA_CHAT_MODEL=google/gemma-4-26B-A4B-it
+ZAI_MODEL=zai-org/GLM-5.1
 
 # Google OAuth (via Supabase)
 SUPABASE_URL=https://your-project.supabase.co
