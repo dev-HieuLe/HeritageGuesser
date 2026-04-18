@@ -1,6 +1,8 @@
 import { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "../../Context/authContext";
+import { useLang } from "../../Context/languageContext";
+import t from "../../translations";
 
 const rankNames = [
   "Iron",
@@ -19,6 +21,8 @@ export default function Leaderboard() {
   const [players, setPlayers] = useState([]);
   const [loading, setLoading] = useState(true);
   const { user } = useContext(AuthContext);
+  const { lang } = useLang();
+  const tx = t[lang];
 
   useEffect(() => {
     axios
@@ -137,7 +141,7 @@ export default function Leaderboard() {
                 (player.rank || 1) - 1,
                 rankNames.length - 1,
               );
-              const rankName = rankNames[rankIndex];
+              const rankName = tx.ranking.rankNames[rankIndex];
 
               return (
                 <div key={player.id} className="flex flex-col items-center">
@@ -251,10 +255,10 @@ export default function Leaderboard() {
               letterSpacing: "0.18em",
             }}
           >
-            <div>Rank</div>
-            <div>Curator</div>
-            <div className="lb-col-tier text-right">Tier</div>
-            <div className="text-right">Level</div>
+            <div>{tx.leaderboard.rank}</div>
+            <div>{tx.leaderboard.curator}</div>
+            <div className="lb-col-tier text-right">{tx.leaderboard.tier}</div>
+            <div className="text-right">{tx.leaderboard.level}</div>
           </div>
 
           {/* All players list */}
@@ -262,7 +266,7 @@ export default function Leaderboard() {
             const rank = index + 1;
             const isUser = user && p.id === user.id;
             const rankIndex = Math.min((p.rank || 1) - 1, rankNames.length - 1);
-            const rankName = rankNames[rankIndex];
+            const rankName = tx.ranking.rankNames[rankIndex];
 
             return (
               <div
@@ -417,7 +421,7 @@ export default function Leaderboard() {
               >
                 history_edu
               </span>
-              {players.length} Curators in the Archive
+              {tx.leaderboard.curatorsInArchive(players.length)}
             </div>
           </div>
         )}

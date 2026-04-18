@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 import LoadingScreen from "../LoadingScreen";
+import FeedbackModal from "../UI/FeedbackModal";
 import {
   ChevronDown,
   Compass,
@@ -16,7 +17,14 @@ import {
   Smartphone,
   Users,
   Gift,
+  Play,
 } from "lucide-react";
+import { FaYoutube, FaFacebook } from "react-icons/fa";
+
+const CHANNEL_ICONS = {
+  youtube: FaYoutube,
+  facebook: FaFacebook,
+};
 
 const fadeUp = {
   hidden: { opacity: 0, y: 48 },
@@ -58,54 +66,23 @@ export default function Homepage() {
   const tx = t[lang];
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const getDailyDone = () => {
+    try {
+      const raw = JSON.parse(localStorage.getItem("dailyChallenge")) || {};
+      return raw.date === new Date().toDateString() && raw.completed === true;
+    } catch { return false; }
+  };
+  const [dailyDone, setDailyDone] = useState(getDailyDone);
+  const [showFeedback, setShowFeedback] = useState(false);
   const [topPlayers, setTopPlayers] = useState([]);
   const [loadingDone, setLoadingDone] = useState(
     () => sessionStorage.getItem("loadingDone") === "true"
   );
   const [openFaq, setOpenFaq] = useState(null);
 
-  const FAQ_ITEMS = [
-    {
-      icon: Compass,
-      q: "What is Heritage Guessr?",
-      a: "Heritage Guessr is a Vietnamese heritage knowledge game. Each round places you inside a real Street View panorama of a heritage site — your job is to identify its name and estimate how old it is. There is no map pin. It is a test of cultural knowledge, not geography.",
-    },
-    {
-      icon: MapPin,
-      q: "How does each round work?",
-      a: "You are dropped into a 360° Street View of a real Vietnamese heritage site. Study the architecture, carvings, and surroundings, then type the site's name and your best estimate of its age in years. Hit Confirm before the 120-second timer runs out.",
-    },
-    {
-      icon: Trophy,
-      q: "How is my score calculated?",
-      a: "Each round is scored out of 10: up to 5 points for the name (similarity matching — partial matches still score) and up to 5 points for the age (within 10 years = full marks, within 80 years = 1 point). A total of 8 or above is a win; 4 or below is a loss.",
-    },
-    {
-      icon: Star,
-      q: "How does the rank system work?",
-      a: "There are 10 ranks from Iron to Challenger. Win enough rounds to fill your 5-star progress bar and you promote to the next rank. Lose enough and you demote. Your rank and progress are shown on the Global Leaderboard alongside all other players.",
-    },
-    {
-      icon: Gift,
-      q: "How do I earn points?",
-      a: "You earn +5 points for finishing any ranked game, +10 points for your first game of the day (daily check-in), +5 points for reading a Study article, and +10 points for submitting a heritage contribution. Points are visible in your profile and the navbar.",
-    },
-    {
-      icon: BookOpen,
-      q: "What is The Archivist?",
-      a: "The Archivist is an AI companion available during every round. You can ask it up to 10 questions per round for hints — it will nudge you toward the answer without giving it away. Start with broad questions like 'What dynasty built this?' before narrowing down.",
-    },
-    {
-      icon: Users,
-      q: "What is the Study (Academy) section?",
-      a: "The Study section contains in-depth articles about real Vietnamese heritage sites — their history, architecture, and cultural significance. Reading them sharpens your ability to recognise sites in-game. Each article you finish awards +5 points.",
-    },
-    {
-      icon: Smartphone,
-      q: "Can I contribute new heritage sites?",
-      a: "Yes. On the Contribute page, paste a Google Maps Street View URL and give the site a name. Our system auto-generates the region, era, and description using AI. Approved submissions enter the game's location pool and earn you +10 points.",
-    },
-  ];
+  const faqIcons = [Compass, MapPin, Trophy, Star, Gift, BookOpen, Users, Smartphone];
+  const FAQ_ITEMS = tx.faq.map((item, i) => ({ ...item, icon: faqIcons[i] }));
 
   const NAV_ITEMS = [
     { to: "/", label: tx.sidebar.sanctuary, icon: "home" },
@@ -118,8 +95,13 @@ export default function Homepage() {
       label: tx.sidebar.contribute,
       icon: "add_location_alt",
     },
+    { to: "/shop", label: tx.sidebar.shop, icon: "storefront" },
     { to: "/tutorial", label: tx.sidebar.tutorial, icon: "help_center" },
   ];
+
+  useEffect(() => {
+    if (sidebarOpen) setDailyDone(getDailyDone());
+  }, [sidebarOpen]);
 
   useEffect(() => {
     axios
@@ -230,6 +212,7 @@ export default function Homepage() {
             { label: tx.nav.explore,     to: "/explore",      active: false },
             { label: tx.nav.study,       to: "/study",        active: false },
             { label: tx.nav.contribute,  to: "/contribute",   active: false },
+            { label: tx.nav.shop,        to: "/shop",         active: false },
             { label: tx.nav.tutorial,    to: "/tutorial",     active: false },
           ].map((l) => (
             <Link
@@ -375,35 +358,58 @@ export default function Homepage() {
 
         {/* Bottom */}
         <div className="p-4">
+          {/* Daily challenge tickbox */}
+          <div className="flex items-center gap-2.5 px-1 mb-2">
+            <div
+              className="flex items-center justify-center rounded flex-shrink-0"
+              style={{
+                width: "17px", height: "17px",
+                backgroundColor: dailyDone ? "#e9c349" : "transparent",
+                border: dailyDone ? "none" : "1.5px solid rgba(233,195,73,0.35)",
+                transition: "all 0.2s",
+              }}
+            >
+              {dailyDone && (
+                <span className="material-symbols-outlined" style={{ fontSize: "12px", color: "#12140e", fontVariationSettings: "'FILL' 1" }}>
+                  check
+                </span>
+              )}
+            </div>
+            <span style={{ color: dailyDone ? "#e9c349" : "rgba(192,200,195,0.5)", fontSize: "11px", fontWeight: "700", letterSpacing: "0.08em", textTransform: "uppercase" }}>
+              {tx.sidebar.dailyChallenge}
+            </span>
+          </div>
+
           <Link
             to="/game"
             onClick={() => setSidebarOpen(false)}
-            className="block w-full p-3 bg-[rgba(233,195,73,0.1)] border border-[rgba(233,195,73,0.2)] text-[#e9c349] text-[12px] font-black uppercase tracking-[0.15em] text-center no-underline rounded-xl mb-6 transition-colors duration-150 hover:bg-[rgba(233,195,73,0.2)] box-border"
+            className="block w-full p-3 border text-[12px] font-black uppercase tracking-[0.15em] text-center no-underline rounded-xl mb-6 transition-colors duration-150 box-border"
+            style={{
+              backgroundColor: dailyDone ? "rgba(233,195,73,0.05)" : "rgba(233,195,73,0.1)",
+              borderColor: dailyDone ? "rgba(233,195,73,0.15)" : "rgba(233,195,73,0.2)",
+              color: dailyDone ? "rgba(233,195,73,0.4)" : "#e9c349",
+            }}
           >
-            {tx.sidebar.dailyQuest}
+            {dailyDone ? "✓ " : ""}{tx.sidebar.dailyQuest}
           </Link>
 
           <div className="border-t border-white/[0.05] pt-3 flex flex-col gap-1">
-            {[
-              { label: tx.sidebar.settings, icon: "settings", to: "/settings" },
-              {
-                label: tx.sidebar.support,
-                icon: "contact_support",
-                to: "/tutorial",
-              },
-            ].map((l) => (
-              <Link
-                key={l.label}
-                to={l.to}
-                onClick={() => setSidebarOpen(false)}
-                className="flex items-center gap-3 px-4 py-2 rounded-xl text-[#c0c8c3] text-[12px] font-medium no-underline transition-colors duration-150 hover:bg-white/[0.05]"
-              >
-                <span className="material-symbols-outlined text-[18px]">
-                  {l.icon}
-                </span>
-                {l.label}
-              </Link>
-            ))}
+            <Link
+              to="/settings"
+              onClick={() => setSidebarOpen(false)}
+              className="flex items-center gap-3 px-4 py-2 rounded-xl text-[#c0c8c3] text-[12px] font-medium no-underline transition-colors duration-150 hover:bg-white/[0.05]"
+            >
+              <span className="material-symbols-outlined text-[18px]">settings</span>
+              {tx.sidebar.settings}
+            </Link>
+
+            <button
+              onClick={() => setShowFeedback(true)}
+              className="flex items-center gap-3 px-4 py-2 rounded-xl text-[#c0c8c3] text-[12px] font-medium transition-colors duration-150 hover:bg-white/[0.05] bg-transparent border-none cursor-pointer w-full text-left"
+            >
+              <span className="material-symbols-outlined text-[18px]">feedback</span>
+              {tx.sidebar.feedback}
+            </button>
           </div>
         </div>
       </aside>
@@ -921,15 +927,16 @@ export default function Homepage() {
                       border: "1px solid rgba(162,209,187,0.2)",
                     }}
                   >
-                    <span
-                      className="material-symbols-outlined text-[#a2d1bb]"
-                      style={{
-                        fontSize: "22px",
-                        fontVariationSettings: "'FILL' 1",
-                      }}
-                    >
-                      {ch.icon}
-                    </span>
+                    {CHANNEL_ICONS[ch.icon] ? (
+                      (() => { const Ic = CHANNEL_ICONS[ch.icon]; return <Ic size={22} color="#a2d1bb" />; })()
+                    ) : (
+                      <span
+                        className="material-symbols-outlined text-[#a2d1bb]"
+                        style={{ fontSize: "22px", fontVariationSettings: "'FILL' 1" }}
+                      >
+                        {ch.icon}
+                      </span>
+                    )}
                   </div>
 
                   {/* Label + value */}
@@ -955,12 +962,16 @@ export default function Homepage() {
 
                   {/* Corner accent */}
                   <div className="absolute -bottom-6 -right-6 opacity-[0.06] pointer-events-none">
-                    <span
-                      className="material-symbols-outlined text-[100px] text-[#a2d1bb]"
-                      style={{ fontVariationSettings: "'FILL' 1" }}
-                    >
-                      {ch.icon}
-                    </span>
+                    {CHANNEL_ICONS[ch.icon] ? (
+                      (() => { const Ic = CHANNEL_ICONS[ch.icon]; return <Ic size={100} color="#a2d1bb" />; })()
+                    ) : (
+                      <span
+                        className="material-symbols-outlined text-[100px] text-[#a2d1bb]"
+                        style={{ fontVariationSettings: "'FILL' 1" }}
+                      >
+                        {ch.icon}
+                      </span>
+                    )}
                   </div>
                 </motion.a>
               ))}
@@ -1021,6 +1032,8 @@ export default function Homepage() {
           backgroundSize: "32px 32px",
         }}
       />
+
+      {showFeedback && <FeedbackModal tx={tx} onClose={() => setShowFeedback(false)} />}
     </div>
   );
 }

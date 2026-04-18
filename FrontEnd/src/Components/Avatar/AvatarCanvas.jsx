@@ -19,13 +19,23 @@ export default function AvatarCanvas({
   messages = [],
   loadingReply = false,
   isLoading = false,
+  chatCount = 0,
+  maxChat = 10,
 }) {
   const [loadError,      setLoadError]      = useState(null);
   const [chatInput,      setChatInput]      = useState("");
   const [showHistory,    setShowHistory]    = useState(false);
   const [historyHovered, setHistoryHovered] = useState(false);
+  const [showIntro,      setShowIntro]      = useState(true);
   const historyRef  = useRef(null);
   const inputRef    = useRef(null);
+
+  // Auto-dismiss intro after 5 seconds
+  useEffect(() => {
+    if (!showIntro) return;
+    const t = setTimeout(() => setShowIntro(false), 5000);
+    return () => clearTimeout(t);
+  }, [showIntro]);
 
   // Close history popup when clicking outside
   useEffect(() => {
@@ -39,9 +49,11 @@ export default function AvatarCanvas({
     return () => document.removeEventListener("mousedown", handler);
   }, [showHistory]);
 
+  const chatLimitReached = chatCount >= maxChat;
+
   const handleSend = () => {
     const text = chatInput.trim();
-    if (!text || loadingReply || isLoading || isSpeaking) return;
+    if (!text || loadingReply || isLoading || isSpeaking || chatLimitReached) return;
     onSendMessage?.(text);
     setChatInput("");
     inputRef.current?.focus();
@@ -54,15 +66,41 @@ export default function AvatarCanvas({
   return (
     <div style={outerWrap}>
 
+      {/* ── Intro notification ────────────────────────────────────────── */}
+      {showIntro && (
+        <div style={introBanner}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "8px" }}>
+            <div style={{ display: "flex", gap: "10px", alignItems: "flex-start" }}>
+              <span className="material-symbols-outlined" style={{ color: "#e9c349", fontSize: "18px", flexShrink: 0, marginTop: "1px", fontVariationSettings: "'FILL' 1" }}>
+                emoji_people
+              </span>
+              <div>
+                <p style={{ margin: 0, fontSize: "12px", fontWeight: "800", color: "#e3e3d9", letterSpacing: "0.02em" }}>
+                  Meet Savannah, your Archivist!
+                </p>
+                <p style={{ margin: "4px 0 0", fontSize: "11px", color: "rgba(192,200,195,0.75)", lineHeight: "1.5" }}>
+                  Ask her up to <span style={{ color: "#e9c349", fontWeight: "700" }}>10 questions</span> for hints about this heritage site. Use them wisely!
+                </p>
+              </div>
+            </div>
+            <button onClick={() => setShowIntro(false)} style={introCloseBtn}>✕</button>
+          </div>
+        </div>
+      )}
+
       {/* ── 3D model card ─────────────────────────────────────────────── */}
       <div style={cardStyle}>
         {/* Speaking glow border */}
         <div style={glowBorder(isSpeaking)} />
 
-        {/* ARCHIVIST label */}
+        {/* ARCHIVIST label + chat counter */}
         <div style={labelRow}>
           <span style={labelDot(isSpeaking)} />
-          <span style={labelText}>ARCHIVIST</span>
+          <span style={labelText}>SAVANNAH</span>
+          <div style={chatCounterBadge(chatCount, maxChat)}>
+            <span className="material-symbols-outlined" style={{ fontSize: "11px", lineHeight: 1 }}>chat</span>
+            <span style={{ fontSize: "10px", fontWeight: "800" }}>{chatCount}/{maxChat}</span>
+          </div>
         </div>
 
         {/* Chat history button — top-right corner of card */}
@@ -146,33 +184,53 @@ export default function AvatarCanvas({
 
       {/* ── Chat bar ──────────────────────────────────────────────────── */}
       {(() => {
-        const blocked = loadingReply || isLoading || isSpeaking;
-        const placeholder = loadingReply
-          ? "Archivist is thinking…"
-          : (isLoading || isSpeaking)
-            ? "Archivist is speaking…"
-            : "Ask the Archivist…";
+        const blocked = loadingReply || isLoading || isSpeaking || chatLimitReached;
+        const placeholder = chatLimitReached
+          ? "Question limit reached"
+          : loadingReply
+            ? "Archivist is thinking…"
+            : (isLoading || isSpeaking)
+              ? "Archivist is speaking…"
+              : "Ask the Archivist…";
         return (
-          <div style={chatBar}>
-            <input
-              ref={inputRef}
-              value={chatInput}
-              onChange={(e) => setChatInput(e.target.value)}
-              onKeyDown={handleKey}
-              placeholder={placeholder}
-              disabled={blocked}
-              style={chatInput_style(blocked)}
-            />
-            <button
-              onClick={handleSend}
-              disabled={!chatInput.trim() || blocked}
-              style={sendBtn(!chatInput.trim() || blocked)}
-            >
-              {blocked
-                ? <span style={dotsStyle}>···</span>
-                : <span className="material-symbols-outlined" style={{ fontSize: "17px", lineHeight: 1 }}>send</span>
-              }
-            </button>
+          <div style={{ display: "flex", flexDirection: "column", gap: "6px", pointerEvents: "auto" }}>
+            {/* Limit alert */}
+            {chatLimitReached && (
+              <div style={{
+                padding: "8px 12px",
+                borderRadius: "10px",
+                backgroundColor: "rgba(187,3,8,0.15)",
+                border: "1px solid rgba(187,3,8,0.3)",
+                color: "#ffb4a9",
+                fontSize: "11px",
+                fontWeight: "600",
+                textAlign: "center",
+                letterSpacing: "0.02em",
+              }}>
+                You've used all 10 questions. Make your guess!
+              </div>
+            )}
+            <div style={chatBar}>
+              <input
+                ref={inputRef}
+                value={chatInput}
+                onChange={(e) => setChatInput(e.target.value)}
+                onKeyDown={handleKey}
+                placeholder={placeholder}
+                disabled={blocked}
+                style={chatInput_style(blocked)}
+              />
+              <button
+                onClick={handleSend}
+                disabled={!chatInput.trim() || blocked}
+                style={sendBtn(!chatInput.trim() || blocked)}
+              >
+                {blocked && !chatLimitReached
+                  ? <span style={dotsStyle}>···</span>
+                  : <span className="material-symbols-outlined" style={{ fontSize: "17px", lineHeight: 1 }}>send</span>
+                }
+              </button>
+            </div>
           </div>
         );
       })()}
@@ -455,6 +513,45 @@ function dot(i) {
     backgroundColor: "#a2d1bb",
     opacity:         0.85,
     animation:       `avatarDotBounce 1.1s ease-in-out ${i * 0.18}s infinite`,
+  };
+}
+
+// ─── Intro banner ─────────────────────────────────────────────────────────────
+const introBanner = {
+  padding:         "12px 14px",
+  borderRadius:    "12px",
+  backgroundColor: "rgba(14,18,12,0.92)",
+  backdropFilter:  "blur(14px)",
+  WebkitBackdropFilter: "blur(14px)",
+  border:          "1px solid rgba(233,195,73,0.3)",
+  boxShadow:       "0 4px 20px rgba(0,0,0,0.5)",
+  pointerEvents:   "auto",
+};
+
+const introCloseBtn = {
+  background:  "none",
+  border:      "none",
+  cursor:      "pointer",
+  color:       "rgba(192,200,195,0.4)",
+  fontSize:    "12px",
+  padding:     0,
+  lineHeight:  1,
+  flexShrink:  0,
+};
+
+function chatCounterBadge(count, max) {
+  const pct = count / max;
+  const color = count >= max ? "#ffb4a9" : pct >= 0.8 ? "#e9c349" : "#a2d1bb";
+  return {
+    display:         "flex",
+    alignItems:      "center",
+    gap:             "3px",
+    padding:         "2px 7px",
+    borderRadius:    "20px",
+    backgroundColor: count >= max ? "rgba(187,3,8,0.25)" : "rgba(162,209,187,0.1)",
+    border:          `1px solid ${color}40`,
+    color,
+    marginLeft:      "6px",
   };
 }
 

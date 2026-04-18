@@ -19,7 +19,7 @@ const GoogleSVG = () => (
 
 const Signup = () => {
   const [values, setValues] = useState({ name: "", email: "", password: "", confirmPassword: "" });
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState({ name: "", email: "", password: "", confirmPassword: "", recaptcha: "", general: "" });
   const navigate = useNavigate();
   const { setAuth, setUser } = useContext(AuthContext);
   const { lang, toggleLang } = useLang();
@@ -28,28 +28,33 @@ const Signup = () => {
 
   const handleChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
-    setErrors((prev) => ({ ...prev, [e.target.name]: "" }));
+    setErrors((prev) => ({ ...prev, [e.target.name]: "", general: "" }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     let newErrors = {};
 
-    if (!values.name.trim()) newErrors.name = tx.errors.nameRequired;
-    else if (values.name.trim().length < 2) newErrors.name = tx.errors.nameTooShort;
-    else if (values.name.trim().length > 50) newErrors.name = tx.errors.nameTooLong;
+    const trimmedName = values.name.trim();
+    const trimmedEmail = values.email.trim();
 
-    if (!values.email.trim()) newErrors.email = tx.errors.emailRequired;
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) newErrors.email = tx.errors.emailInvalid;
+    if (!trimmedName) newErrors.name = tx.errors.nameRequired;
+    else if (trimmedName.length < 2) newErrors.name = tx.errors.nameTooShort;
+    else if (trimmedName.length > 50) newErrors.name = tx.errors.nameTooLong;
+    else if (!/[a-zA-Z0-9]/.test(trimmedName)) newErrors.name = tx.errors.nameInvalidChars;
+
+    if (!trimmedEmail) newErrors.email = tx.errors.emailRequired;
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) newErrors.email = tx.errors.emailInvalid;
 
     if (!values.password) newErrors.password = tx.errors.passwordRequired;
     else if (values.password.length < 8) newErrors.password = tx.errors.passwordTooShort;
+    else if (values.password.length > 128) newErrors.password = tx.errors.passwordTooLong;
 
     if (!values.confirmPassword) newErrors.confirmPassword = tx.errors.confirmRequired;
     else if (values.password !== values.confirmPassword) newErrors.confirmPassword = tx.errors.confirmMismatch;
 
     const recaptchaToken = recaptchaRef.current?.getValue();
-    if (!recaptchaToken) newErrors.recaptcha = "Please tick the reCAPTCHA box.";
+    if (!recaptchaToken) newErrors.recaptcha = lang === "en" ? "Please tick the reCAPTCHA box." : "Vui lòng xác nhận reCAPTCHA.";
 
     if (Object.keys(newErrors).length > 0) { setErrors(newErrors); return; }
 
@@ -66,22 +71,25 @@ const Signup = () => {
       })
       .catch((err) => {
         const msg = err.response?.data?.error || "";
+        const lm = msg.toLowerCase();
         if (err.response?.status === 409) {
-          const lm = msg.toLowerCase();
-          if (lm.includes("email")) setErrors({ email: tx.errors.emailInUse });
-          else if (lm.includes("name")) setErrors({ name: tx.errors.usernameTaken });
-          else setErrors({ email: tx.errors.registrationError });
+          if (lm.includes("email")) setErrors((prev) => ({ ...prev, email: tx.errors.emailInUse }));
+          else if (lm.includes("name")) setErrors((prev) => ({ ...prev, name: tx.errors.usernameTaken }));
+          else setErrors((prev) => ({ ...prev, general: tx.errors.registrationError }));
         } else if (err.response?.status === 400) {
-          const lm = msg.toLowerCase();
-          if (lm.includes("name")) setErrors({ name: msg });
-          else if (lm.includes("email")) setErrors({ email: msg });
-          else if (lm.includes("password")) setErrors({ password: msg });
-          else setErrors({ email: msg || tx.errors.invalidData });
+          if (lm.includes("name") && lm.includes("letter")) setErrors((prev) => ({ ...prev, name: tx.errors.nameInvalidChars }));
+          else if (lm.includes("name")) setErrors((prev) => ({ ...prev, name: tx.errors.nameTooShort }));
+          else if (lm.includes("email")) setErrors((prev) => ({ ...prev, email: tx.errors.emailInvalid }));
+          else if (lm.includes("password") && lm.includes("128")) setErrors((prev) => ({ ...prev, password: tx.errors.passwordTooLong }));
+          else if (lm.includes("password")) setErrors((prev) => ({ ...prev, password: tx.errors.passwordTooShort }));
+          else setErrors((prev) => ({ ...prev, general: tx.errors.invalidData }));
         } else if (err.response?.status === 403) {
           recaptchaRef.current?.reset();
-          setErrors({ recaptcha: "reCAPTCHA verification failed. Please try again." });
+          setErrors((prev) => ({ ...prev, recaptcha: lang === "en" ? "reCAPTCHA verification failed. Please try again." : "Xác minh reCAPTCHA thất bại. Vui lòng thử lại." }));
+        } else if (err.response?.status === 500) {
+          setErrors((prev) => ({ ...prev, general: tx.errors.serverError }));
         } else {
-          setErrors({ email: tx.errors.somethingWrong });
+          setErrors((prev) => ({ ...prev, general: tx.errors.somethingWrong }));
         }
       });
   };
@@ -222,6 +230,17 @@ const Signup = () => {
                 <p className="mt-1.5 text-[11px]" style={{ color: "#ffb4a9" }}>{errors.recaptcha}</p>
               )}
             </div>
+
+            {/* General error */}
+            {errors.general && (
+              <div
+                className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-[12px]"
+                style={{ backgroundColor: "rgba(187,3,8,0.12)", border: "1px solid rgba(187,3,8,0.3)", color: "#ffb4a9" }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: "15px" }}>error</span>
+                {errors.general}
+              </div>
+            )}
 
             {/* Submit */}
             <button

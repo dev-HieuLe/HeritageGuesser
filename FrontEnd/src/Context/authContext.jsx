@@ -48,6 +48,10 @@ function PointsToast({ amount, reason, onDone }) {
   );
 }
 
+const INACTIVITY_LIMIT = 5 * 60 * 1000;   // 5 minutes
+const REFRESH_INTERVAL = 13 * 60 * 1000;  // refresh token every 13 min (access token lives 15 min)
+const TICK_INTERVAL    = 30 * 1000;        // check every 30 seconds
+
 export const AuthProvider = ({ children }) => {
   const [auth, setAuth] = useState(false);
   const [user, setUser] = useState(null);
@@ -58,6 +62,9 @@ export const AuthProvider = ({ children }) => {
   const [pointsToast, setPointsToast] = useState(null);
   const pointsToastTimer = useRef(null);
   const checkinDoneRef = useRef(false);
+  const lastActivityRef = useRef(Date.now());
+  const lastRefreshRef  = useRef(Date.now());
+  const authRef         = useRef(false);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -91,6 +98,49 @@ export const AuthProvider = ({ children }) => {
       // Optimistic update stays — don't revert, UX is better
     }
   };
+
+  // Keep authRef in sync so interval callbacks can read it without stale closure
+  useEffect(() => { authRef.current = auth; }, [auth]);
+
+  // ── Activity tracking + inactivity logout + proactive token refresh ──────────
+  useEffect(() => {
+    const updateActivity = () => { lastActivityRef.current = Date.now(); };
+
+    const EVENTS = ["mousemove", "mousedown", "keydown", "scroll", "touchstart", "click"];
+    EVENTS.forEach((e) => window.addEventListener(e, updateActivity, { passive: true }));
+
+    const tick = setInterval(async () => {
+      if (!authRef.current) return;
+
+      const now = Date.now();
+      const idle = now - lastActivityRef.current;
+
+      // Sign out if inactive for too long
+      if (idle >= INACTIVITY_LIMIT) {
+        clearInterval(tick);
+        setAuth(false);
+        setUser(null);
+        setWasLoggedInBefore(false);
+        checkinDoneRef.current = false;
+        try {
+          await axios.get(`${import.meta.env.VITE_API_BASE_URL}/logout`, { withCredentials: true });
+        } catch (_) {}
+        navigate("/login");
+        return;
+      }
+
+      // Proactively refresh access token while user is active
+      if (now - lastRefreshRef.current >= REFRESH_INTERVAL) {
+        const ok = await tryRefreshToken();
+        if (ok) lastRefreshRef.current = Date.now();
+      }
+    }, TICK_INTERVAL);
+
+    return () => {
+      clearInterval(tick);
+      EVENTS.forEach((e) => window.removeEventListener(e, updateActivity));
+    };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Refresh token if access token expired
   const tryRefreshToken = async () => {
@@ -133,11 +183,15 @@ export const AuthProvider = ({ children }) => {
           rank_progress: res.data.rank_progress,
           avatar_url: res.data.avatar_url || null,
           points: res.data.points ?? 0,
+          max_play: res.data.max_play ?? 15,
+          subscription_plan: res.data.subscription_plan ?? "basic",
         });
 
         setWasLoggedInBefore(true);
         setLoading(false);
         setAuthCheckedOnce(true);
+        lastActivityRef.current = Date.now();
+        lastRefreshRef.current  = Date.now();
       }
     } catch (err) {
       if (err.response?.status === 401) {
@@ -188,20 +242,6 @@ export const AuthProvider = ({ children }) => {
     checkAuth(isProtected); // only alert on protected routes
   }, [location.pathname]);
 
-  // Interval check for protected paths
-  useEffect(() => {
-    const protectedPaths = ["/rank", "/game/rank", "/settings"];
-    const isProtected = protectedPaths.some((path) =>
-      location.pathname.startsWith(path)
-    );
-    if (!isProtected || !wasLoggedInBefore) return;
-
-    const interval = setInterval(() => {
-      checkAuth(true); // only alert if in protected route
-    }, 5 * 60 * 1000);
-
-    return () => clearInterval(interval);
-  }, [wasLoggedInBefore, location.pathname]);
 
   // Daily check-in is triggered externally (by playing a rank game)
   // claimDailyCheckin returns true if this is the first claim today

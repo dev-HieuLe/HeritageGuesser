@@ -17,6 +17,7 @@ export default function Navbar({ onMenuClick }) {
     { label: tx.nav.explore, to: "/explore" },
     { label: tx.nav.study, to: "/study" },
     { label: tx.nav.contribute, to: "/contribute" },
+    { label: tx.nav.shop, to: "/shop" },
     { label: tx.nav.tutorial, to: "/tutorial" },
   ];
 
@@ -68,7 +69,7 @@ export default function Navbar({ onMenuClick }) {
             <Link
               key={l.to}
               to={l.to}
-              className={`no-underline pb-1 tracking-wide transition-all duration-150 border-b-2 ${
+              className={`no-underline pb-1 transition-all duration-150 border-b-2 whitespace-nowrap ${
                 active
                   ? "text-[#e9c349] font-semibold border-[#e9c349]"
                   : "text-[#c0c8c3] font-normal border-transparent hover:text-[#e3e3de] hover:border-[rgba(162,209,187,0.3)]"

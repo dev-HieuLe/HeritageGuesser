@@ -1,5 +1,7 @@
 import { useContext } from "react";
 import { AuthContext } from "../../Context/authContext";
+import { useLang } from "../../Context/languageContext";
+import t from "../../translations";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 
@@ -57,6 +59,8 @@ const rankRingGradients = [
 
 export default function RankDashboard() {
   const { user } = useContext(AuthContext);
+  const { lang } = useLang();
+  const tx = t[lang];
 
   if (!user) {
     return (
@@ -278,7 +282,7 @@ export default function RankDashboard() {
                       letterSpacing: "0.1em",
                     }}
                   >
-                    Progress to next rank
+                    {tx.ranking.progressToNextRank}
                   </span>
                   <span
                     style={{
@@ -321,7 +325,7 @@ export default function RankDashboard() {
                       letterSpacing: "0.1em",
                     }}
                   >
-                    Rank Tier
+                    {tx.ranking.rankTier}
                   </p>
                   <p
                     className="font-black text-2xl mt-1"
@@ -339,7 +343,7 @@ export default function RankDashboard() {
                       letterSpacing: "0.1em",
                     }}
                   >
-                    Level
+                    {tx.ranking.level}
                   </p>
                   <p
                     className="font-black text-2xl mt-1"
@@ -357,7 +361,7 @@ export default function RankDashboard() {
                       letterSpacing: "0.1em",
                     }}
                   >
-                    Stars
+                    {tx.ranking.stars}
                   </p>
                   <p
                     className="font-black text-2xl mt-1"
@@ -385,12 +389,12 @@ export default function RankDashboard() {
               className="uppercase tracking-widest font-black mb-3 sm:mb-4"
               style={{ fontSize: "10px", color: "rgba(192,200,195,0.5)" }}
             >
-              Rank Ladder
+              {tx.ranking.rankLadder}
             </p>
             <div className="grid grid-cols-5 gap-1 sm:gap-2">
-              {rankNames.map((name, i) => (
+              {rankNames.map((_name, i) => (
                 <div
-                  key={name}
+                  key={i}
                   className="flex flex-col items-center gap-1.5 py-2 rounded-lg"
                   style={{
                     backgroundColor:
@@ -426,7 +430,7 @@ export default function RankDashboard() {
                       textAlign: "center",
                     }}
                   >
-                    {name}
+                    {tx.ranking.rankNames[i]}
                   </span>
                 </div>
               ))}

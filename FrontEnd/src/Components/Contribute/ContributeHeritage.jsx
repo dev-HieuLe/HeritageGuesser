@@ -3,6 +3,8 @@ import axios from "axios";
 import ReCAPTCHA from "react-google-recaptcha";
 import { motion, AnimatePresence } from "framer-motion";
 import { AuthContext } from "../../Context/authContext";
+import { useLang } from "../../Context/languageContext";
+import t from "../../translations";
 
 const API = import.meta.env.VITE_API_BASE_URL;
 
@@ -399,6 +401,8 @@ function AnchorModal({ onClose, onSuccess }) {
 ───────────────────────────────────────────────────────── */
 export default function ContributeHeritage() {
   const { user, auth, addPoints } = useContext(AuthContext);
+  const { lang } = useLang();
+  const tx = t[lang];
   const [modalOpen, setModalOpen] = useState(false);
   const [toast, setToast] = useState(null);
   const [contributions, setContributions] = useState([]);
@@ -483,7 +487,8 @@ export default function ContributeHeritage() {
               transition={{ duration: 0.5 }}
               className="text-5xl lg:text-7xl font-headline font-extrabold tracking-tighter leading-none text-[#dde4e0]"
             >
-              Legacy <span className="text-[#e9c349] italic">Preservation</span>
+              {tx.contribute.legacyHeading[0]}{" "}
+              <span className="text-[#e9c349] italic">{tx.contribute.legacyHeading[1]}</span>
             </motion.h1>
             <motion.p
               initial={{ opacity: 0, y: 16 }}
@@ -491,9 +496,7 @@ export default function ContributeHeritage() {
               transition={{ duration: 0.5, delay: 0.1 }}
               className="text-lg text-[#c0c8c3] max-w-xl leading-relaxed"
             >
-              Your contributions weave the fabric of our collective memory. Use
-              the sanctuary to register new findings and refine the archive's
-              intelligence.
+              {tx.contribute.heroDesc}
             </motion.p>
             <motion.div
               initial={{ opacity: 0, y: 12 }}
@@ -524,7 +527,7 @@ export default function ContributeHeritage() {
                 >
                   add_circle
                 </span>
-                Register New Heritage
+                {tx.contribute.registerNewHeritage}
               </button>
             </motion.div>
           </div>
@@ -560,25 +563,25 @@ export default function ContributeHeritage() {
           >
             {[
               {
-                label: "Total Submitted",
+                label: tx.contribute.totalSubmitted,
                 value: stats.total,
                 icon: "inventory_2",
                 color: "#a2d1bb",
               },
               {
-                label: "Approved",
+                label: tx.contribute.approved,
                 value: stats.approved,
                 icon: "verified",
                 color: "#a2d1bb",
               },
               {
-                label: "Pending",
+                label: tx.contribute.pending,
                 value: stats.pending,
                 icon: "hourglass_top",
                 color: "#e9c349",
               },
               {
-                label: "Declined",
+                label: tx.contribute.declined,
                 value: stats.rejected,
                 icon: "cancel",
                 color: "#ffb4ab",
@@ -618,7 +621,7 @@ export default function ContributeHeritage() {
               <div className="flex items-center justify-between">
                 <h3 className="text-2xl font-headline font-bold text-[#e9c349] flex items-center gap-3">
                   <span className="material-symbols-outlined">movie</span>
-                  The Art of Archiving
+                  {tx.contribute.theArtOfArchiving}
                 </h3>
                 <span className="text-xs font-label uppercase tracking-widest text-[#c0c8c3]">
                   Tutorial Series 01
@@ -701,28 +704,7 @@ export default function ContributeHeritage() {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {[
-                  {
-                    icon: "location_on",
-                    title: "Spatial Accuracy",
-                    desc: "Open Google Maps, navigate to the exact heritage location, then copy the full URL from your browser's address bar.",
-                  },
-                  {
-                    icon: "auto_awesome",
-                    title: "AI-Powered Metadata",
-                    desc: "Our AI extracts coordinates from your URL and auto-generates cultural descriptions, era, and difficulty rating.",
-                  },
-                  {
-                    icon: "description",
-                    title: "Semantic Detail",
-                    desc: "Add an optional description to give the AI context and improve the quality of the generated archive entry.",
-                  },
-                  {
-                    icon: "pending_actions",
-                    title: "Review Process",
-                    desc: "Each submission is reviewed by our curators. Accepted sites are added to the Heritage Guessr game world.",
-                  },
-                ].map((card) => (
+                {tx.contribute.cards.map((card) => (
                   <div
                     key={card.title}
                     className="p-6 rounded-2xl flex items-start gap-4"
@@ -758,16 +740,10 @@ export default function ContributeHeritage() {
                 <span className="material-symbols-outlined text-lg">
                   help_outline
                 </span>
-                How to get a valid Google Maps URL
+                {tx.contribute.howToGetUrl}
               </h4>
               <ol className="space-y-3 text-sm text-[#c0c8c3]">
-                {[
-                  "Go to google.com/maps and search for the heritage site by name.",
-                  "Click on the location pin to open its detail panel.",
-                  "Switch to Street View by dragging the yellow Pegman onto the map.",
-                  'Copy the full URL from your browser — it should contain "@lat,lng" coordinates.',
-                  'Paste the URL into the "Google Street View URL" field and submit.',
-                ].map((step, i) => (
+                {tx.contribute.steps.map((step, i) => (
                   <li key={i} className="flex items-start gap-3">
                     <span
                       className="flex-shrink-0 w-6 h-6 rounded-full text-xs font-bold flex items-center justify-center"
@@ -785,7 +761,7 @@ export default function ContributeHeritage() {
           <div className="lg:col-span-1 space-y-6">
             <div className="flex items-center justify-between sticky top-24">
               <h3 className="text-2xl font-headline font-bold text-[#dde4e0]">
-                Your Contributions
+                {tx.contribute.yourContributions}
               </h3>
               <button
                 onClick={fetchContributions}
@@ -835,8 +811,7 @@ export default function ContributeHeritage() {
                   add_location_alt
                 </span>
                 <p className="text-sm text-[#c0c8c3]">
-                  No contributions yet. Be the first to register a heritage
-                  site!
+                  {tx.contribute.noContributions}
                 </p>
                 <button
                   onClick={() => setModalOpen(true)}
@@ -845,7 +820,7 @@ export default function ContributeHeritage() {
                     background: "linear-gradient(135deg, #0f3d2e, #a2d1bb)",
                   }}
                 >
-                  Submit Your First Site
+                  {tx.contribute.submitFirstSite}
                 </button>
               </div>
             ) : (

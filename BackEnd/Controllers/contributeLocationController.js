@@ -58,7 +58,9 @@ export const submitContribution = async (req, res) => {
     return res.status(400).json({ error: "Heritage name is required." });
   }
   if (name.trim().length > 255) {
-    return res.status(400).json({ error: "Heritage name is too long (max 255 characters)." });
+    return res
+      .status(400)
+      .json({ error: "Heritage name is too long (max 255 characters)." });
   }
 
   if (!mapsUrl || typeof mapsUrl !== "string" || mapsUrl.trim().length === 0) {
@@ -69,7 +71,8 @@ export const submitContribution = async (req, res) => {
 
   if (!isGoogleMapsUrl(trimmedUrl)) {
     return res.status(400).json({
-      error: "Invalid URL. Please provide a valid Google Maps link (google.com/maps/...).",
+      error:
+        "Invalid URL. Please provide a valid Google Maps link (google.com/maps/...).",
     });
   }
 
@@ -85,7 +88,9 @@ export const submitContribution = async (req, res) => {
 
   // Sanity-check coordinate ranges
   if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
-    return res.status(400).json({ error: "Extracted coordinates are out of valid range." });
+    return res
+      .status(400)
+      .json({ error: "Extracted coordinates are out of valid range." });
   }
 
   // --- Gemini 2.5 Flash metadata generation ---
@@ -111,11 +116,11 @@ You are an expert on Vietnamese cultural heritage sites. A user has submitted a 
 
 Please provide structured metadata about this location in valid JSON format ONLY (no markdown, no code fences, no extra text):
 {
-  "description": "A detailed 2–3 sentence description of the site's cultural and historical significance",
+  "description": "A detailed 3 sentence description of the site's context, cultural, and historical significance",
   "era": "The historical era or dynasty (e.g. 'Lý Dynasty', 'French Colonial', 'Modern Era', 'Prehistoric') or null if unknown",
   "built_year": A four-digit integer year the site was built/founded, or null if unknown or if it's a natural site,
   "region": "The Vietnamese region name (e.g. 'Hanoi', 'Ho Chi Minh City', 'Hue', 'Hoi An', 'Da Nang', 'Ninh Binh') or the closest city/province",
-  "aliases": "Comma-separated alternative names or null if none",
+  "aliases": "3 Comma-separated alternative names or nicknames for the site both vietnamese and english",
   "difficulty": An integer from 1 to 3 (1=well-known tourist site, 2=moderately known, 3=obscure or specialised)
 }
 `.trim();
@@ -127,7 +132,10 @@ Please provide structured metadata about this location in valid JSON format ONLY
     const raw = completion.choices[0].message.content.trim();
 
     // Strip possible markdown fences
-    const cleaned = raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
+    const cleaned = raw
+      .replace(/^```(?:json)?\s*/i, "")
+      .replace(/\s*```$/i, "")
+      .trim();
     const parsed = JSON.parse(cleaned);
 
     metadata.description =
@@ -170,16 +178,19 @@ Please provide structured metadata about this location in valid JSON format ONLY
         metadata.region,
         metadata.era,
         metadata.difficulty,
-      ]
+      ],
     );
 
     return res.status(201).json({
-      message: "Your heritage submission has been received and is pending review. Thank you for your contribution!",
+      message:
+        "Your heritage submission has been received and is pending review. Thank you for your contribution!",
       id: result.insertId,
     });
   } catch (err) {
     console.error("DB insert error:", err.message);
-    return res.status(500).json({ error: "Failed to save your contribution. Please try again." });
+    return res
+      .status(500)
+      .json({ error: "Failed to save your contribution. Please try again." });
   }
 };
 
@@ -196,12 +207,14 @@ export const getUserContributions = async (req, res) => {
        FROM contribute_location
        WHERE user_id = ?
        ORDER BY created_at DESC`,
-      [userId]
+      [userId],
     );
 
     return res.json(rows);
   } catch (err) {
     console.error("getUserContributions error:", err.message);
-    return res.status(500).json({ error: "Failed to fetch your contributions." });
+    return res
+      .status(500)
+      .json({ error: "Failed to fetch your contributions." });
   }
 };

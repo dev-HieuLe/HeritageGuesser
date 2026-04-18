@@ -69,7 +69,9 @@ Relevant location info from database:
       model: process.env.DEEPINFRA_GEMMA_MODEL || "google/gemma-4-26B-A4B-it",
     });
     const reply = completion.choices[0].message.content;
-    console.info(`[Chat] Gemini response time: ${Date.now() - chatStart}ms | chars=${reply.length}`);
+    console.info(
+      `[Chat] Gemma response time: ${Date.now() - chatStart}ms | chars=${reply.length}`,
+    );
 
     res.json({ reply });
   } catch (err) {

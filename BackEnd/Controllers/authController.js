@@ -10,21 +10,27 @@ export const register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    if (
-      !name ||
-      typeof name !== "string" ||
-      name.trim().length < 2 ||
-      name.trim().length > 50
-    )
+    const trimmedName = typeof name === "string" ? name.trim() : "";
+    const trimmedEmail = typeof email === "string" ? email.trim().toLowerCase() : "";
+
+    if (!trimmedName || trimmedName.length < 2 || trimmedName.length > 50)
       return res
         .status(400)
         .json({ error: "Name must be between 2 and 50 characters" });
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+    if (!/[a-zA-Z0-9]/.test(trimmedName))
+      return res
+        .status(400)
+        .json({ error: "Name must contain at least one letter or number" });
+    if (!trimmedEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail))
       return res.status(400).json({ error: "Invalid email address" });
     if (!password || password.length < 8)
       return res
         .status(400)
         .json({ error: "Password must be at least 8 characters" });
+    if (password.length > 128)
+      return res
+        .status(400)
+        .json({ error: "Password must be less than 128 characters" });
 
     const hash = await bcrypt.hash(password, SALT_ROUNDS);
 
@@ -34,14 +40,14 @@ export const register = async (req, res) => {
       VALUES (?, ?, ?, 0, 1, 0)
     `;
 
-    const [result] = await db.execute(sql, [name, email, hash]);
+    const [result] = await db.execute(sql, [trimmedName, trimmedEmail, hash]);
     const id = result.insertId;
 
-    const accessToken = jwt.sign({ name, email, id }, process.env.JWT_SECRET, {
+    const accessToken = jwt.sign({ name: trimmedName, email: trimmedEmail, id }, process.env.JWT_SECRET, {
       expiresIn: "15m",
     });
     const refreshToken = jwt.sign(
-      { id, email },
+      { id, email: trimmedEmail },
       process.env.JWT_REFRESH_SECRET,
       {
         expiresIn: "7d",
@@ -61,7 +67,7 @@ export const register = async (req, res) => {
 
     return res.status(201).json({
       status: "Success",
-      user: { name, email, id, level: 0, rank: 1, rank_progress: 0, points: 0, accessToken, refreshToken },
+      user: { name: trimmedName, email: trimmedEmail, id, level: 0, rank: 1, rank_progress: 0, points: 0, accessToken, refreshToken },
     });
   } catch (err) {
     console.error("Register error:", err.message);
@@ -104,7 +110,7 @@ export const login = async (req, res) => {
       return res.status(401).json({ error: "Invalid email or password" });
     }
 
-    const { id, name, level, rank, rank_progress, points } = rows[0];
+    const { id, name, level, rank, rank_progress, points, max_play, subscription_plan } = rows[0];
 
     const accessToken = jwt.sign({ id, email, name }, process.env.JWT_SECRET, {
       expiresIn: "15m",
@@ -129,7 +135,7 @@ export const login = async (req, res) => {
 
     return res.status(200).json({
       status: "Success",
-      user: { id, name, email, level, rank, rank_progress, points, accessToken, refreshToken },
+      user: { id, name, email, level, rank, rank_progress, points, max_play: max_play ?? 15, subscription_plan: subscription_plan ?? "basic", accessToken, refreshToken },
     });
   } catch (err) {
     console.error(err);
@@ -141,7 +147,7 @@ export const login = async (req, res) => {
 export const getPlayer = async (req, res) => {
   try {
     const [rows] = await db.execute(
-      "SELECT id, name, email, level, `rank`, rank_progress, avatar_url, points FROM users WHERE id = ?",
+      "SELECT id, name, email, level, `rank`, rank_progress, avatar_url, points, max_play, subscription_plan FROM users WHERE id = ?",
       [req.user.id],
     );
 
@@ -159,6 +165,8 @@ export const getPlayer = async (req, res) => {
       rank_progress: rows[0].rank_progress,
       avatar_url: rows[0].avatar_url,
       points: rows[0].points ?? 0,
+      max_play: rows[0].max_play ?? 15,
+      subscription_plan: rows[0].subscription_plan ?? "basic",
     });
   } catch (err) {
     console.error(err);
@@ -217,13 +225,13 @@ export const googleAuth = async (req, res) => {
 
     // Find or create user in MySQL
     let [rows] = await db.execute(
-      "SELECT id, name, email, level, `rank`, rank_progress, avatar_url, points FROM users WHERE google_id = ?",
+      "SELECT id, name, email, level, `rank`, rank_progress, avatar_url, points, max_play, subscription_plan FROM users WHERE google_id = ?",
       [googleId],
     );
 
     if (rows.length === 0) {
       [rows] = await db.execute(
-        "SELECT id, name, email, level, `rank`, rank_progress, avatar_url, points FROM users WHERE email = ?",
+        "SELECT id, name, email, level, `rank`, rank_progress, avatar_url, points, max_play, subscription_plan FROM users WHERE email = ?",
         [email],
       );
       if (rows.length > 0) {
@@ -269,7 +277,7 @@ export const googleAuth = async (req, res) => {
       rows[0].avatar_url = avatarUrl;
     }
 
-    const { id, name, level, rank, rank_progress, avatar_url, points } =
+    const { id, name, level, rank, rank_progress, avatar_url, points, max_play, subscription_plan } =
       rows[0];
 
     const accessToken = jwt.sign({ id, name, email }, process.env.JWT_SECRET, {
@@ -303,6 +311,8 @@ export const googleAuth = async (req, res) => {
         rank_progress,
         avatar_url,
         points: points ?? 0,
+        max_play: max_play ?? 15,
+        subscription_plan: subscription_plan ?? "basic",
       },
     });
   } catch (err) {
