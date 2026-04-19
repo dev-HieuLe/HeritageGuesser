@@ -51,8 +51,8 @@ export const getDailyLocations = async (_req, res) => {
 export const getRandomLocations = async (req, res) => {
   // Parse and validate count
   let count = parseInt(req.query.count, 10);
-  if (isNaN(count) || count <= 0) count = 3;
-  if (count > 20) count = 20; // cap to prevent abuse
+  if (isNaN(count) || count <= 0) count = 5;
+  if (count > 50) count = 50; // cap to prevent abuse
 
   try {
     const [rows] = await db.query(
