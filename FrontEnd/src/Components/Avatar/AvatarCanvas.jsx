@@ -23,6 +23,8 @@ export default function AvatarCanvas({
   maxChat = 10,
 }) {
   const [loadError,      setLoadError]      = useState(null);
+  const [modelLoaded,    setModelLoaded]    = useState(false);
+  const [contextLost,    setContextLost]    = useState(false);
   const [chatInput,      setChatInput]      = useState("");
   const [showHistory,    setShowHistory]    = useState(false);
   const [historyHovered, setHistoryHovered] = useState(false);
@@ -38,6 +40,11 @@ export default function AvatarCanvas({
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, []);
+
+  // Reset model state when mobile panel closes so spinner shows again on reopen
+  useEffect(() => {
+    if (!mobileOpen) { setModelLoaded(false); setContextLost(false); setLoadError(null); }
+  }, [mobileOpen]);
 
   // Auto-dismiss intro after 5 seconds
   useEffect(() => {
@@ -162,8 +169,8 @@ export default function AvatarCanvas({
           </div>
         )}
 
-        {/* Loading overlay */}
-        {isLoading && !isSpeaking && (
+        {/* TTS loading overlay (speaking dots) */}
+        {isLoading && !isSpeaking && modelLoaded && (
           <div style={loadingOverlay}>
             <div style={loadingDots}>
               <span style={dot(0)} />
@@ -173,16 +180,55 @@ export default function AvatarCanvas({
           </div>
         )}
 
-        {loadError ? (
+        {/* Model loading spinner — shown until VRM finishes loading */}
+        {!modelLoaded && !loadError && !contextLost && (
+          <div style={modelLoadingOverlay}>
+            <div style={modelSpinner} />
+            <span style={{ fontSize: "11px", color: "rgba(162,209,187,0.55)", marginTop: "12px", letterSpacing: "0.06em" }}>
+              Loading Savannah…
+            </span>
+          </div>
+        )}
+
+        {/* WebGL context lost */}
+        {contextLost && (
+          <div style={errorStyle}>
+            <span className="material-symbols-outlined" style={{ fontSize: "28px", color: "rgba(162,209,187,0.3)" }}>warning</span>
+            <span style={{ fontSize: "10px", color: "rgba(192,200,195,0.4)", marginTop: "6px", textAlign: "center", padding: "0 12px" }}>
+              GPU context lost
+            </span>
+            <button
+              onClick={() => { setContextLost(false); setModelLoaded(false); }}
+              style={{ marginTop: "10px", fontSize: "10px", padding: "5px 12px", borderRadius: "8px", border: "1px solid rgba(162,209,187,0.3)", background: "rgba(162,209,187,0.08)", color: "#a2d1bb", cursor: "pointer" }}
+            >
+              Retry
+            </button>
+          </div>
+        )}
+
+        {loadError && !contextLost && (
           <div style={errorStyle}>
             <span style={{ fontSize: "28px", opacity: 0.4 }}>⚠</span>
             <span style={{ fontSize: "10px", opacity: 0.5, marginTop: "4px" }}>Avatar unavailable</span>
           </div>
-        ) : (
+        )}
+
+        {!loadError && !contextLost && (
           <Canvas
             camera={{ position: [0, 0, 1.62], fov: 38, near: 0.01, far: 20 }}
             gl={{ alpha: true, antialias: true, powerPreference: "high-performance" }}
             style={canvasStyle}
+            onCreated={({ gl }) => {
+              gl.domElement.addEventListener("webglcontextlost", (e) => {
+                e.preventDefault();
+                setContextLost(true);
+                setModelLoaded(false);
+              });
+              gl.domElement.addEventListener("webglcontextrestored", () => {
+                setContextLost(false);
+                setModelLoaded(false);
+              });
+            }}
           >
             <ambientLight intensity={0.7} />
             <directionalLight position={[1.5, 2.5, 2]} intensity={1.4} color="#ffe8d6" />
@@ -190,6 +236,7 @@ export default function AvatarCanvas({
             <VRMModel
               isSpeaking={isSpeaking}
               spokenText={spokenText}
+              onLoaded={() => setModelLoaded(true)}
               onError={(msg) => { console.warn("[AvatarCanvas] VRM load error:", msg); setLoadError(msg); }}
             />
           </Canvas>
@@ -673,6 +720,29 @@ function chatCounterBadge(count, max) {
   };
 }
 
+// ─── Model loading overlay (covers canvas while VRM loads) ───────────────────
+const modelLoadingOverlay = {
+  position:       "absolute",
+  inset:          0,
+  borderRadius:   "16px",
+  display:        "flex",
+  flexDirection:  "column",
+  alignItems:     "center",
+  justifyContent: "center",
+  zIndex:         5,
+  background:     "rgba(14,18,12,0.72)",
+  pointerEvents:  "none",
+};
+
+const modelSpinner = {
+  width:        "32px",
+  height:       "32px",
+  borderRadius: "50%",
+  border:       "2px solid rgba(162,209,187,0.15)",
+  borderTop:    "2px solid #a2d1bb",
+  animation:    "avatarSpin 0.9s linear infinite",
+};
+
 // Inject keyframes once
 if (typeof document !== "undefined" && !document.getElementById("avatarDotStyle")) {
   const s = document.createElement("style");
@@ -681,6 +751,9 @@ if (typeof document !== "undefined" && !document.getElementById("avatarDotStyle"
     @keyframes avatarDotBounce {
       0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
       40%           { transform: translateY(-8px); opacity: 1; }
+    }
+    @keyframes avatarSpin {
+      to { transform: rotate(360deg); }
     }
   `;
   document.head.appendChild(s);
