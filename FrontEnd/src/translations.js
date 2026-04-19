@@ -126,12 +126,19 @@ const t = {
           href: "https://www.facebook.com/profile.php?id=61568386015819",
           cta: "Follow us",
         },
+        {
+          icon: "github",
+          label: "GitHub",
+          value: "github.com/dev-HieuLe/HeritageGuessr",
+          href: "https://github.com/dev-HieuLe/HeritageGuesser/blob/main/README.md",
+          cta: "View source",
+        },
       ],
     },
 
     // Footer
     footer: {
-      copyright: "© 2024 The Ethereal Archivist Project. All Rights Reserved.",
+      copyright: "© 2026 Heritage Guessr. All Rights Reserved.",
       links: [
         { label: "Chronicles", to: "/rank" },
         { label: "Global Ranks", to: "/leaderboard" },
@@ -480,12 +487,19 @@ const t = {
           href: "https://www.facebook.com/share/1CQYKoHfu1/?mibextid=wwXIfr",
           cta: "Theo dõi",
         },
+        {
+          icon: "github",
+          label: "GitHub",
+          value: "github.com/dev-HieuLe/HeritageGuessr",
+          href: "https://github.com/dev-HieuLe/HeritageGuesser/blob/main/README.md",
+          cta: "Xem mã nguồn",
+        },
       ],
     },
 
     // Footer
     footer: {
-      copyright: "© 2024 Dự Án Kho Lưu Trữ Huyền Bí. Mọi Quyền Được Bảo Lưu.",
+      copyright: "© 2026 Heritage Guessr. Mọi Quyền Được Bảo Lưu.",
       links: [
         { label: "Biên Niên Sử", to: "/rank" },
         { label: "Xếp Hạng Toàn Cầu", to: "/leaderboard" },

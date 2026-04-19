@@ -19,11 +19,12 @@ import {
   Gift,
   Play,
 } from "lucide-react";
-import { FaYoutube, FaFacebook } from "react-icons/fa";
+import { FaYoutube, FaFacebook, FaGithub } from "react-icons/fa";
 
 const CHANNEL_ICONS = {
   youtube: FaYoutube,
   facebook: FaFacebook,
+  github: FaGithub,
 };
 
 const fadeUp = {
@@ -889,7 +890,7 @@ export default function Homepage() {
 
             {/* Channel cards */}
             <motion.div
-              className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6"
               variants={staggerContainer}
               initial="hidden"
               whileInView="show"
@@ -1018,6 +1019,15 @@ export default function Homepage() {
                   </span>
                 </div>
               ))}
+              <a
+                href="https://github.com/dev-HieuLe/HeritageGuesser"
+                target="_blank"
+                rel="noreferrer"
+                className="w-10 h-10 rounded-full bg-white/[0.05] flex items-center justify-center cursor-pointer transition-colors duration-150 hover:bg-[rgba(233,195,73,0.2)] no-underline"
+                title="GitHub Repository"
+              >
+                <FaGithub size={20} color="#c0c8c3" />
+              </a>
             </div>
           </div>
         </motion.footer>

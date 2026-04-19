@@ -27,8 +27,17 @@ export default function AvatarCanvas({
   const [showHistory,    setShowHistory]    = useState(false);
   const [historyHovered, setHistoryHovered] = useState(false);
   const [showIntro,      setShowIntro]      = useState(true);
-  const historyRef  = useRef(null);
-  const inputRef    = useRef(null);
+  const [isMobile,       setIsMobile]       = useState(() => window.innerWidth < 768);
+  const [mobileOpen,     setMobileOpen]     = useState(false);
+  const historyRef = useRef(null);
+  const inputRef   = useRef(null);
+
+  // Track mobile breakpoint
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
 
   // Auto-dismiss intro after 5 seconds
   useEffect(() => {
@@ -63,10 +72,19 @@ export default function AvatarCanvas({
     if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); }
   };
 
-  return (
-    <div style={outerWrap}>
+  // ── Shared panel content (3D card + chat bar) ──────────────────────────────
+  const blocked     = loadingReply || isLoading || isSpeaking || chatLimitReached;
+  const placeholder = chatLimitReached
+    ? "Question limit reached"
+    : loadingReply
+      ? "Archivist is thinking…"
+      : (isLoading || isSpeaking)
+        ? "Archivist is speaking…"
+        : "Ask the Archivist…";
 
-      {/* ── Intro notification ────────────────────────────────────────── */}
+  const cardContent = (mobile) => (
+    <>
+      {/* Intro notification */}
       {showIntro && (
         <div style={introBanner}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "8px" }}>
@@ -88,12 +106,10 @@ export default function AvatarCanvas({
         </div>
       )}
 
-      {/* ── 3D model card ─────────────────────────────────────────────── */}
-      <div style={cardStyle}>
-        {/* Speaking glow border */}
+      {/* 3D model card */}
+      <div style={cardStyle(mobile)}>
         <div style={glowBorder(isSpeaking)} />
 
-        {/* ARCHIVIST label + chat counter */}
         <div style={labelRow}>
           <span style={labelDot(isSpeaking)} />
           <span style={labelText}>SAVANNAH</span>
@@ -103,7 +119,7 @@ export default function AvatarCanvas({
           </div>
         </div>
 
-        {/* Chat history button — top-right corner of card */}
+        {/* Chat history button */}
         <div style={{ position: "absolute", top: "12px", right: "12px", zIndex: 10 }}>
           <button
             title="Chat history"
@@ -112,9 +128,7 @@ export default function AvatarCanvas({
             onClick={() => setShowHistory((v) => !v)}
             style={historyBtnStyle(historyHovered, showHistory)}
           >
-            <span className="material-symbols-outlined" style={{ fontSize: "17px", lineHeight: 1 }}>
-              history
-            </span>
+            <span className="material-symbols-outlined" style={{ fontSize: "17px", lineHeight: 1 }}>history</span>
             <span style={{ fontSize: "11px", fontWeight: "700", letterSpacing: "0.04em" }}>History</span>
             {historyHovered && !showHistory && (
               <span style={historyTooltipStyle}>Chat history</span>
@@ -148,7 +162,7 @@ export default function AvatarCanvas({
           </div>
         )}
 
-        {/* Loading overlay — visible while waiting for TTS to start */}
+        {/* Loading overlay */}
         {isLoading && !isSpeaking && (
           <div style={loadingOverlay}>
             <div style={loadingDots}>
@@ -182,116 +196,221 @@ export default function AvatarCanvas({
         )}
       </div>
 
-      {/* ── Chat bar ──────────────────────────────────────────────────── */}
-      {(() => {
-        const blocked = loadingReply || isLoading || isSpeaking || chatLimitReached;
-        const placeholder = chatLimitReached
-          ? "Question limit reached"
-          : loadingReply
-            ? "Archivist is thinking…"
-            : (isLoading || isSpeaking)
-              ? "Archivist is speaking…"
-              : "Ask the Archivist…";
-        return (
-          <div style={{ display: "flex", flexDirection: "column", gap: "6px", pointerEvents: "auto" }}>
-            {/* Limit alert */}
-            {chatLimitReached && (
-              <div style={{
-                padding: "8px 12px",
-                borderRadius: "10px",
-                backgroundColor: "rgba(187,3,8,0.15)",
-                border: "1px solid rgba(187,3,8,0.3)",
-                color: "#ffb4a9",
-                fontSize: "11px",
-                fontWeight: "600",
-                textAlign: "center",
-                letterSpacing: "0.02em",
-              }}>
-                You've used all 10 questions. Make your guess!
+      {/* Chat bar */}
+      <div style={{ display: "flex", flexDirection: "column", gap: "6px", pointerEvents: "auto" }}>
+        {chatLimitReached && (
+          <div style={{
+            padding: "8px 12px",
+            borderRadius: "10px",
+            backgroundColor: "rgba(187,3,8,0.15)",
+            border: "1px solid rgba(187,3,8,0.3)",
+            color: "#ffb4a9",
+            fontSize: "11px",
+            fontWeight: "600",
+            textAlign: "center",
+            letterSpacing: "0.02em",
+          }}>
+            You've used all 10 questions. Make your guess!
+          </div>
+        )}
+        <div style={chatBar}>
+          <input
+            ref={inputRef}
+            value={chatInput}
+            onChange={(e) => setChatInput(e.target.value)}
+            onKeyDown={handleKey}
+            placeholder={placeholder}
+            disabled={blocked}
+            style={chatInputStyle(blocked)}
+          />
+          <button
+            onClick={handleSend}
+            disabled={!chatInput.trim() || blocked}
+            style={sendBtn(!chatInput.trim() || blocked)}
+          >
+            {blocked && !chatLimitReached
+              ? <span style={dotsStyle}>···</span>
+              : <span className="material-symbols-outlined" style={{ fontSize: "17px", lineHeight: 1 }}>send</span>
+            }
+          </button>
+        </div>
+      </div>
+    </>
+  );
+
+  // ── Render ─────────────────────────────────────────────────────────────────
+  return (
+    <>
+      {/* ── MOBILE: header button always visible; panel pops below it ── */}
+      {isMobile && (
+        <div style={mobileContainer}>
+          {/* Header row — the open/close button lives here at the top-right of the chatbot */}
+          <div style={mobileHeaderRow}>
+            {!mobileOpen && (
+              <div style={chatbotHintBubble}>
+                <span style={{ fontSize: "12px", fontWeight: "800", color: "#e3e3d9", display: "block", lineHeight: 1.3 }}>
+                  Chat with Savannah
+                </span>
+                <span style={{ fontSize: "10px", color: "rgba(192,200,195,0.65)", display: "block", marginTop: "2px" }}>
+                  Your AI Archivist
+                </span>
               </div>
             )}
-            <div style={chatBar}>
-              <input
-                ref={inputRef}
-                value={chatInput}
-                onChange={(e) => setChatInput(e.target.value)}
-                onKeyDown={handleKey}
-                placeholder={placeholder}
-                disabled={blocked}
-                style={chatInput_style(blocked)}
-              />
-              <button
-                onClick={handleSend}
-                disabled={!chatInput.trim() || blocked}
-                style={sendBtn(!chatInput.trim() || blocked)}
-              >
-                {blocked && !chatLimitReached
-                  ? <span style={dotsStyle}>···</span>
-                  : <span className="material-symbols-outlined" style={{ fontSize: "17px", lineHeight: 1 }}>send</span>
-                }
-              </button>
-            </div>
+            <button
+              onClick={() => setMobileOpen((v) => !v)}
+              style={mobileHeaderBtn(mobileOpen)}
+              aria-label={mobileOpen ? "Close chatbot" : "Open chatbot"}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: "20px", lineHeight: 1, fontVariationSettings: "'FILL' 1" }}>
+                {mobileOpen ? "close" : "chat"}
+              </span>
+              {mobileOpen && (
+                <span style={{ fontSize: "11px", fontWeight: "800", letterSpacing: "0.06em" }}>Close</span>
+              )}
+            </button>
           </div>
-        );
-      })()}
 
-    </div>
+          {/* Panel — pops up below the header button */}
+          {mobileOpen && (
+            <div style={mobilePanelWrap}>
+              {cardContent(true)}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── DESKTOP: original layout, no changes ── */}
+      {!isMobile && (
+        <div style={desktopWrap}>
+          {cardContent(false)}
+        </div>
+      )}
+    </>
   );
 }
 
-// ─── Outer container (model card + chat bar stacked) ─────────────────────────
-const outerWrap = {
-  position:  "fixed",
-  bottom:    "36px",   // raised ~8px
-  right:     "28px",
-  width:     "300px",  // narrower
-  zIndex:    1000,
-  display:   "flex",
+// ─── Desktop outer container ──────────────────────────────────────────────────
+const desktopWrap = {
+  position:      "fixed",
+  bottom:        "36px",
+  right:         "28px",
+  width:         "300px",
+  zIndex:        1000,
+  display:       "flex",
   flexDirection: "column",
-  gap:       "8px",
-  pointerEvents: "none",   // children opt-in with pointerEvents: "auto"
+  gap:           "8px",
+  pointerEvents: "none",
+};
+
+// ─── Mobile outer container — anchored to top-right corner, panel drops down ───
+const mobileContainer = {
+  position:      "fixed",
+  top:           "56px",   // just below the top nav bar (~50-56px tall on mobile)
+  right:         "0px",
+  width:         "260px",
+  zIndex:        1001,
+  display:       "flex",
+  flexDirection: "column",
+  gap:           "0px",
+  alignItems:    "flex-end",
+  pointerEvents: "none",
+};
+
+// ─── Mobile header row (open/close button) ────────────────────────────────────
+const mobileHeaderRow = {
+  display:        "flex",
+  alignItems:     "center",
+  justifyContent: "flex-end",
+  gap:            "10px",
+  padding:        "6px 12px 6px 0",
+  pointerEvents:  "auto",
+};
+
+// ─── Mobile open/close button ─────────────────────────────────────────────────
+function mobileHeaderBtn(open) {
+  return {
+    display:         "flex",
+    alignItems:      "center",
+    gap:             open ? "8px" : "0",
+    padding:         open ? "10px 14px" : "10px 12px",
+    borderRadius:    "12px",
+    border:          "1px solid rgba(162,209,187,0.3)",
+    cursor:          "pointer",
+    backgroundColor: open ? "rgba(162,209,187,0.15)" : "rgba(15,61,46,0.88)",
+    color:           "#a2d1bb",
+    backdropFilter:  "blur(14px)",
+    WebkitBackdropFilter: "blur(14px)",
+    boxShadow:       "0 4px 20px rgba(0,0,0,0.5)",
+    flexShrink:      0,
+    transition:      "background 0.2s",
+  };
+}
+
+// ─── Mobile hint bubble (shown when closed, to the left of the button) ───────
+const chatbotHintBubble = {
+  padding:         "7px 12px",
+  borderRadius:    "10px",
+  backgroundColor: "rgba(14,18,12,0.92)",
+  backdropFilter:  "blur(14px)",
+  WebkitBackdropFilter: "blur(14px)",
+  border:          "1px solid rgba(162,209,187,0.25)",
+  boxShadow:       "0 4px 16px rgba(0,0,0,0.5)",
+  pointerEvents:   "auto",
+  whiteSpace:      "nowrap",
+};
+
+// ─── Mobile panel wrapper (drops below the header button) ─────────────────────
+const mobilePanelWrap = {
+  display:       "flex",
+  flexDirection: "column",
+  gap:           "8px",
+  padding:       "4px 12px 12px 12px",
+  width:         "260px",
+  pointerEvents: "none",
 };
 
 // ─── 3D card ──────────────────────────────────────────────────────────────────
-const cardStyle = {
-  position:        "relative",
-  width:           "100%",
-  height:          "310px",   // ~7% taller than previous 290px → model appears bigger
-  borderRadius:    "16px",
-  overflow:        "hidden",
-  backgroundColor: "rgba(14, 18, 12, 0.72)",
-  backdropFilter:  "blur(14px)",
-  WebkitBackdropFilter: "blur(14px)",
-  border:          "1px solid rgba(162, 209, 187, 0.13)",
-  boxShadow:       "0 8px 40px rgba(0,0,0,0.55), inset 0 1px 0 rgba(162,209,187,0.07)",
-  pointerEvents:   "auto",
-};
+function cardStyle(mobile) {
+  return {
+    position:        "relative",
+    width:           "100%",
+    height:          mobile ? "240px" : "310px",
+    borderRadius:    "16px",
+    overflow:        "hidden",
+    backgroundColor: "rgba(14, 18, 12, 0.72)",
+    backdropFilter:  "blur(14px)",
+    WebkitBackdropFilter: "blur(14px)",
+    border:          "1px solid rgba(162, 209, 187, 0.13)",
+    boxShadow:       "0 8px 40px rgba(0,0,0,0.55), inset 0 1px 0 rgba(162,209,187,0.07)",
+    pointerEvents:   "auto",
+  };
+}
 
 function glowBorder(speaking) {
   return {
-    position:     "absolute",
-    inset:        0,
-    borderRadius: "16px",
-    border:       speaking
+    position:      "absolute",
+    inset:         0,
+    borderRadius:  "16px",
+    border:        speaking
       ? "1px solid rgba(162,209,187,0.45)"
       : "1px solid rgba(162,209,187,0.08)",
-    transition:   "border-color 0.4s ease",
+    transition:    "border-color 0.4s ease",
     pointerEvents: "none",
     zIndex:        2,
   };
 }
 
 const labelRow = {
-  position:        "absolute",
-  bottom:          "10px",
-  left:            0,
-  right:           0,
-  display:         "flex",
-  alignItems:      "center",
-  justifyContent:  "center",
-  gap:             "5px",
-  zIndex:          3,
-  pointerEvents:   "none",
+  position:       "absolute",
+  bottom:         "10px",
+  left:           0,
+  right:          0,
+  display:        "flex",
+  alignItems:     "center",
+  justifyContent: "center",
+  gap:            "5px",
+  zIndex:         3,
+  pointerEvents:  "none",
 };
 
 function labelDot(speaking) {
@@ -357,8 +476,8 @@ const historyPopup = {
   position:        "absolute",
   top:             "44px",
   right:           "0px",
-  width:           "340px",
-  maxHeight:       "360px",
+  width:           "260px",
+  maxHeight:       "320px",
   borderRadius:    "12px",
   overflow:        "hidden",
   backgroundColor: "rgba(14,18,12,0.97)",
@@ -373,21 +492,21 @@ const historyPopup = {
 };
 
 const historyHeader = {
-  display:         "flex",
-  alignItems:      "center",
-  justifyContent:  "space-between",
-  padding:         "14px 16px 10px",
-  borderBottom:    "1px solid rgba(65,73,68,0.5)",
-  flexShrink:      0,
+  display:      "flex",
+  alignItems:   "center",
+  justifyContent: "space-between",
+  padding:      "14px 16px 10px",
+  borderBottom: "1px solid rgba(65,73,68,0.5)",
+  flexShrink:   0,
 };
 
 const historyBody = {
-  overflowY:  "auto",
-  flex:       1,
-  padding:    "8px",
-  display:    "flex",
+  overflowY:     "auto",
+  flex:          1,
+  padding:       "8px",
+  display:       "flex",
   flexDirection: "column",
-  gap:        "6px",
+  gap:           "6px",
 };
 
 const closeBtn = {
@@ -402,18 +521,18 @@ const closeBtn = {
 
 function msgBubble(role) {
   return {
-    display:         "flex",
-    flexDirection:   "column",
-    alignItems:      role === "user" ? "flex-end" : "flex-start",
-    gap:             "2px",
+    display:       "flex",
+    flexDirection: "column",
+    alignItems:    role === "user" ? "flex-end" : "flex-start",
+    gap:           "2px",
   };
 }
 function msgLabel(role) {
   return {
-    fontSize:  "9px",
-    fontWeight: "700",
+    fontSize:      "9px",
+    fontWeight:    "700",
     letterSpacing: "0.08em",
-    color:     role === "user" ? "rgba(162,209,187,0.5)" : "rgba(233,195,73,0.5)",
+    color:         role === "user" ? "rgba(162,209,187,0.5)" : "rgba(233,195,73,0.5)",
     textTransform: "uppercase",
   };
 }
@@ -446,17 +565,16 @@ const chatBar = {
   pointerEvents:   "auto",
 };
 
-function chatInput_style(disabled) {
+function chatInputStyle(disabled) {
   return {
-    flex:            1,
-    background:      "none",
-    border:          "none",
-    outline:         "none",
-    color:           disabled ? "rgba(192,200,195,0.35)" : "#e3e3d9",
-    fontSize:        "12px",
-    fontFamily:      "inherit",
-    placeholder:     "#666",
-    cursor:          disabled ? "not-allowed" : "text",
+    flex:       1,
+    background: "none",
+    border:     "none",
+    outline:    "none",
+    color:      disabled ? "rgba(192,200,195,0.35)" : "#e3e3d9",
+    fontSize:   "12px",
+    fontFamily: "inherit",
+    cursor:     disabled ? "not-allowed" : "text",
   };
 }
 
@@ -484,24 +602,24 @@ const dotsStyle = {
   animation:     "pulse 1s infinite",
 };
 
-// ─── Loading overlay (waiting for TTS to start) ───────────────────────────────
+// ─── Loading overlay ──────────────────────────────────────────────────────────
 const loadingOverlay = {
-  position:        "absolute",
-  inset:           0,
-  borderRadius:    "16px",
-  display:         "flex",
-  alignItems:      "flex-end",
-  justifyContent:  "center",
-  paddingBottom:   "38px",
-  zIndex:          4,
-  pointerEvents:   "none",
-  background:      "linear-gradient(to top, rgba(14,18,12,0.55) 0%, transparent 55%)",
+  position:      "absolute",
+  inset:         0,
+  borderRadius:  "16px",
+  display:       "flex",
+  alignItems:    "flex-end",
+  justifyContent: "center",
+  paddingBottom: "38px",
+  zIndex:        4,
+  pointerEvents: "none",
+  background:    "linear-gradient(to top, rgba(14,18,12,0.55) 0%, transparent 55%)",
 };
 
 const loadingDots = {
-  display:         "flex",
-  alignItems:      "center",
-  gap:             "7px",
+  display:    "flex",
+  alignItems: "center",
+  gap:        "7px",
 };
 
 function dot(i) {
@@ -529,18 +647,18 @@ const introBanner = {
 };
 
 const introCloseBtn = {
-  background:  "none",
-  border:      "none",
-  cursor:      "pointer",
-  color:       "rgba(192,200,195,0.4)",
-  fontSize:    "12px",
-  padding:     0,
-  lineHeight:  1,
-  flexShrink:  0,
+  background: "none",
+  border:     "none",
+  cursor:     "pointer",
+  color:      "rgba(192,200,195,0.4)",
+  fontSize:   "12px",
+  padding:    0,
+  lineHeight: 1,
+  flexShrink: 0,
 };
 
 function chatCounterBadge(count, max) {
-  const pct = count / max;
+  const pct   = count / max;
   const color = count >= max ? "#ffb4a9" : pct >= 0.8 ? "#e9c349" : "#a2d1bb";
   return {
     display:         "flex",
