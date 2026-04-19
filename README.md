@@ -2,7 +2,7 @@
 
 > A Vietnamese cultural heritage guessing game powered by AI, Street View, and NLP.
 
-HeritageGuesser drops you into a Google Street View of a real Vietnamese UNESCO or national heritage site. Your mission: explore the surroundings, chat with **Toto** (your AI turtle guide), and guess the heritage's name and age. The closer you are, the more XP and rank points you earn. Compete on the global leaderboard and climb from Iron to Challenger.
+HeritageGuesser drops you into a Google Street View of a real Vietnamese UNESCO or national heritage site. Your mission: explore the surroundings, chat with **Savannah** (your AI local guide), and guess the heritage's name and age. The closer you are, the more XP and rank points you earn. Compete on the global leaderboard and climb from Iron to Challenger.
 
 ---
 
@@ -23,16 +23,21 @@ HeritageGuesser drops you into a Google Street View of a real Vietnamese UNESCO 
 ## Features
 
 - **Street View Exploration** — Explore real Google Street View panoramas of Vietnamese heritage sites.
-- **AI Chat Assistant (Toto)** — A Gemini-powered turtle character gives clues without spoiling the answer. Rules-bound to never reveal the heritage name or age.
+- **AI Chat Assistant (Savannah)** — A Gemma-powered AI local guide gives clues without spoiling the answer. Rules-bound to never reveal the heritage name or age.
+- **AI Text-to-Speech** — Savannah's responses are read aloud via Google Gemini TTS (Despina voice), supporting both English and Vietnamese.
 - **NLP Answer Validation** — Multilingual sentence embeddings (MarianMT + SentenceTransformers) score your guesses even if spelled differently or in Vietnamese.
 - **Ranked Mode** — 10-tier ranking system (Iron → Challenger) with win/loss-based progression and a 5-star progress bar per rank.
-- **AI-Personalized Rounds** — Gemini analyses your last 30 games and recommends the next 3 heritage sites targeting your weak regions or preferred difficulty.
-- **Study Mode** — Browse all heritage cards with search, filter, and region tags — no gameplay pressure.
+- **AI-Personalized Rounds** — Gemma analyses your last 30 games and recommends the next 3 heritage sites targeting your weak regions or preferred difficulty.
+- **Study Mode** — Browse all heritage cards with search, filter, and region tags — no gameplay pressure. Includes detailed lesson pages with cultural content and XP rewards for reading.
 - **Discover Mode** — Geocode any address to a Google Street View for free exploration.
+- **Shop** — Redeem earned XP points for real merchandise rewards (keyboard, mouse, T-shirts, keychains, and more).
+- **Settings** — Update your account profile (name, email, password) from a dedicated settings page.
+- **3D VRM Avatar** — An animated VRM 3D avatar represents Savannah in the chat interface.
 - **Bilingual UI** — Full English / Vietnamese toggle across all pages.
 - **Leaderboard** — Top 20 players with podium display and rank tiers.
+- **Feedback Modal** — Players can submit in-app feedback; contact links to Gmail and Facebook.
 - **Secure Auth** — JWT access + refresh tokens stored in httpOnly cookies. Bcrypt password hashing. Google OAuth via Supabase with profile picture sync. Accounts created via Google are blocked from password login with a clear error message.
-- **Community Contributions** — Authenticated users can submit new heritage sites via Google Maps URL. Gemini auto-generates cultural metadata (description, era, region, difficulty). Submissions enter a pending review queue before going live.
+- **Community Contributions** — Authenticated users can submit new heritage sites via Google Maps URL. Gemma auto-generates cultural metadata (description, era, region, difficulty). Submissions enter a pending review queue before going live.
 
 ---
 
@@ -44,8 +49,10 @@ HeritageGuesser drops you into a Google Street View of a real Vietnamese UNESCO 
 | Maps       | Google Maps JavaScript API, React Google Maps API, Leaflet                    |
 | Backend    | Node.js, Express 5, MySQL2, JWT, bcrypt, Helmet                               |
 | Auth       | Supabase (Google OAuth), JWT httpOnly cookies, Passport.js                    |
-| AI / NLP   | Google Gemini 2.5 Flash (chat + personalization), FastAPI (NLP server)        |
+| AI / Chat  | DeepInfra API (OpenAI-compatible) — Gemma 4 26B (`google/gemma-4-26B-A4B-it`) |
+| AI / TTS   | Google Gemini TTS (`gemini-2.5-flash-preview-tts`, Despina voice)             |
 | NLP Models | MarianMT (Vi→En translation), Sentence-Transformers (multilingual embeddings) |
+| 3D Avatar  | Three.js, @react-three/fiber, @pixiv/three-vrm (VRM format)                   |
 | Database   | MySQL                                                                         |
 
 ---
@@ -59,15 +66,17 @@ HeritageGuesser/
 │   │   └── db.js                       # MySQL connection pool
 │   ├── Controllers/
 │   │   ├── authController.js                 # Register, login, logout, token refresh, get player
-│   │   ├── chatController.js                 # Toto AI chat (Gemini)
+│   │   ├── chatController.js                 # Savannah AI chat (DeepInfra / Gemma)
 │   │   ├── contributeLocationController.js   # Submit / list community heritage contributions
 │   │   ├── DiscoverController.js             # Google Geocoding for Street View discovery
 │   │   ├── heritageCheck.js                  # Forwards guess to NLP server for scoring
 │   │   ├── historyController.js              # Record game results in player_history
 │   │   ├── LeaderboardController.js          # Top 20 players query
 │   │   ├── locationController.js             # Get all / random heritage locations
-│   │   ├── personalizeController.js          # Gemini-powered location recommendations
-│   │   └── playerController.js               # Update player level and rank
+│   │   ├── nlpController.js                  # NLP helper utilities
+│   │   ├── personalizeController.js          # Gemma-powered location recommendations
+│   │   ├── playerController.js               # Update player level and rank
+│   │   └── ttsController.js                  # Gemini TTS proxy (WAV audio synthesis)
 │   ├── Middleware/
 │   │   ├── errorHandler.js                   # Global Express error handler
 │   │   └── verifyPlayer.js                   # JWT authentication middleware
@@ -81,7 +90,8 @@ HeritageGuesser/
 │   │   ├── LeaderboardRoutes.js              # /leaderboard
 │   │   ├── locationRoutes.js                 # /locations /locations/random
 │   │   ├── PersonalizeRoutes.js              # /personalize/next-set
-│   │   └── playerRoutes.js                   # /player/update-level /player/update-rank
+│   │   ├── playerRoutes.js                   # /player/update-level /player/update-rank
+│   │   └── ttsRoutes.js                      # /tts
 │   ├── server.js                       # Express entry point (port 8081)
 │   ├── package.json
 │   └── .env                            # Backend secrets (see Environment Variables)
@@ -92,12 +102,18 @@ HeritageGuesser/
 │   │   ├── intro.mp4                         # Loading screen cinematic video (with audio)
 │   │   ├── banner.png
 │   │   ├── VietnamCastle.png
-│   │   └── vietnammap.png
+│   │   ├── vietnammap.png
+│   │   └── Shops/                            # Product images for the Shop page
 │   ├── src/
+│   │   ├── 3d_models/
+│   │   │   └── avatar.vrm                    # VRM 3D avatar model for Savannah
 │   │   ├── Components/
 │   │   │   ├── Animations/
 │   │   │   │   ├── FullScreenTransition.jsx  # Full-screen loading overlay
 │   │   │   │   └── PageWrapper.jsx           # Framer Motion page transitions
+│   │   │   ├── Avatar/
+│   │   │   │   ├── AvatarCanvas.jsx          # React Three Fiber canvas wrapper
+│   │   │   │   └── VRMModel.jsx              # VRM model loader with blink/animation
 │   │   │   ├── Contribute/
 │   │   │   │   └── ContributeHeritage.jsx    # Community heritage submission & history
 │   │   │   ├── Discover/
@@ -112,14 +128,20 @@ HeritageGuesser/
 │   │   │   ├── Rank/
 │   │   │   │   ├── Rank.jsx                  # Player rank dashboard + progress bar
 │   │   │   │   └── RankPlay.jsx              # Ranked match game mode
+│   │   │   ├── Settings/
+│   │   │   │   └── Settings.jsx              # Account settings (name, email, password)
+│   │   │   ├── Shop/
+│   │   │   │   └── Shop.jsx                  # XP reward shop with redeemable merchandise
 │   │   │   ├── Sidebar/
 │   │   │   │   └── Sidebar.jsx               # Mobile hamburger menu
 │   │   │   ├── Study/
+│   │   │   │   ├── LessonDetail.jsx          # Single heritage lesson page with XP rewards
 │   │   │   │   └── Studypage.jsx             # Heritage card browser with search/filter
 │   │   │   ├── Tutorial/
 │   │   │   │   └── Tutorial.jsx              # Step-by-step onboarding guide
 │   │   │   ├── UI/
-│   │   │   │   └── AuthToast.jsx             # Toast notification component
+│   │   │   │   ├── AuthToast.jsx             # Toast notification component
+│   │   │   │   └── FeedbackModal.jsx         # In-app feedback modal with word counter
 │   │   │   ├── AuthCallback.jsx              # Google OAuth redirect handler (Supabase → app JWT)
 │   │   │   ├── LoadingScreen.jsx             # Cinematic intro screen shown once per session
 │   │   │   ├── Login.jsx                     # Login form
@@ -169,10 +191,10 @@ The core experience:
 1. Fetches 3 random heritage locations from the backend.
 2. Loads Google Street View at the heritage site coordinates.
 3. Player explores freely and enters a name + age guess.
-4. Chat sidebar lets the player ask **Toto** for hints at any time.
+4. Chat sidebar lets the player ask **Savannah** for hints at any time. Responses are read aloud via Gemini TTS.
 5. On submit, the guess is sent to the NLP backend for similarity scoring.
 6. Score (0–5 stars per category) is displayed; XP and rank are updated.
-7. Gemini recommends the next personalized round automatically.
+7. Gemma recommends the next personalized round automatically.
 
 ### RankPlay (`/game/rank`)
 
@@ -194,20 +216,32 @@ Global rankings. Top 3 players displayed on a gold/silver/bronze podium. Remaini
 
 Heritage card browser with no guessing pressure. Browse all sites with their region, type, era, difficulty, and description. Supports text search and region/type filters for learning before playing.
 
+### Study Lesson (`/study/:id`)
+
+Detailed lesson page for a single heritage site with rich cultural content. Players earn 5 XP for completing a lesson (once per day). Progress is tracked per-user in localStorage.
+
 ### Discover (`/explore`)
 
 Type any address or landmark into a search bar. The app geocodes it via Google Maps and opens a Street View at those coordinates for free exploration. Rate-limited to 4 searches per user per day.
 
+### Shop (`/shop`)
+
+Redeem XP points for real merchandise rewards including keyboards, mice, T-shirts, Starbucks vouchers, and keychains. Item prices are displayed in XP and orders are processed through the platform.
+
+### Settings (`/settings`)
+
+Account management page where authenticated users can update their display name, email address, and password.
+
 ### Tutorial (`/tutorial`)
 
-Step-by-step onboarding walkthrough explaining how to play, how scoring works, and how to use Toto. Available in both English and Vietnamese.
+Step-by-step onboarding walkthrough explaining how to play, how scoring works, and how to use Savannah. Available in both English and Vietnamese.
 
 ### Contribute (`/contribute`)
 
 Community heritage submission portal. Authenticated users can:
 
 - Submit a new heritage site by name + Google Maps URL. Coordinates are extracted automatically.
-- Optionally add a cultural description; Gemini fills in any missing metadata (era, region, difficulty, aliases).
+- Optionally add a cultural description; Gemma fills in any missing metadata (era, region, difficulty, aliases).
 - Track all their past submissions with live status badges: **Pending**, **Approved**, or **Declined**.
 
 ### Login (`/login`) & Register (`/register`)
@@ -217,7 +251,7 @@ Auth forms with client-side validation, error toasts via `AuthToast`, and redire
 ### Navbar & Sidebar
 
 - **Navbar** — Fixed top bar with logo, page links, and language toggle (EN/VI).
-- **Sidebar** — Collapsible hamburger menu for mobile navigation.
+- **Sidebar** — Collapsible hamburger menu for mobile navigation. Includes a **Feedback** button that opens the `FeedbackModal`.
 
 ---
 
@@ -228,14 +262,14 @@ Auth forms with client-side validation, error toasts via `AuthToast`, and redire
 
 ### Authentication
 
-| Method | Endpoint         | Auth | Description                                                                          |
-| ------ | ---------------- | ---- | ------------------------------------------------------------------------------------ |
-| `POST` | `/register`      | No   | Create account. Body: `{ name, email, password }`                                                                          |
-| `POST` | `/login`         | No   | Log in. Body: `{ email, password }`. Sets httpOnly cookies. Returns error if account is Google-only (no password set).     |
-| `GET`  | `/logout`        | No   | Clear auth cookies.                                                                                                         |
-| `POST` | `/refresh-token` | No   | Generate new access token using refresh cookie.                                                                             |
-| `GET`  | `/player`        | Yes  | Return current user `{ id, name, email, level, rank, rank_progress, avatar_url }`.                                         |
-| `POST` | `/auth/google`   | No   | Body: `{ access_token }` (Supabase token). Verifies with Supabase, finds/creates MySQL user, syncs avatar, sets cookies.  |
+| Method | Endpoint         | Auth | Description                                                                                                              |
+| ------ | ---------------- | ---- | ------------------------------------------------------------------------------------------------------------------------ |
+| `POST` | `/register`      | No   | Create account. Body: `{ name, email, password }`                                                                        |
+| `POST` | `/login`         | No   | Log in. Body: `{ email, password }`. Sets httpOnly cookies. Returns error if account is Google-only (no password set).   |
+| `GET`  | `/logout`        | No   | Clear auth cookies.                                                                                                      |
+| `POST` | `/refresh-token` | No   | Generate new access token using refresh cookie.                                                                          |
+| `GET`  | `/player`        | Yes  | Return current user `{ id, name, email, level, rank, rank_progress, avatar_url }`.                                       |
+| `POST` | `/auth/google`   | No   | Body: `{ access_token }` (Supabase token). Verifies with Supabase, finds/creates MySQL user, syncs avatar, sets cookies. |
 
 ### Locations
 
@@ -252,9 +286,15 @@ Auth forms with client-side validation, error toasts via `AuthToast`, and redire
 
 ### Chat
 
-| Method | Endpoint | Auth | Description                                                                                |
-| ------ | -------- | ---- | ------------------------------------------------------------------------------------------ |
-| `POST` | `/chat`  | Yes  | Body: `{ message, locationId? }`. Returns Toto AI response. Will never reveal name or age. |
+| Method | Endpoint | Auth | Description                                                                                              |
+| ------ | -------- | ---- | -------------------------------------------------------------------------------------------------------- |
+| `POST` | `/chat`  | Yes  | Body: `{ message, locationId? }`. Returns Savannah AI response via Gemma. Will never reveal name or age. |
+
+### Text-to-Speech
+
+| Method | Endpoint | Auth | Description                                                                       |
+| ------ | -------- | ---- | --------------------------------------------------------------------------------- |
+| `POST` | `/tts`   | No   | Body: `{ text }`. Returns `audio/wav` binary synthesized by Gemini TTS (Despina). |
 
 ### Leaderboard
 
@@ -278,16 +318,16 @@ Auth forms with client-side validation, error toasts via `AuthToast`, and redire
 
 ### Personalization
 
-| Method | Endpoint                | Auth | Description                                                                          |
-| ------ | ----------------------- | ---- | ------------------------------------------------------------------------------------ |
-| `GET`  | `/personalize/next-set` | Yes  | Returns 3 AI-recommended location IDs based on player's last 30 games. Cached 5 min. |
+| Method | Endpoint                | Auth | Description                                                                             |
+| ------ | ----------------------- | ---- | --------------------------------------------------------------------------------------- |
+| `GET`  | `/personalize/next-set` | Yes  | Returns 3 Gemma-recommended location IDs based on player's last 30 games. Cached 5 min. |
 
 ### Contributions
 
-| Method | Endpoint      | Auth | Description                                                                                                                     |
-| ------ | ------------- | ---- | ------------------------------------------------------------------------------------------------------------------------------- |
-| `POST` | `/contribute` | Yes  | Body: `{ name, mapsUrl, userDescription? }`. Extracts coordinates from Maps URL, calls Gemini for metadata, saves as `pending`. |
-| `GET`  | `/contribute` | Yes  | Returns all submissions made by the authenticated user, ordered by date descending.                                             |
+| Method | Endpoint      | Auth | Description                                                                                                                    |
+| ------ | ------------- | ---- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `POST` | `/contribute` | Yes  | Body: `{ name, mapsUrl, userDescription? }`. Extracts coordinates from Maps URL, calls Gemma for metadata, saves as `pending`. |
+| `GET`  | `/contribute` | Yes  | Returns all submissions made by the authenticated user, ordered by date descending.                                            |
 
 ### NLP Server (internal)
 
@@ -318,6 +358,7 @@ CREATE TABLE users (
 ```
 
 > **Migration** — if upgrading an existing database:
+>
 > ```sql
 > ALTER TABLE users
 >   ADD COLUMN google_id VARCHAR(100) UNIQUE NULL,
@@ -420,10 +461,13 @@ JWT_REFRESH_SECRET=your_jwt_refresh_secret
 
 # APIs
 GOOGLE_MAPS_API_KEY=your_google_maps_api_key
-GEMINI_TTS_API_KEY=your_gemini_tts_api_key
-ZAI_API_KEY=your_zai_api_key
-GEMMA_CHAT_MODEL=google/gemma-4-26B-A4B-it
-ZAI_MODEL=zai-org/GLM-5.1
+
+# Gemini TTS (text-to-speech for Savannah)
+GEMINI_TTS_API_KEY=your_gemini_api_key
+
+# DeepInfra (Gemma chat model + personalization)
+DEEPINFRA_API_KEY=your_deepinfra_api_key
+DEEPINFRA_GEMMA_MODEL=google/gemma-4-26B-A4B-it
 
 # Google OAuth (via Supabase)
 SUPABASE_URL=https://your-project.supabase.co
@@ -473,7 +517,8 @@ DB_NAME=heritagedb
 - MySQL 8+
 - Python 3.10+
 - Google Cloud project with **Maps JavaScript API** and **Geocoding API** enabled
-- Google **Gemini API** key
+- Google **Gemini API** key (for TTS)
+- **DeepInfra** API key (for Gemma chat and personalization)
 
 ### 1. Database
 
@@ -525,7 +570,7 @@ Any logged-in user can expand the game's archive directly from the `/contribute`
 1. **Find** the heritage site on [Google Maps](https://maps.google.com) and navigate to its Street View.
 2. **Copy** the full URL from the browser address bar — it must contain `@lat,lng` coordinates.
 3. **Submit** the URL and site name via the form. Optionally add a cultural description.
-4. **Gemini** auto-generates the era, region, difficulty, and aliases.
+4. **Gemma** auto-generates the era, region, difficulty, and aliases.
 5. **Wait for review** — curators approve or decline each submission. Status is visible on your contributions panel.
 
 ---
@@ -534,9 +579,10 @@ Any logged-in user can expand the game's archive directly from the `/contribute`
 
 For questions, collaboration inquiries, or feedback about Heritage Guessr:
 
-**Le Trung Hieu** — Lead Developer & Project Author  
+**Le Trung Hieu** — Lead Developer & Designers & Project Author
 Delta Global School, Hanoi, Vietnam  
-Email: [lthieu@stu.dgs.org.vn](mailto:lthieu@stu.dgs.org.vn)
+Email: [lthieu@stu.dgs.org.vn](mailto:lthieu@stu.dgs.org.vn)  
+Facebook: [Heritage Guessr](https://www.facebook.com/profile.php?id=61568386015819)
 
 This project was conceived and built at **Delta Global School (DGS)** as part of an initiative to preserve and promote Vietnamese cultural heritage through technology. Heritage Guessr is currently being piloted at Delta Global School and Luong Van Can High School, reaching over 600 students.
 
@@ -562,6 +608,7 @@ This project integrates third-party APIs and libraries, each subject to their ow
 
 - [Google Maps Platform Terms of Service](https://cloud.google.com/maps-platform/terms)
 - [Google Gemini API Terms](https://ai.google.dev/gemini-api/terms)
+- [DeepInfra Terms of Service](https://deepinfra.com/terms)
 - [Hugging Face Terms of Service](https://huggingface.co/terms-of-service)
 
 ### Disclaimer

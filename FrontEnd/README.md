@@ -1,12 +1,53 @@
-# React + Vite
+# HeritageGuesser — Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React 19 + Vite 7 frontend for the Heritage Guessr application.
 
-Currently, two official plugins are available:
+## Tech
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **React 19** with React Router DOM 7
+- **Vite 7** (dev server on port 5173, `/api` proxied to backend port 8081)
+- **TailwindCSS 4** for styling
+- **Framer Motion** for page transitions
+- **Three.js / @react-three/fiber / @pixiv/three-vrm** for the 3D VRM avatar
+- **Leaflet** for mini-maps
+- **Supabase JS** for Google OAuth
 
-## Expanding the ESLint configuration
+## Setup
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```bash
+cp .env.example .env   # fill in VITE_ vars
+npm install
+npm run dev
+```
+
+## Environment Variables
+
+```env
+VITE_API_BASE_URL=/api
+VITE_GOOGLE_MAPS_API_KEY=your_google_maps_api_key
+VITE_BACKEND_URL=http://localhost:8081
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+## Routes
+
+| Path          | Component           | Description                                |
+| ------------- | ------------------- | ------------------------------------------ |
+| `/`           | Homepage            | Landing page with leaderboard preview      |
+| `/game`       | Game                | Core gameplay (Street View + guessing)     |
+| `/game/rank`  | RankPlay            | Ranked mode gameplay                       |
+| `/rank`       | Rank                | Player rank dashboard                      |
+| `/leaderboard`| Leaderboard         | Global top 20 players                      |
+| `/study`      | Studypage           | Heritage card browser                      |
+| `/study/:id`  | LessonDetail        | Heritage lesson with XP rewards            |
+| `/explore`    | Discover            | Free Street View explorer                  |
+| `/shop`       | Shop                | XP reward merchandise shop                 |
+| `/settings`   | Settings            | Account management                         |
+| `/tutorial`   | Tutorial            | Onboarding guide (EN/VI)                   |
+| `/contribute` | ContributeHeritage  | Community heritage submissions             |
+| `/login`      | Login               | Login form                                 |
+| `/register`   | Register            | Registration form                          |
+| `/auth/callback` | AuthCallback     | Google OAuth redirect handler              |
+
+See the [root README](../README.md) for full project documentation.
