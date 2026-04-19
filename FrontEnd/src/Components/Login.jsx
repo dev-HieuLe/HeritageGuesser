@@ -25,6 +25,7 @@ const Login = () => {
   const { lang, toggleLang } = useLang();
   const tx = t[lang].login;
   const { executeRecaptcha } = useGoogleReCaptcha();
+  const isMobile = window.innerWidth < 768;
 
   const handleChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
@@ -38,9 +39,11 @@ const Login = () => {
     if (!values.password.trim()) newErrors.password = tx.passwordRequired;
     if (Object.keys(newErrors).length > 0) { setErrors(newErrors); return; }
 
-    const recaptchaToken = executeRecaptcha ? await executeRecaptcha("login") : null;
+    const body = isMobile
+      ? { ...values, type: "mobile" }
+      : { ...values, recaptchaToken: executeRecaptcha ? await executeRecaptcha("login") : null };
     axios
-      .post(`${import.meta.env.VITE_API_BASE_URL}/login`, { ...values, recaptchaToken }, { withCredentials: true })
+      .post(`${import.meta.env.VITE_API_BASE_URL}/login`, body, { withCredentials: true })
       .then((res) => {
         if (res.data.status === "Success") {
           setAuth(true);

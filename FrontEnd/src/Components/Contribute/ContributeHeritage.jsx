@@ -149,6 +149,7 @@ function AnchorModal({ onClose, onSuccess }) {
   const [loading, setLoading] = useState(false);
   const [fieldError, setFieldError] = useState({});
   const recaptchaRef = useRef(null);
+  const isMobile = window.innerWidth < 768;
 
   const validate = () => {
     const errors = {};
@@ -184,8 +185,8 @@ function AnchorModal({ onClose, onSuccess }) {
       setFieldError(errors);
       return;
     }
-    const recaptchaToken = recaptchaRef.current?.getValue();
-    if (!recaptchaToken) {
+    const recaptchaToken = isMobile ? null : recaptchaRef.current?.getValue();
+    if (!isMobile && !recaptchaToken) {
       setFieldError({ ...errors, recaptcha: "Please tick the reCAPTCHA box." });
       return;
     }
@@ -199,7 +200,7 @@ function AnchorModal({ onClose, onSuccess }) {
           name: name.trim(),
           mapsUrl: mapsUrl.trim(),
           userDescription: userDescription.trim(),
-          recaptchaToken,
+          ...(isMobile ? { type: "mobile" } : { recaptchaToken }),
         },
         { withCredentials: true },
       );
@@ -330,21 +331,23 @@ function AnchorModal({ onClose, onSuccess }) {
               />
             </div>
 
-            <div className="flex flex-col items-center">
-              <ReCAPTCHA
-                ref={recaptchaRef}
-                sitekey={import.meta.env.VITE_RECAPTCHA_V2_SITE_KEY}
-                theme="dark"
-                onChange={() =>
-                  setFieldError((prev) => ({ ...prev, recaptcha: "" }))
-                }
-              />
-              {fieldError.recaptcha && (
-                <p className="mt-1.5 text-xs text-[#ffb4ab]">
-                  {fieldError.recaptcha}
-                </p>
-              )}
-            </div>
+            {!isMobile && (
+              <div className="flex flex-col items-center">
+                <ReCAPTCHA
+                  ref={recaptchaRef}
+                  sitekey={import.meta.env.VITE_RECAPTCHA_V2_SITE_KEY}
+                  theme="dark"
+                  onChange={() =>
+                    setFieldError((prev) => ({ ...prev, recaptcha: "" }))
+                  }
+                />
+                {fieldError.recaptcha && (
+                  <p className="mt-1.5 text-xs text-[#ffb4ab]">
+                    {fieldError.recaptcha}
+                  </p>
+                )}
+              </div>
+            )}
 
             <div className="flex gap-4 pt-2">
               <button

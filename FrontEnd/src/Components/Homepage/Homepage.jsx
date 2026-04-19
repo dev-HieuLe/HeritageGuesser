@@ -97,6 +97,7 @@ export default function Homepage() {
       icon: "add_location_alt",
     },
     { to: "/shop", label: tx.sidebar.shop, icon: "storefront" },
+    { to: "/vr-discovery", label: tx.sidebar.vrDiscovery, icon: "view_in_ar", badge: "Beta" },
     { to: "/tutorial", label: tx.sidebar.tutorial, icon: "help_center" },
   ];
 
@@ -352,6 +353,9 @@ export default function Homepage() {
                   {item.icon}
                 </span>
                 <span>{item.label}</span>
+                {item.badge && (
+                  <span className="ml-auto text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-full" style={{ backgroundColor: "rgba(162,209,187,0.15)", color: "#a2d1bb", border: "1px solid rgba(162,209,187,0.25)" }}>{item.badge}</span>
+                )}
               </Link>
             );
           })}

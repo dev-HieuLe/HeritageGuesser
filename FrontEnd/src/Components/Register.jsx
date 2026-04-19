@@ -25,6 +25,7 @@ const Signup = () => {
   const { lang, toggleLang } = useLang();
   const tx = t[lang].register;
   const recaptchaRef = useRef(null);
+  const isMobile = window.innerWidth < 768;
 
   const handleChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
@@ -53,14 +54,17 @@ const Signup = () => {
     if (!values.confirmPassword) newErrors.confirmPassword = tx.errors.confirmRequired;
     else if (values.password !== values.confirmPassword) newErrors.confirmPassword = tx.errors.confirmMismatch;
 
-    const recaptchaToken = recaptchaRef.current?.getValue();
-    if (!recaptchaToken) newErrors.recaptcha = lang === "en" ? "Please tick the reCAPTCHA box." : "Vui lòng xác nhận reCAPTCHA.";
+    if (!isMobile) {
+      const recaptchaToken = recaptchaRef.current?.getValue();
+      if (!recaptchaToken) newErrors.recaptcha = lang === "en" ? "Please tick the reCAPTCHA box." : "Vui lòng xác nhận reCAPTCHA.";
+    }
 
     if (Object.keys(newErrors).length > 0) { setErrors(newErrors); return; }
 
     const { confirmPassword, ...dataToSend } = values;
+    const recaptchaToken = isMobile ? null : recaptchaRef.current?.getValue();
     axios
-      .post(`${import.meta.env.VITE_API_BASE_URL}/register`, { ...dataToSend, recaptchaToken }, { withCredentials: true })
+      .post(`${import.meta.env.VITE_API_BASE_URL}/register`, { ...dataToSend, ...(isMobile ? { type: "mobile" } : { recaptchaToken }) }, { withCredentials: true })
       .then((res) => {
         if (res.data.status === "Success") {
           axios
@@ -218,18 +222,20 @@ const Signup = () => {
               );
             })}
 
-            {/* reCAPTCHA */}
-            <div className="flex flex-col items-center pt-1">
-              <ReCAPTCHA
-                ref={recaptchaRef}
-                sitekey={import.meta.env.VITE_RECAPTCHA_V2_SITE_KEY}
-                theme="dark"
-                onChange={() => setErrors((prev) => ({ ...prev, recaptcha: "" }))}
-              />
-              {errors.recaptcha && (
-                <p className="mt-1.5 text-[11px]" style={{ color: "#ffb4a9" }}>{errors.recaptcha}</p>
-              )}
-            </div>
+            {/* reCAPTCHA — desktop only */}
+            {!isMobile && (
+              <div className="flex flex-col items-center pt-1">
+                <ReCAPTCHA
+                  ref={recaptchaRef}
+                  sitekey={import.meta.env.VITE_RECAPTCHA_V2_SITE_KEY}
+                  theme="dark"
+                  onChange={() => setErrors((prev) => ({ ...prev, recaptcha: "" }))}
+                />
+                {errors.recaptcha && (
+                  <p className="mt-1.5 text-[11px]" style={{ color: "#ffb4a9" }}>{errors.recaptcha}</p>
+                )}
+              </div>
+            )}
 
             {/* General error */}
             {errors.general && (

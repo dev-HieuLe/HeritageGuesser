@@ -5,7 +5,7 @@ const SCORE_THRESHOLD = 0.5;
 
 export const verifyRecaptcha = async (req, res, next) => {
   // Skip reCAPTCHA for mobile clients
-  if (req.body?.type === "mobile") return next();
+  if (req.body?.type === "mobile" || req.query?.type === "mobile") return next();
 
   const recaptchaToken = req.body?.recaptchaToken || req.query?.recaptchaToken;
 

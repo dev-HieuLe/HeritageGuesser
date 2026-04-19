@@ -15,6 +15,7 @@ import LessonDetail from "./Components/Study/LessonDetail";
 import Tutorial from "./Components/Tutorial/Tutorial";
 import ContributeHeritage from "./Components/Contribute/ContributeHeritage";
 import Shop from "./Components/Shop/Shop";
+import VRDiscovery from "./Components/VRDiscovery/VRDiscovery";
 import Settings from "./Components/Settings/Settings";
 import AuthCallback from "./Components/AuthCallback";
 import PageWrapper from "./Components/Animations/PageWrapper";
@@ -96,8 +97,9 @@ export default function App() {
             <Route path="/study/:id"   element={<PageWrapper><LessonDetail /></PageWrapper>} />
             <Route path="/tutorial"    element={<PageWrapper><Tutorial /></PageWrapper>} />
             <Route path="/contribute"  element={<PageWrapper><ContributeHeritage /></PageWrapper>} />
-            <Route path="/shop"        element={<PageWrapper><Shop /></PageWrapper>} />
-            <Route path="/settings"   element={<PageWrapper><Settings /></PageWrapper>} />
+            <Route path="/shop"         element={<PageWrapper><Shop /></PageWrapper>} />
+            <Route path="/vr-discovery" element={<PageWrapper><VRDiscovery /></PageWrapper>} />
+            <Route path="/settings"    element={<PageWrapper><Settings /></PageWrapper>} />
           </Routes>
         </AnimatePresence>
       </div>

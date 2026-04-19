@@ -18,6 +18,7 @@ export default function Navbar({ onMenuClick }) {
     { label: tx.nav.study, to: "/study" },
     { label: tx.nav.contribute, to: "/contribute" },
     { label: tx.nav.shop, to: "/shop" },
+    { label: tx.nav.vrDiscovery, to: "/vr-discovery", badge: "Beta" },
     { label: tx.nav.tutorial, to: "/tutorial" },
   ];
 
@@ -77,6 +78,9 @@ export default function Navbar({ onMenuClick }) {
               style={{ fontSize: "15px", letterSpacing: "0.01em" }}
             >
               {l.label}
+              {l.badge && (
+                <span className="ml-1 text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-full align-middle" style={{ backgroundColor: "rgba(162,209,187,0.15)", color: "#a2d1bb", border: "1px solid rgba(162,209,187,0.25)" }}>{l.badge}</span>
+              )}
             </Link>
           );
         })}

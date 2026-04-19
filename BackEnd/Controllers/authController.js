@@ -432,7 +432,7 @@ export const refreshToken = (req, res) => {
         sameSite: isProd ? "None" : "Lax",
         secure: isProd,
       });
-      return res.json({ status: "Success" });
+      return res.json({ status: "Success", accessToken: newAccessToken });
     },
   );
 };

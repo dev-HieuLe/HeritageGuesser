@@ -110,6 +110,7 @@ export default function RankPlay() {
   // ── Avatar TTS ─────────────────────────────────────────────────────────────
   const { speak, stop: stopSpeech, isSpeaking } = useGeminiTTS();
   const { executeRecaptcha } = useGoogleReCaptcha();
+  const isMobile = window.innerWidth < 768;
   const [lastBotText, setLastBotText] = useState("");
   const [isWaitingToSpeak, setIsWaitingToSpeak] = useState(false);
 
@@ -159,14 +160,15 @@ export default function RankPlay() {
     // Wait for reCAPTCHA to finish loading before attempting the fetch.
     // Without this guard, executeRecaptcha is null on first render and the
     // backend rejects the request with 400 (missing token).
-    if (!executeRecaptcha) return;
+    if (!isMobile && !executeRecaptcha) return;
 
     updateLimitState();
     const loadInitial = async () => {
       try {
-        const token = await executeRecaptcha("load_game");
+        const token = isMobile ? null : await executeRecaptcha("load_game");
+        const query = isMobile ? "count=20&type=mobile" : `count=20&recaptchaToken=${token}`;
         const res = await axios.get(
-          `${import.meta.env.VITE_API_BASE_URL}/locations/random?count=20&recaptchaToken=${token}`,
+          `${import.meta.env.VITE_API_BASE_URL}/locations/random?${query}`,
         );
         const shuffled = res.data.sort(() => Math.random() - 0.5);
         setSessionLocations(shuffled);
@@ -256,12 +258,10 @@ export default function RankPlay() {
     setChatCount((p) => p + 1);
     setLoadingReply(true);
     try {
-      const recaptchaToken = executeRecaptcha
-        ? await executeRecaptcha("chat")
-        : null;
+      const recaptchaToken = isMobile ? undefined : executeRecaptcha ? await executeRecaptcha("chat") : null;
       const res = await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/chat`,
-        { message: text.trim(), locationId: current.id, recaptchaToken },
+        { message: text.trim(), locationId: current.id, ...(isMobile ? { type: "mobile" } : { recaptchaToken }) },
         { withCredentials: true },
       );
       const reply = res.data.reply || "No reply";
@@ -284,10 +284,10 @@ export default function RankPlay() {
     if (!current) return;
     clearInterval(timerRef.current);
     try {
-      const token = executeRecaptcha ? await executeRecaptcha("guess") : null;
+      const token = isMobile ? null : executeRecaptcha ? await executeRecaptcha("guess") : null;
       const checkResp = await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/heritage/check`,
-        { answer: heritage, locationId: current.id, recaptchaToken: token },
+        { answer: heritage, locationId: current.id, ...(isMobile ? { type: "mobile" } : { recaptchaToken: token }) },
         { withCredentials: true },
       );
       const { nameScore = 0, similarity = 0 } = checkResp.data || {};
@@ -423,11 +423,10 @@ export default function RankPlay() {
     // Re-fetch a fresh random batch when the current one is exhausted
     if (nextIndex >= sessionLocations.length) {
       try {
-        const token = executeRecaptcha
-          ? await executeRecaptcha("next_round")
-          : null;
+        const token = isMobile ? null : executeRecaptcha ? await executeRecaptcha("next_round") : null;
+        const query = isMobile ? "count=20&type=mobile" : `count=20&recaptchaToken=${token}`;
         const res = await axios.get(
-          `${import.meta.env.VITE_API_BASE_URL}/locations/random?count=20${token ? `&recaptchaToken=${token}` : ""}`,
+          `${import.meta.env.VITE_API_BASE_URL}/locations/random?${query}`,
         );
         const fresh = res.data.sort(() => Math.random() - 0.5);
         setSessionLocations(fresh);
