@@ -451,13 +451,13 @@ export default function Homepage() {
                 </span>
               </Link>
               <Link
-                to="/explore"
+                to="/tutorial"
                 style={{ transition: ease }}
                 className="px-5 sm:px-8 py-3 sm:py-4 bg-[rgba(36,43,41,0.5)] backdrop-blur-[24px] border border-[rgba(65,73,68,0.3)] text-[#dde4e0] font-semibold rounded-xl flex items-center gap-2 no-underline text-[13px] sm:text-[14px] hover:bg-[rgba(47,54,52,0.7)]"
               >
-                {tx.hero.viewMap}
+                {tx.hero.tutorial}
                 <span className="material-symbols-outlined text-[18px] sm:text-[20px]">
-                  map
+                  help_center
                 </span>
               </Link>
             </div>

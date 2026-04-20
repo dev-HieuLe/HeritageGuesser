@@ -250,8 +250,8 @@ export default function AboutUs() {
   ];
 
   const STATS = [
-    { value: 500, suffix: "+", label: ab.statsLabels[0] },
-    { value: 100, suffix: "+", label: ab.statsLabels[1] },
+    { value: 390, suffix: "+", label: ab.statsLabels[0] },
+    { value: 124, suffix: "+", label: ab.statsLabels[1] },
     { value: 3, suffix: "", label: ab.statsLabels[2] },
     { value: 2, suffix: "", label: ab.statsLabels[3] },
   ];
@@ -374,15 +374,31 @@ export default function AboutUs() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
           >
-            <FeaturePill icon="360" label={ab.pills.streetView} color="#a2d1bb" />
-            <FeaturePill icon="smart_toy" label={ab.pills.aiGuide} color="#e9c349" />
+            <FeaturePill
+              icon="360"
+              label={ab.pills.streetView}
+              color="#a2d1bb"
+            />
+            <FeaturePill
+              icon="smart_toy"
+              label={ab.pills.aiGuide}
+              color="#e9c349"
+            />
             <FeaturePill
               icon="psychology"
               label={ab.pills.nlpScoring}
               color="#c084fc"
             />
-            <FeaturePill icon="school" label={ab.pills.studyMode} color="#38bdf8" />
-            <FeaturePill icon="storefront" label={ab.pills.xpShop} color="#f97316" />
+            <FeaturePill
+              icon="school"
+              label={ab.pills.studyMode}
+              color="#38bdf8"
+            />
+            <FeaturePill
+              icon="storefront"
+              label={ab.pills.xpShop}
+              color="#f97316"
+            />
             <FeaturePill
               icon="view_in_ar"
               label={ab.pills.vrDiscovery}
@@ -626,7 +642,8 @@ export default function AboutUs() {
               className="font-extrabold text-[#e3e3de] leading-[1.1] tracking-[-0.02em] mb-5"
               style={{ fontSize: "clamp(24px, 3vw, 40px)" }}
             >
-              {ab.howItStarted} <em className="text-[#a2d1bb] italic">{ab.howItStartedAccent}</em>
+              {ab.howItStarted}{" "}
+              <em className="text-[#a2d1bb] italic">{ab.howItStartedAccent}</em>
             </h2>
             <p className="text-[14px] text-[#c0c8c3] leading-relaxed">
               {ab.journeyDesc}

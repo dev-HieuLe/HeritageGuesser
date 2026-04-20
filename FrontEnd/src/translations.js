@@ -53,6 +53,7 @@ const t = {
       body: "Step into an ethereal archive of heritage. Test your cultural intuition across thousands of years of history, from the mist of Ha Long to the imperial gates of Hue.",
       startGuessing: "Start Guessing",
       viewMap: "View Map",
+      tutorial: "Learn How to Play",
     },
 
     // Bento
@@ -587,6 +588,7 @@ const t = {
       body: "Bước vào kho lưu trữ di sản huyền bí. Kiểm tra trực giác văn hóa của bạn qua hàng nghìn năm lịch sử, từ làn sương Hạ Long đến cổng thành Huế.",
       startGuessing: "Bắt Đầu Đoán",
       viewMap: "Xem Bản Đồ",
+      tutorial: "Học Cách Chơi",
     },
 
     // Bento

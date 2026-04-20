@@ -586,38 +586,57 @@ export default function VRMode({ location, permissionGranted, onExit }) {
           </div>
         )}
 
-        {/* ── Left eye container ───────────────────────────────────────────── */}
+        {/* ── SVG clip-path definitions (goggle lens shapes) ───────────────── */}
         {/*
-          clip-path cuts the panorama to a goggle-lens ellipse.
-          Percentages are relative to THIS container (50vw × 100vh),
-          so ellipse(45% 45%) → lens is 90% × 90% of the half-screen.
-          Black from the VR root shows through outside the clip.
+          objectBoundingBox coords (0–1) scale to each 50vw×100vh container.
+          Left window: inner-right edge bows OUT to x≈0.985 at center (y=0.5),
+          retreating to x≈0.80 at top/bottom → gap widens toward corners.
+          Right window is the horizontal mirror.
+          Center gap at mid-height ≈ 2×(1-0.985)×50vw ≈ 1.5vw ≈ 0.4cm.
         */}
+        <svg width="0" height="0" style={{ position: "absolute", overflow: "hidden" }}>
+          <defs>
+            <clipPath id="vr-left-clip" clipPathUnits="objectBoundingBox">
+              <path d="
+                M 0.14,0.10
+                C 0.35,0.08 0.60,0.08 0.80,0.10
+                C 0.95,0.18 0.985,0.34 0.985,0.50
+                C 0.985,0.66 0.95,0.82 0.80,0.90
+                C 0.60,0.92 0.35,0.92 0.14,0.90
+                C 0.07,0.82 0.07,0.18 0.14,0.10
+                Z
+              " />
+            </clipPath>
+            <clipPath id="vr-right-clip" clipPathUnits="objectBoundingBox">
+              <path d="
+                M 0.86,0.10
+                C 0.65,0.08 0.40,0.08 0.20,0.10
+                C 0.05,0.18 0.015,0.34 0.015,0.50
+                C 0.015,0.66 0.05,0.82 0.20,0.90
+                C 0.40,0.92 0.65,0.92 0.86,0.90
+                C 0.93,0.82 0.93,0.18 0.86,0.10
+                Z
+              " />
+            </clipPath>
+          </defs>
+        </svg>
+
+        {/* ── Left eye container ───────────────────────────────────────────── */}
         <div
           ref={leftContRef}
           style={{
             width: "50%", height: "100%",
             position: "relative", overflow: "hidden",
             flexShrink: 0, backgroundColor: "#000",
-            // clipRX = lensRadius / halfScreen × 100 — matches physical lens aperture
-            clipPath: `ellipse(${clipRX}% ${clipRX}% at ${leftCX}% 50%)`,
+            clipPath: "url(#vr-left-clip)",
           }}
         >
           <div ref={leftPaneRef} className="vr-eye" style={leftPaneStyle} />
           <div style={{
             position: "absolute", inset: 0, zIndex: 10, pointerEvents: "none",
-            background: `radial-gradient(ellipse ${clipRX * 2}% ${clipRX * 2}% at ${leftCX}% 50%, transparent 58%, rgba(0,0,0,0.55) 100%)`,
+            background: `radial-gradient(ellipse 80% 75% at ${leftCX}% 50%, transparent 55%, rgba(0,0,0,0.55) 100%)`,
           }} />
         </div>
-
-        {/* ── Center nose divider ──────────────────────────────────────────── */}
-        <div style={{
-          position: "absolute",
-          left: "50%", top: 0, bottom: 0,
-          width: 2, backgroundColor: "rgba(255,255,255,0.5)",
-          transform: "translateX(-50%)",
-          zIndex: 40,
-        }} />
 
         {/* ── Right eye container ──────────────────────────────────────────── */}
         <div
@@ -626,13 +645,13 @@ export default function VRMode({ location, permissionGranted, onExit }) {
             width: "50%", height: "100%",
             position: "relative", overflow: "hidden",
             flexShrink: 0, backgroundColor: "#000",
-            clipPath: `ellipse(${clipRX}% ${clipRX}% at ${rightCX}% 50%)`,
+            clipPath: "url(#vr-right-clip)",
           }}
         >
           <div ref={rightPaneRef} className="vr-eye" style={rightPaneStyle} />
           <div style={{
             position: "absolute", inset: 0, zIndex: 10, pointerEvents: "none",
-            background: `radial-gradient(ellipse ${clipRX * 2}% ${clipRX * 2}% at ${rightCX}% 50%, transparent 58%, rgba(0,0,0,0.55) 100%)`,
+            background: `radial-gradient(ellipse 80% 75% at ${rightCX}% 50%, transparent 55%, rgba(0,0,0,0.55) 100%)`,
           }} />
         </div>
 
