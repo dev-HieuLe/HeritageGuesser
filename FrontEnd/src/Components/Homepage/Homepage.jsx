@@ -196,6 +196,7 @@ export default function Homepage() {
           {[
             { label: tx.nav.home,        to: "/",             active: true  },
             { label: tx.nav.about,       to: "/about",        active: false },
+            { label: tx.nav.atlas,       to: "/atlas",        active: false },
             { label: tx.nav.leaderboard, to: "/leaderboard",  active: false },
             { label: tx.nav.study,       to: "/study",        active: false },
             { label: tx.nav.contribute,  to: "/contribute",   active: false },
@@ -436,7 +437,7 @@ export default function Homepage() {
 
             <div className="flex flex-wrap gap-3 sm:gap-4">
               <Link
-                to="/leaderboard"
+                to="/rank"
                 style={{
                   background: "linear-gradient(135deg, #e9c349, #f0d060)",
                   transition: ease,

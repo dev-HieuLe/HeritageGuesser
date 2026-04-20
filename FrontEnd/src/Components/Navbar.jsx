@@ -13,6 +13,7 @@ export default function Navbar({ onMenuClick }) {
   const navLinks = [
     { label: tx.nav.home, to: "/" },
     { label: tx.nav.about, to: "/about" },
+    { label: tx.nav.atlas, to: "/atlas" },
     { label: tx.nav.leaderboard, to: "/leaderboard" },
     { label: tx.nav.study, to: "/study" },
     { label: tx.nav.contribute, to: "/contribute" },

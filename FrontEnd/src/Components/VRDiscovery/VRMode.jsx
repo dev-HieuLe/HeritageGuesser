@@ -24,12 +24,14 @@ const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 const LS_KEY  = "vr_calib_v2";
 
 // ─── Calibration defaults ────────────────────────────────────────────────────
+// Pre-filled for user's box: 30mm lenses (r=15mm), 35mm IPD, 145mm phone (14.5cm)
 const DEFAULTS = {
-  lensDistanceMM:  63.9,   // Google Cardboard standard inter-lens distance
-  screenWidthMM:   0,      // 0 = unknown → use manual eyeWidthVW
-  eyeWidthVW:      45,     // manual fallback
-  verticalOffsetPX: 0,     // positive → shift image down (see lower content)
-  zoom:            1,      // Street View zoom: 0=180°FOV, 1=standard, 3=max
+  lensDistanceMM:  35,    // 3.5 cm center-to-center between lenses
+  lensRadiusMM:    15,    // 3 cm diameter lens → radius = 15mm
+  screenWidthMM:   145,   // phone ~14.5 cm long (landscape width)
+  eyeWidthVW:      24,    // fallback; auto-computed = 35/145×100 = 24.1 vw
+  verticalOffsetPX: 0,
+  zoom:            1,
 };
 
 function loadCalib() {
@@ -50,6 +52,36 @@ function computeEyeVW(calib) {
     return parseFloat(Math.min(Math.max(vw, 20), 65).toFixed(1));
   }
   return null;
+}
+
+// Compute how many vw to shift each eye's panorama INWARD so the camera center
+// lands exactly behind its physical lens, not at the screen-half center.
+//
+// Physics:
+//   Left lens center from screen left  = (screenWidth - IPD) / 2
+//   Left container center (software)   = screenWidth / 4   (= 25 vw)
+//   Offset = lens_pos - container_center  (positive → shift right for left eye)
+//
+// Without this correction each eye looks slightly outward through the lens,
+// causing the brain to see two separate images instead of one fused image.
+function computeEyeOffsetVW(calib) {
+  if (calib.screenWidthMM > 0) {
+    const leftLensMM     = (calib.screenWidthMM - calib.lensDistanceMM) / 2;
+    const leftContCtrMM  = calib.screenWidthMM / 4;
+    return ((leftLensMM - leftContCtrMM) / calib.screenWidthMM) * 100;
+  }
+  return 0;
+}
+
+// Clip-path radius as % of each eye container (50vw wide).
+// rx = lensRadius / halfScreenWidth × 100
+// This sizes the goggle window to exactly the physical lens aperture.
+function computeClipRX(calib) {
+  if (calib.screenWidthMM > 0) {
+    const halfMM = calib.screenWidthMM / 2;
+    return parseFloat(Math.min(48, Math.max(10, (calib.lensRadiusMM / halfMM) * 100)).toFixed(1));
+  }
+  return 38;
 }
 
 // ─── Street View shared options (no UI) ──────────────────────────────────────
@@ -287,18 +319,6 @@ function CalibrationPanel({ draft, setDraft, onSave, onReset, onClose }) {
   );
 }
 
-// ─── HUD button style ─────────────────────────────────────────────────────────
-const HUD = {
-  display: "flex", alignItems: "center", gap: 5,
-  backgroundColor: "rgba(8,11,8,0.82)",
-  border: "1px solid rgba(162,209,187,0.22)",
-  borderRadius: 20, padding: "6px 14px",
-  color: "#a2d1bb", fontSize: 10, fontWeight: 900,
-  letterSpacing: "0.12em", textTransform: "uppercase",
-  cursor: "pointer", backdropFilter: "blur(14px)",
-  fontFamily: "'Be Vietnam Pro', sans-serif",
-};
-
 // ─── Main component ───────────────────────────────────────────────────────────
 export default function VRMode({ location, permissionGranted, onExit }) {
   const containerRef = useRef(null);
@@ -317,12 +337,21 @@ export default function VRMode({ location, permissionGranted, onExit }) {
   const [draft,      setDraft]      = useState(loadCalib);
   const [panoReady,  setPanoReady]  = useState(false);
   const [isCalib,    setIsCalib]    = useState(false);
-  const [orientFail, setOrientFail] = useState(false);
 
   const { isLoaded } = useJsApiLoader({ googleMapsApiKey: API_KEY });
 
-  // Effective eye width — auto or manual
-  const eyeVW = computeEyeVW(calib) ?? calib.eyeWidthVW;
+  // Horizontal shift (vw) to align each camera behind its physical lens
+  const eyeOffset = computeEyeOffsetVW(calib);
+  // Lens center as % of each 50%-wide container (used for clip-path + pane left)
+  const leftCX    = 50 + 2 * eyeOffset;
+  const rightCX   = 50 - 2 * eyeOffset;
+
+  // Window size: 1.3× the physical lens aperture for a bigger window.
+  // clipRX drives the visible hole size.
+  // eyeVW = clipRX exactly fills the hole with panorama content (no over-render).
+  // Camera centers (leftCX / rightCX) are untouched → fusion preserved.
+  const clipRX = computeClipRX(calib) * 3.1;
+  const eyeVW  = Math.max(computeEyeVW(calib) ?? calib.eyeWidthVW, clipRX);
 
   // ── Fullscreen + orientation lock ───────────────────────────────────────────
   useEffect(() => {
@@ -332,9 +361,7 @@ export default function VRMode({ location, permissionGranted, onExit }) {
     (el.requestFullscreen?.() ?? el.webkitRequestFullscreen?.() ?? Promise.resolve()).catch(() => {});
 
     if (screen.orientation?.lock) {
-      screen.orientation.lock("landscape").catch(() => setOrientFail(true));
-    } else {
-      setOrientFail(true);
+      screen.orientation.lock("landscape").catch(() => {});
     }
 
     const checkOrientation = () => {
@@ -476,30 +503,21 @@ export default function VRMode({ location, permissionGranted, onExit }) {
     setIsCalib(true);
   };
 
-  // ── Pano div style — centered in its half, offset vertically ───────────────
+  // ── Pano div styles — camera center shifted to align with physical lens ───
   //
-  // Layout:
-  //   [left container 50%][right container 50%]
-  //   Each container: overflow hidden
-  //   Pano div inside: width = eyeVW vw (vw = viewport units, may exceed 50%)
-  //                    centered horizontally → left lens / right lens aligns
-  //                    shifted vertically by verticalOffsetPX for physical fit
+  // The Google Maps camera sits at the center of its div. By placing `left`
+  // at leftCX% (instead of 50%), the camera lands exactly behind the physical
+  // lens rather than at the container midpoint, fixing the "two screens" issue.
   //
-  // Why vw units for the pano width?
-  //   The Google Maps API camera is ALWAYS at the center of its div.
-  //   By making the pano div eyeVW vw wide and centering it in the 50% container,
-  //   the camera center lands at 25 vw (left eye) and 75 vw (right eye) —
-  //   matching the physical lens positions.
-  //
-  const paneDivStyle = {
-    position: "absolute",
-    width:    `${eyeVW}vw`,
-    height:   "100%",
-    left:     "50%",                      // center of each 50%-wide container
-    top:      0,
+  const basePane = {
+    position:  "absolute",
+    width:     `${eyeVW}vw`,
+    height:    "100%",
+    top:       0,
     transform: `translateX(-50%) translateY(${calib.verticalOffsetPX}px)`,
-    // overflow is clipped by the parent container
   };
+  const leftPaneStyle  = { ...basePane, left: `${leftCX}%`  };
+  const rightPaneStyle = { ...basePane, left: `${rightCX}%` };
 
   return (
     <>
@@ -570,9 +588,10 @@ export default function VRMode({ location, permissionGranted, onExit }) {
 
         {/* ── Left eye container ───────────────────────────────────────────── */}
         {/*
-          Container is exactly 50% of viewport width, overflow: hidden.
-          The pano div inside is eyeVW wide, centered → camera at 25vw.
-          overflow:hidden clips anything that bleeds past the 50% boundary.
+          clip-path cuts the panorama to a goggle-lens ellipse.
+          Percentages are relative to THIS container (50vw × 100vh),
+          so ellipse(45% 45%) → lens is 90% × 90% of the half-screen.
+          Black from the VR root shows through outside the clip.
         */}
         <div
           ref={leftContRef}
@@ -580,23 +599,24 @@ export default function VRMode({ location, permissionGranted, onExit }) {
             width: "50%", height: "100%",
             position: "relative", overflow: "hidden",
             flexShrink: 0, backgroundColor: "#000",
+            // clipRX = lensRadius / halfScreen × 100 — matches physical lens aperture
+            clipPath: `ellipse(${clipRX}% ${clipRX}% at ${leftCX}% 50%)`,
           }}
         >
-          <div ref={leftPaneRef} className="vr-eye" style={paneDivStyle} />
+          <div ref={leftPaneRef} className="vr-eye" style={leftPaneStyle} />
+          <div style={{
+            position: "absolute", inset: 0, zIndex: 10, pointerEvents: "none",
+            background: `radial-gradient(ellipse ${clipRX * 2}% ${clipRX * 2}% at ${leftCX}% 50%, transparent 58%, rgba(0,0,0,0.55) 100%)`,
+          }} />
         </div>
 
         {/* ── Center nose divider ──────────────────────────────────────────── */}
-        {/*
-          This 3 px black bar sits at 50vw — the nose bridge of the cardboard.
-          It physically separates the two optical paths and prevents cross-eye bleed.
-        */}
         <div style={{
           position: "absolute",
           left: "50%", top: 0, bottom: 0,
-          width: 3, backgroundColor: "#000",
+          width: 2, backgroundColor: "rgba(255,255,255,0.5)",
           transform: "translateX(-50%)",
           zIndex: 40,
-          flexShrink: 0,
         }} />
 
         {/* ── Right eye container ──────────────────────────────────────────── */}
@@ -606,71 +626,47 @@ export default function VRMode({ location, permissionGranted, onExit }) {
             width: "50%", height: "100%",
             position: "relative", overflow: "hidden",
             flexShrink: 0, backgroundColor: "#000",
+            clipPath: `ellipse(${clipRX}% ${clipRX}% at ${rightCX}% 50%)`,
           }}
         >
-          <div ref={rightPaneRef} className="vr-eye" style={paneDivStyle} />
+          <div ref={rightPaneRef} className="vr-eye" style={rightPaneStyle} />
+          <div style={{
+            position: "absolute", inset: 0, zIndex: 10, pointerEvents: "none",
+            background: `radial-gradient(ellipse ${clipRX * 2}% ${clipRX * 2}% at ${rightCX}% 50%, transparent 58%, rgba(0,0,0,0.55) 100%)`,
+          }} />
         </div>
 
-        {/* ── Lens vignette (aesthetic — mimics cardboard barrel distortion darkening) */}
-        <div style={{
-          position: "absolute", inset: 0, zIndex: 45, pointerEvents: "none",
-          background: [
-            "radial-gradient(ellipse 46% 72% at 25% 50%, transparent 58%, rgba(0,0,0,0.65) 100%)",
-            "radial-gradient(ellipse 46% 72% at 75% 50%, transparent 58%, rgba(0,0,0,0.65) 100%)",
-          ].join(", "),
-        }} />
-
-        {/* ── HUD ─────────────────────────────────────────────────────────── */}
-        <button onClick={onExit}    style={{ position: "absolute", top: 14, left: 14,  zIndex: 60, ...HUD }}>
-          <span className="material-symbols-outlined" style={{ fontSize: 14 }}>close</span>
-          Exit VR
+        {/* ── HUD — minimal icon buttons matching reference screenshot ──────── */}
+        {/* Exit: plain white × top-left */}
+        <button
+          onClick={onExit}
+          style={{
+            position: "absolute", top: 14, left: 14, zIndex: 60,
+            background: "none", border: "none", cursor: "pointer",
+            color: "#fff", padding: 6, lineHeight: 1,
+            fontSize: 26, fontWeight: 300,
+            textShadow: "0 1px 4px rgba(0,0,0,0.6)",
+          }}
+          aria-label="Exit VR"
+        >
+          ✕
         </button>
 
-        <button onClick={openCalib} style={{ position: "absolute", top: 14, right: 14, zIndex: 60, ...HUD }}>
-          <span className="material-symbols-outlined" style={{ fontSize: 14 }}>tune</span>
-          Calibrate
+        {/* Settings: plain white gear top-right */}
+        <button
+          onClick={openCalib}
+          style={{
+            position: "absolute", top: 10, right: 10, zIndex: 60,
+            background: "none", border: "none", cursor: "pointer",
+            color: "#fff", padding: 6,
+            display: "flex", alignItems: "center",
+          }}
+          aria-label="Calibrate"
+        >
+          <span className="material-symbols-outlined" style={{ fontSize: 30, filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.6))" }}>
+            settings
+          </span>
         </button>
-
-        {/* Active calibration values — shown as a mini pill so user can see current state */}
-        {panoReady && !isCalib && (
-          <div style={{
-            position: "absolute", bottom: 14, left: "50%",
-            transform: "translateX(-50%)",
-            zIndex: 60,
-            display: "flex", alignItems: "center", gap: 10,
-            backgroundColor: "rgba(8,11,8,0.78)",
-            border: "1px solid rgba(162,209,187,0.15)",
-            borderRadius: 20, padding: "5px 14px",
-            backdropFilter: "blur(10px)",
-            fontFamily: "'Be Vietnam Pro', sans-serif",
-          }}>
-            <span style={{ fontSize: 9, fontWeight: 700, color: "rgba(162,209,187,0.5)", letterSpacing: "0.1em", textTransform: "uppercase", whiteSpace: "nowrap" }}>
-              {location.name}
-            </span>
-            <div style={{ width: 1, height: 10, backgroundColor: "rgba(162,209,187,0.15)" }} />
-            <span style={{ fontSize: 9, color: "rgba(162,209,187,0.35)", whiteSpace: "nowrap" }}>
-              {eyeVW.toFixed(0)}vw · zoom {calib.zoom.toFixed(1)}
-              {calib.verticalOffsetPX !== 0 ? ` · ${calib.verticalOffsetPX > 0 ? "+" : ""}${calib.verticalOffsetPX}px` : ""}
-            </span>
-          </div>
-        )}
-
-        {/* Orientation fallback hint (only on iOS where lock fails) */}
-        {orientFail && panoReady && !isCalib && (
-          <div style={{
-            position: "absolute", bottom: 44, left: "50%",
-            transform: "translateX(-50%)",
-            zIndex: 60,
-            backgroundColor: "rgba(8,11,8,0.65)",
-            borderRadius: 12, padding: "4px 12px",
-            color: "rgba(162,209,187,0.3)",
-            fontSize: 8, fontWeight: 700, letterSpacing: "0.1em",
-            textTransform: "uppercase", whiteSpace: "nowrap",
-            fontFamily: "'Be Vietnam Pro', sans-serif",
-          }}>
-            Keep phone horizontal
-          </div>
-        )}
 
         {/* ── Calibration panel overlay ────────────────────────────────────── */}
         {isCalib && (

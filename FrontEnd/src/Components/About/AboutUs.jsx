@@ -196,88 +196,70 @@ function TimelineItem({ year, title, desc, last = false }) {
 export default function AboutUs() {
   const { lang } = useLang();
   const tx = t[lang];
+  const ab = tx.aboutUs;
 
   const TECH_STACK = [
     {
       materialIcon: "code",
       name: "React 19 + Vite 7",
-      desc: "Lightning-fast frontend with HMR",
+      desc: ab.techDescs[0],
       color: "#61dafb",
     },
     {
       materialIcon: "map",
       name: "Google Street View",
-      desc: "Immersive 360° heritage exploration",
+      desc: ab.techDescs[1],
       color: "#4ade80",
     },
     {
       materialIcon: "smart_toy",
       name: "Gemma 4 · 26B via DeepInfra",
-      desc: "AI guide & site personalization",
+      desc: ab.techDescs[2],
       color: "#a2d1bb",
     },
     {
       materialIcon: "record_voice_over",
       name: "Gemini TTS (Despina)",
-      desc: "Natural bilingual voice synthesis",
+      desc: ab.techDescs[3],
       color: "#e9c349",
     },
     {
       materialIcon: "psychology",
       name: "NLP · MarianMT + Transformers",
-      desc: "Multilingual answer scoring",
+      desc: ab.techDescs[4],
       color: "#c084fc",
     },
     {
       materialIcon: "view_in_ar",
       name: "Three.js + VRM Avatar",
-      desc: "3D animated AI companion Savannah",
+      desc: ab.techDescs[5],
       color: "#f97316",
     },
     {
       materialIcon: "storage",
       name: "Node.js + MySQL",
-      desc: "Express 5 REST API + relational DB",
+      desc: ab.techDescs[6],
       color: "#86efac",
     },
     {
       materialIcon: "palette",
       name: "TailwindCSS 4 + Framer Motion",
-      desc: "Fluid animations, utility-first UI",
+      desc: ab.techDescs[7],
       color: "#38bdf8",
     },
   ];
 
   const STATS = [
-    { value: 500, suffix: "+", label: "Students Reached" },
-    { value: 100, suffix: "+", label: "Heritage Sites" },
-    { value: 3, suffix: "", label: "AI Models" },
-    { value: 2, suffix: "", label: "Schools Piloting" },
+    { value: 500, suffix: "+", label: ab.statsLabels[0] },
+    { value: 100, suffix: "+", label: ab.statsLabels[1] },
+    { value: 3, suffix: "", label: ab.statsLabels[2] },
+    { value: 2, suffix: "", label: ab.statsLabels[3] },
   ];
 
-  const TIMELINE = [
-    {
-      year: "2024 · Conception",
-      title: "Born at Delta Global School",
-      desc: "Heritage Guessr began as a capstone project at DGS Hanoi — blending education, AI, and Vietnamese cultural preservation into a single platform.",
-    },
-    {
-      year: "2024 · Build Phase",
-      title: "AI & NLP Integration",
-      desc: "Integrated Google Street View, a custom Gemma-powered chat guide named Savannah, and a multilingual NLP scoring engine that understands both English and Vietnamese guesses.",
-    },
-    {
-      year: "2025 · Pilot Launch",
-      title: "600+ Students Onboarded",
-      desc: "Rolled out to Delta Global School and Luong Van Can High School. Players explored over 40 UNESCO and national heritage sites through immersive gameplay.",
-    },
-    {
-      year: "Now · Open Platform",
-      title: "Community & Growth",
-      desc: "Any logged-in user can contribute new heritage sites. Gemma auto-generates metadata; curators review before approval. The archive grows with the community.",
-      last: true,
-    },
-  ];
+  const TIMELINE = ab.timeline.map((item, i) => ({
+    ...item,
+    last: i === ab.timeline.length - 1,
+  }));
 
   return (
     <div
@@ -344,7 +326,7 @@ export default function AboutUs() {
                   textTransform: "uppercase",
                 }}
               >
-                Heritage Guessr
+                {ab.badge}
               </span>
             </div>
           </motion.div>
@@ -360,7 +342,7 @@ export default function AboutUs() {
               ease: [0.22, 1, 0.36, 1],
             }}
           >
-            <span style={{ color: "#e3e3de" }}>Built to </span>
+            <span style={{ color: "#e3e3de" }}>{ab.heroLine1} </span>
             <span
               style={{
                 color: "#e9c349",
@@ -368,11 +350,11 @@ export default function AboutUs() {
                 WebkitBackgroundClip: "text",
               }}
             >
-              Preserve.
+              {ab.heroLine2}
             </span>
             <br />
-            <span style={{ color: "#e3e3de" }}>Designed to </span>
-            <em style={{ color: "#a2d1bb" }}>Inspire.</em>
+            <span style={{ color: "#e3e3de" }}>{ab.heroLine3} </span>
+            <em style={{ color: "#a2d1bb" }}>{ab.heroLine4}</em>
           </motion.h1>
 
           <motion.p
@@ -382,11 +364,7 @@ export default function AboutUs() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
           >
-            Heritage Guessr drops you into real Google Street View panoramas of
-            Vietnamese heritage sites. Explore with your AI guide{" "}
-            <em style={{ color: "#e9c349" }}>Savannah</em>, guess the site's
-            name and age, and climb a global leaderboard — all while learning
-            about Vietnam's cultural treasures.
+            {ab.heroDesc}
           </motion.p>
 
           {/* Feature pills */}
@@ -396,18 +374,18 @@ export default function AboutUs() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
           >
-            <FeaturePill icon="360" label="Street View" color="#a2d1bb" />
-            <FeaturePill icon="smart_toy" label="AI Guide" color="#e9c349" />
+            <FeaturePill icon="360" label={ab.pills.streetView} color="#a2d1bb" />
+            <FeaturePill icon="smart_toy" label={ab.pills.aiGuide} color="#e9c349" />
             <FeaturePill
               icon="psychology"
-              label="NLP Scoring"
+              label={ab.pills.nlpScoring}
               color="#c084fc"
             />
-            <FeaturePill icon="school" label="Study Mode" color="#38bdf8" />
-            <FeaturePill icon="storefront" label="XP Shop" color="#f97316" />
+            <FeaturePill icon="school" label={ab.pills.studyMode} color="#38bdf8" />
+            <FeaturePill icon="storefront" label={ab.pills.xpShop} color="#f97316" />
             <FeaturePill
               icon="view_in_ar"
-              label="VR Discovery"
+              label={ab.pills.vrDiscovery}
               color="#4ade80"
             />
           </motion.div>
@@ -485,10 +463,10 @@ export default function AboutUs() {
                   className="font-black text-[13px] uppercase tracking-[0.2em] mb-1"
                   style={{ color: "#e9c349" }}
                 >
-                  Our Mission
+                  {ab.missionLabel}
                 </p>
                 <p className="text-[15px] sm:text-[17px] font-semibold text-white leading-snug">
-                  Lan tỏa, kết nối và gìn giữ.
+                  {ab.missionVi}
                 </p>
                 <p
                   style={{
@@ -497,7 +475,7 @@ export default function AboutUs() {
                     marginTop: "2px",
                   }}
                 >
-                  Spread, connect, and preserve.
+                  {ab.missionEn}
                 </p>
               </div>
             </div>
@@ -515,48 +493,37 @@ export default function AboutUs() {
               className="block text-[11px] font-black uppercase tracking-[0.22em] mb-3"
               style={{ color: "#e9c349" }}
             >
-              Why We Built This
+              {ab.whyBuilt}
             </span>
             <h2
               className="font-extrabold leading-[1.1] tracking-[-0.02em] mb-5"
               style={{ fontSize: "clamp(26px, 4vw, 46px)", color: "#e3e3de" }}
             >
-              Vietnam has over{" "}
-              <em style={{ color: "#a2d1bb" }}>40,000 heritage sites.</em>
+              {ab.missionHeadline1}{" "}
+              <em style={{ color: "#a2d1bb" }}>{ab.missionHeadline2}</em>
               <br />
-              Most go unnoticed.
+              {ab.missionHeadline3}
             </h2>
             <p
               className="text-[14px] sm:text-[15px] leading-relaxed mb-5"
               style={{ color: "#c0c8c3" }}
             >
-              Heritage Guessr was conceived at{" "}
-              <strong style={{ color: "#e3e3de" }}>
-                Delta Global School, Hanoi
-              </strong>{" "}
-              as a technology-driven initiative to make Vietnamese cultural
-              heritage accessible, engaging, and unforgettable — starting with
-              students and expanding outward.
+              {ab.missionBody1}
             </p>
             <p
               className="text-[14px] sm:text-[15px] leading-relaxed mb-7"
               style={{ color: "#c0c8c3" }}
             >
-              We combine{" "}
-              <strong style={{ color: "#e3e3de" }}>Google Street View</strong>,{" "}
-              <strong style={{ color: "#e3e3de" }}>generative AI</strong>, and{" "}
-              <strong style={{ color: "#e3e3de" }}>multilingual NLP</strong> to
-              turn passive scrolling into active learning — while tracking your
-              progress against players worldwide.
+              {ab.missionBody2}
             </p>
 
             {/* Highlight badges */}
             <div className="flex flex-wrap gap-3">
               {[
-                { icon: "school", label: "DGS Hanoi", color: "#a2d1bb" },
-                { icon: "people", label: "600+ Students", color: "#e9c349" },
-                { icon: "public", label: "UNESCO Sites", color: "#4ade80" },
-                { icon: "auto_awesome", label: "AI-Powered", color: "#c084fc" },
+                { icon: "school", label: ab.badgeDGS, color: "#a2d1bb" },
+                { icon: "people", label: ab.badge600, color: "#e9c349" },
+                { icon: "public", label: ab.badgeUNESCO, color: "#4ade80" },
+                { icon: "auto_awesome", label: ab.badgeAI, color: "#c084fc" },
               ].map((b) => (
                 <FeaturePill
                   key={b.label}
@@ -595,18 +562,17 @@ export default function AboutUs() {
               </span>
             </div>
             <span className="block text-[#e9c349] font-black tracking-[0.2em] uppercase text-[12px] mb-3">
-              Under the Hood
+              {ab.underTheHood}
             </span>
             <h2
               className="font-extrabold text-[#e3e3de] leading-[1.1] tracking-[-0.02em]"
               style={{ fontSize: "clamp(26px, 4vw, 48px)" }}
             >
-              Powered by Eight{" "}
-              <em className="text-[#a2d1bb] italic">Technologies</em>
+              {ab.techHeadline1}{" "}
+              <em className="text-[#a2d1bb] italic">{ab.techHeadline2}</em>
             </h2>
             <p className="mt-4 text-[14px] sm:text-[16px] text-[#c0c8c3] max-w-xl mx-auto leading-relaxed">
-              From real-time 3D Street View to multilingual neural networks —
-              every layer is chosen to serve the experience.
+              {ab.techDesc}
             </p>
           </motion.div>
 
@@ -654,17 +620,16 @@ export default function AboutUs() {
               </span>
             </div>
             <span className="block text-[#e9c349] font-black tracking-[0.2em] uppercase text-[12px] mb-3">
-              Our Journey
+              {ab.ourJourney}
             </span>
             <h2
               className="font-extrabold text-[#e3e3de] leading-[1.1] tracking-[-0.02em] mb-5"
               style={{ fontSize: "clamp(24px, 3vw, 40px)" }}
             >
-              How It All <em className="text-[#a2d1bb] italic">Started</em>
+              {ab.howItStarted} <em className="text-[#a2d1bb] italic">{ab.howItStartedAccent}</em>
             </h2>
             <p className="text-[14px] text-[#c0c8c3] leading-relaxed">
-              From a classroom idea to a full-stack platform serving hundreds of
-              students — here's the Heritage Guessr story.
+              {ab.journeyDesc}
             </p>
 
             {/* Quote */}
@@ -679,8 +644,7 @@ export default function AboutUs() {
                 className="text-[14px] italic leading-relaxed mb-3"
                 style={{ color: "#c0c8c3" }}
               >
-                "We asked — what if rediscovering Vietnam's past could feel like
-                playing a game? That question became Heritage Guessr."
+                {ab.quote}
               </p>
               <div className="flex items-center gap-2.5">
                 <div
@@ -704,7 +668,7 @@ export default function AboutUs() {
                     Đặng Thái Hoà
                   </p>
                   <p className="text-[10px] text-[#8a938d] uppercase tracking-widest">
-                    Innovation Leader
+                    {ab.quoteRole}
                   </p>
                 </div>
               </div>
@@ -802,7 +766,7 @@ export default function AboutUs() {
                       fontWeight: 700,
                     }}
                   >
-                    ONLINE
+                    {ab.online}
                   </span>
                 </div>
               </div>
@@ -813,7 +777,7 @@ export default function AboutUs() {
                   className="block text-[11px] font-black uppercase tracking-[0.22em] mb-2"
                   style={{ color: "#a2d1bb" }}
                 >
-                  Meet Your AI Guide
+                  {ab.meetAIGuide}
                 </span>
                 <h2
                   className="font-black leading-tight mb-4 tracking-[-0.02em]"
@@ -822,42 +786,34 @@ export default function AboutUs() {
                     color: "#e3e3de",
                   }}
                 >
-                  Savannah — Your{" "}
-                  <em style={{ color: "#e9c349" }}>Heritage Expert</em>
+                  {ab.savannahTitle1}{" "}
+                  <em style={{ color: "#e9c349" }}>{ab.savannahTitle2}</em>
                 </h2>
                 <p
                   className="text-[14px] sm:text-[15px] leading-relaxed mb-5 max-w-xl"
                   style={{ color: "#c0c8c3" }}
                 >
-                  Powered by{" "}
-                  <strong style={{ color: "#e3e3de" }}>Gemma 4 26B</strong> via
-                  DeepInfra, Savannah gives you contextual hints without ever
-                  spoiling the answer. She speaks in{" "}
-                  <strong style={{ color: "#e3e3de" }}>natural language</strong>
-                  , reads her replies aloud via{" "}
-                  <strong style={{ color: "#e3e3de" }}>Gemini TTS</strong>{" "}
-                  (Despina voice), and comes to life as a 3D VRM avatar you can
-                  watch blink and animate in real-time.
+                  {ab.savannahDesc}
                 </p>
                 <div className="flex flex-wrap gap-2">
                   <FeaturePill
                     icon="chat"
-                    label="Gemma 4 · 26B Chat"
+                    label={ab.pillGemma}
                     color="#a2d1bb"
                   />
                   <FeaturePill
                     icon="volume_up"
-                    label="Gemini TTS"
+                    label={ab.pillTTS}
                     color="#e9c349"
                   />
                   <FeaturePill
                     icon="view_in_ar"
-                    label="3D VRM Avatar"
+                    label={ab.pill3D}
                     color="#f97316"
                   />
                   <FeaturePill
                     icon="translate"
-                    label="EN + VI"
+                    label={ab.pillLang}
                     color="#38bdf8"
                   />
                 </div>
@@ -919,7 +875,7 @@ export default function AboutUs() {
                   color: "#e3e3de",
                 }}
               >
-                "I wrote every{" "}
+                "{ab.hieuQuote1}{" "}
                 <i
                   style={{
                     fontStyle: "italic",
@@ -934,9 +890,9 @@ export default function AboutUs() {
                     letterSpacing: "-0.01em",
                   }}
                 >
-                  line of code
+                  {ab.hieuQuoteAccent}
                 </i>{" "}
-                with one goal: make Vietnam's heritage{" "}
+                {ab.hieuQuote2}{" "}
                 <em
                   style={{
                     fontStyle: "italic",
@@ -949,7 +905,7 @@ export default function AboutUs() {
                     filter: "drop-shadow(0 2px 6px rgba(233,195,73,0.12))",
                   }}
                 >
-                  impossible to forget.
+                  {ab.hieuQuoteAccent2}
                 </em>
                 "
               </p>
@@ -981,7 +937,7 @@ export default function AboutUs() {
                     className="text-[11px] uppercase tracking-[0.14em]"
                     style={{ color: "#8a938d" }}
                   >
-                    Lead Developer · Designer · Author
+                    {ab.hieuRole}
                   </p>
                 </div>
               </div>
@@ -1034,14 +990,13 @@ export default function AboutUs() {
                   className="block text-[10px] font-black uppercase tracking-[0.22em] mb-1"
                   style={{ color: "#a2d1bb" }}
                 >
-                  Crafted By
+                  {ab.craftedBy}
                 </span>
                 <h3 className="font-black text-[20px] text-[#e3e3de] mb-1 tracking-[-0.01em]">
-                  The Founding Team
+                  {ab.foundingTeam}
                 </h3>
                 <p className="text-[13px] mb-7" style={{ color: "#8a938d" }}>
-                  Three students at Delta Global School, Hanoi — united by one
-                  mission.
+                  {ab.teamDesc}
                 </p>
 
                 <div className="flex flex-col gap-3">
@@ -1049,21 +1004,21 @@ export default function AboutUs() {
                     {
                       img: "/founder_pic/hoapfp.jpg",
                       name: "Đặng Thái Hoà",
-                      role: "Innovation Leader",
+                      role: ab.memberRoles[0],
                       initials: "TH",
                       accent: "#a2d1bb",
                     },
                     {
                       img: "/founder_pic/hieupfp.jpg",
                       name: "Lê Trung Hiếu",
-                      role: "Lead Developer · Designer · Author",
+                      role: ab.memberRoles[1],
                       initials: "LH",
                       accent: "#a2d1bb",
                     },
                     {
                       img: "/founder_pic/Tommypfp.jpg",
                       name: "Nguyễn Thái Sơn",
-                      role: "Creative Content Specialist",
+                      role: ab.memberRoles[2],
                       initials: "TS",
                       accent: "#a2d1bb",
                     },
@@ -1169,7 +1124,7 @@ export default function AboutUs() {
                     </span>
                   </div>
                   <h4 className="font-black text-[15px] text-[#e3e3de] mb-1">
-                    Delta Global School
+                    {ab.dgsTitle}
                   </h4>
                   <p
                     style={{
@@ -1178,15 +1133,13 @@ export default function AboutUs() {
                       marginBottom: "10px",
                     }}
                   >
-                    Hanoi, Vietnam
+                    {ab.dgsLocation}
                   </p>
                   <p
                     className="text-[12px] sm:text-[13px] leading-relaxed"
                     style={{ color: "#c0c8c3" }}
                   >
-                    Heritage Guessr was conceived and built at DGS as part of an
-                    initiative to preserve and promote Vietnamese cultural
-                    heritage through technology.
+                    {ab.dgsDesc}
                   </p>
                 </div>
               </div>
@@ -1224,23 +1177,23 @@ export default function AboutUs() {
                     className="block text-[10px] font-black uppercase tracking-[0.2em] mb-2"
                     style={{ color: "#a2d1bb" }}
                   >
-                    The Team
+                    {ab.theTeamLabel}
                   </span>
                   <p className="font-black text-[15px] text-[#e3e3de] mb-1">
-                    Meet the Founders
+                    {ab.meetFounders}
                   </p>
                   <p
                     className="text-[12px] leading-relaxed mb-4"
                     style={{ color: "#8a938d" }}
                   >
-                    See the full team behind Heritage Guessr on our homepage.
+                    {ab.meetFoundersDesc}
                   </p>
                   <div
                     className="flex items-center gap-1.5"
                     style={{ color: "#a2d1bb" }}
                   >
                     <span style={{ fontSize: "12px", fontWeight: 700 }}>
-                      View Founders
+                      {ab.viewFounders}
                     </span>
                     <span
                       className="material-symbols-outlined"
@@ -1275,20 +1228,19 @@ export default function AboutUs() {
             className="block font-black text-[11px] uppercase tracking-[0.25em] mb-3"
             style={{ color: "#a2d1bb" }}
           >
-            Open Source · Educational
+            {ab.openSource}
           </span>
           <h3
             className="font-black tracking-[-0.02em] mb-3"
             style={{ fontSize: "clamp(18px, 3vw, 30px)", color: "#e3e3de" }}
           >
-            Built with ❤️ for Vietnamese Cultural Heritage
+            {ab.bottomTitle}
           </h3>
           <p
             className="text-[13px] sm:text-[14px] mb-6 max-w-lg mx-auto"
             style={{ color: "#8a938d" }}
           >
-            Copyright © 2025 Le Trung Hieu and the Heritage Guessr Team. All
-            rights reserved.
+            {ab.copyright}
           </p>
           <div className="flex items-center justify-center gap-4 flex-wrap">
             <a
@@ -1331,7 +1283,7 @@ export default function AboutUs() {
               }}
             >
               <FaFacebook size={14} />
-              Follow Us
+              {ab.followUs}
             </a>
             <Link
               to="/contribute"
@@ -1355,7 +1307,7 @@ export default function AboutUs() {
               >
                 add_location_alt
               </span>
-              Contribute a Site
+              {ab.contributeASite}
             </Link>
           </div>
         </div>

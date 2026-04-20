@@ -359,12 +359,154 @@ const t = {
       },
     },
 
+    // About Us page
+    aboutUs: {
+      // Hero
+      badge: "Heritage Guessr",
+      heroLine1: "Built to",
+      heroLine2: "Preserve.",
+      heroLine3: "Designed to",
+      heroLine4: "Inspire.",
+      heroDesc:
+        "Heritage Guessr drops you into real Google Street View panoramas of Vietnamese heritage sites. Explore with your AI guide Savannah, guess the site's name and age, and climb a global leaderboard — all while learning about Vietnam's cultural treasures.",
+      pills: {
+        streetView: "Street View",
+        aiGuide: "AI Guide",
+        nlpScoring: "NLP Scoring",
+        studyMode: "Study Mode",
+        xpShop: "XP Shop",
+        vrDiscovery: "VR Discovery",
+      },
+
+      // Stats
+      statsLabels: [
+        "Students Reached",
+        "Heritage Sites",
+        "AI Models",
+        "Schools Piloting",
+      ],
+
+      // Mission
+      missionLabel: "Our Mission",
+      missionVi: "Lan tỏa, kết nối và gìn giữ.",
+      missionEn: "Spread, connect, and preserve.",
+      whyBuilt: "Why We Built This",
+      missionHeadline1: "Vietnam has over",
+      missionHeadline2: "40,000 heritage sites.",
+      missionHeadline3: "Most go unnoticed.",
+      missionBody1:
+        "Heritage Guessr was conceived at Delta Global School, Hanoi as a technology-driven initiative to make Vietnamese cultural heritage accessible, engaging, and unforgettable — starting with students and expanding outward.",
+      missionBody2:
+        "We combine Google Street View, generative AI, and multilingual NLP to turn passive scrolling into active learning — while tracking your progress against players worldwide.",
+      badgeDGS: "DGS Hanoi",
+      badge600: "600+ Students",
+      badgeUNESCO: "UNESCO Sites",
+      badgeAI: "AI-Powered",
+
+      // Technology
+      underTheHood: "Under the Hood",
+      techHeadline1: "Powered by Eight",
+      techHeadline2: "Technologies",
+      techDesc:
+        "From real-time 3D Street View to multilingual neural networks — every layer is chosen to serve the experience.",
+      techDescs: [
+        "Lightning-fast frontend with HMR",
+        "Immersive 360° heritage exploration",
+        "AI guide & site personalization",
+        "Natural bilingual voice synthesis",
+        "Multilingual answer scoring",
+        "3D animated AI companion Savannah",
+        "Express 5 REST API + relational DB",
+        "Fluid animations, utility-first UI",
+      ],
+
+      // Timeline
+      ourJourney: "Our Journey",
+      howItStarted: "How It All",
+      howItStartedAccent: "Started",
+      journeyDesc:
+        "From a classroom idea to a full-stack platform serving hundreds of students — here's the Heritage Guessr story.",
+      quote:
+        '"We asked — what if rediscovering Vietnam\'s past could feel like playing a game? That question became Heritage Guessr."',
+      quoteRole: "Innovation Leader",
+      timeline: [
+        {
+          year: "2024 · Conception",
+          title: "Born at Delta Global School",
+          desc: "Heritage Guessr began as a capstone project at DGS Hanoi — blending education, AI, and Vietnamese cultural preservation into a single platform.",
+        },
+        {
+          year: "2024 · Build Phase",
+          title: "AI & NLP Integration",
+          desc: "Integrated Google Street View, a custom Gemma-powered chat guide named Savannah, and a multilingual NLP scoring engine that understands both English and Vietnamese guesses.",
+        },
+        {
+          year: "2025 · Pilot Launch",
+          title: "600+ Students Onboarded",
+          desc: "Rolled out to Delta Global School and Luong Van Can High School. Players explored over 40 UNESCO and national heritage sites through immersive gameplay.",
+        },
+        {
+          year: "Now · Open Platform",
+          title: "Community & Growth",
+          desc: "Any logged-in user can contribute new heritage sites. Gemma auto-generates metadata; curators review before approval. The archive grows with the community.",
+        },
+      ],
+
+      // Savannah spotlight
+      meetAIGuide: "Meet Your AI Guide",
+      savannahTitle1: "Savannah — Your",
+      savannahTitle2: "Heritage Expert",
+      savannahDesc:
+        "Powered by Gemma 4 26B via DeepInfra, Savannah gives you contextual hints without ever spoiling the answer. She speaks in natural language, reads her replies aloud via Gemini TTS (Despina voice), and comes to life as a 3D VRM avatar you can watch blink and animate in real-time.",
+      online: "ONLINE",
+      pillGemma: "Gemma 4 · 26B Chat",
+      pillTTS: "Gemini TTS",
+      pill3D: "3D VRM Avatar",
+      pillLang: "EN + VI",
+
+      // Hieu quote
+      hieuQuote1: "I wrote every",
+      hieuQuoteAccent: "line of code",
+      hieuQuote2: "with one goal: make Vietnam's heritage",
+      hieuQuoteAccent2: "impossible to forget.",
+      hieuRole: "Lead Developer · Designer · Author",
+
+      // Team / Contact
+      craftedBy: "Crafted By",
+      foundingTeam: "The Founding Team",
+      teamDesc:
+        "Three students at Delta Global School, Hanoi — united by one mission.",
+      memberRoles: [
+        "Innovation Leader",
+        "Lead Developer · Designer · Author",
+        "Creative Content Specialist",
+      ],
+      dgsTitle: "Delta Global School",
+      dgsLocation: "Hanoi, Vietnam",
+      dgsDesc:
+        "Heritage Guessr was conceived and built at DGS as part of an initiative to preserve and promote Vietnamese cultural heritage through technology.",
+      theTeamLabel: "The Team",
+      meetFounders: "Meet the Founders",
+      meetFoundersDesc:
+        "See the full team behind Heritage Guessr on our homepage.",
+      viewFounders: "View Founders",
+
+      // Bottom strip
+      openSource: "Open Source · Educational",
+      bottomTitle: "Built with ❤️ for Vietnamese Cultural Heritage",
+      copyright:
+        "Copyright © 2025 Le Trung Hieu and the Heritage Guessr Team. All rights reserved.",
+      followUs: "Follow Us",
+      contributeASite: "Contribute a Site",
+    },
+
     // Founders section
     founders: {
       eyebrow: "The People Behind the Platform",
       headline: "Our",
       headlineAccent: "Founders",
-      subtitle: "A devoted team preserving and celebrating the soul of Vietnam — one landmark at a time.",
+      subtitle:
+        "A devoted team preserving and celebrating the soul of Vietnam — one landmark at a time.",
       founderBadge: "Founder",
       viewProfile: "View profile →",
       connect: "Connect",
@@ -529,12 +671,154 @@ const t = {
       ],
     },
 
+    // About Us page
+    aboutUs: {
+      // Hero
+      badge: "Heritage Guessr",
+      heroLine1: "Được tạo ra để",
+      heroLine2: "Bảo Tồn.",
+      heroLine3: "Được thiết kế để",
+      heroLine4: "Truyền Cảm Hứng.",
+      heroDesc:
+        "Heritage Guessr đưa bạn vào những ảnh toàn cảnh Google Street View thực tế của các di sản Việt Nam. Khám phá cùng hướng dẫn viên AI Savannah, đoán tên và niên đại của địa danh, và leo lên bảng xếp hạng toàn cầu — tất cả trong khi tìm hiểu về kho tàng văn hóa Việt Nam.",
+      pills: {
+        streetView: "Street View",
+        aiGuide: "Trợ Lý AI",
+        nlpScoring: "Chấm Điểm NLP",
+        studyMode: "Học Tập",
+        xpShop: "Cửa Hàng XP",
+        vrDiscovery: "Khám Phá VR",
+      },
+
+      // Stats
+      statsLabels: [
+        "Học Sinh Tiếp Cận",
+        "Di Sản Văn Hóa",
+        "Mô Hình AI",
+        "Trường Thí Điểm",
+      ],
+
+      // Mission
+      missionLabel: "Sứ Mệnh Của Chúng Tôi",
+      missionVi: "Lan tỏa, kết nối và gìn giữ.",
+      missionEn: "Spread, connect, and preserve.",
+      whyBuilt: "Tại Sao Chúng Tôi Xây Dựng Điều Này",
+      missionHeadline1: "Việt Nam có hơn",
+      missionHeadline2: "40.000 di sản văn hóa.",
+      missionHeadline3: "Hầu hết bị lãng quên.",
+      missionBody1:
+        "Heritage Guessr được thai nghén tại Trường Delta Global School, Hà Nội như một sáng kiến công nghệ nhằm làm cho di sản văn hóa Việt Nam trở nên dễ tiếp cận, hấp dẫn và khó quên — bắt đầu từ học sinh và lan rộng ra cộng đồng.",
+      missionBody2:
+        "Chúng tôi kết hợp Google Street View, AI tạo sinh và NLP đa ngôn ngữ để biến việc lướt mạng thụ động thành học tập chủ động — đồng thời theo dõi tiến trình của bạn so với người chơi trên toàn thế giới.",
+      badgeDGS: "DGS Hà Nội",
+      badge600: "600+ Học Sinh",
+      badgeUNESCO: "Di Sản UNESCO",
+      badgeAI: "Hỗ Trợ AI",
+
+      // Technology
+      underTheHood: "Công Nghệ Bên Trong",
+      techHeadline1: "Được Hỗ Trợ Bởi Tám",
+      techHeadline2: "Công Nghệ",
+      techDesc:
+        "Từ Street View 3D thời gian thực đến mạng nơ-ron đa ngôn ngữ — mỗi lớp đều được chọn để phục vụ trải nghiệm.",
+      techDescs: [
+        "Frontend siêu nhanh với HMR",
+        "Khám phá di sản toàn cảnh 360°",
+        "Hướng dẫn AI & cá nhân hóa địa điểm",
+        "Tổng hợp giọng nói song ngữ tự nhiên",
+        "Chấm điểm câu trả lời đa ngôn ngữ",
+        "Nhân vật AI 3D đồng hành Savannah",
+        "REST API Express 5 + cơ sở dữ liệu quan hệ",
+        "Hoạt ảnh mượt mà, giao diện utility-first",
+      ],
+
+      // Timeline
+      ourJourney: "Hành Trình Của Chúng Tôi",
+      howItStarted: "Tất Cả Đã",
+      howItStartedAccent: "Bắt Đầu",
+      journeyDesc:
+        "Từ ý tưởng trong lớp học đến nền tảng full-stack phục vụ hàng trăm học sinh — đây là câu chuyện của Heritage Guessr.",
+      quote:
+        '"Chúng tôi đã tự hỏi — điều gì sẽ xảy ra nếu việc khám phá lại quá khứ Việt Nam có thể cảm giác như chơi game? Câu hỏi đó đã trở thành Heritage Guessr."',
+      quoteRole: "Lãnh Đạo Đổi Mới",
+      timeline: [
+        {
+          year: "2024 · Khởi Nguyên",
+          title: "Ra Đời Tại Delta Global School",
+          desc: "Heritage Guessr bắt đầu như một dự án capstone tại DGS Hà Nội — kết hợp giáo dục, AI và bảo tồn văn hóa Việt Nam vào một nền tảng duy nhất.",
+        },
+        {
+          year: "2024 · Giai Đoạn Xây Dựng",
+          title: "Tích Hợp AI & NLP",
+          desc: "Tích hợp Google Street View, hướng dẫn viên chat Savannah do Gemma điều khiển và công cụ chấm điểm NLP đa ngôn ngữ hiểu cả tiếng Anh và tiếng Việt.",
+        },
+        {
+          year: "2025 · Ra Mắt Thí Điểm",
+          title: "Hơn 600 Học Sinh Tham Gia",
+          desc: "Triển khai tại Trường Delta Global School và Trường THPT Lương Văn Can. Người chơi đã khám phá hơn 40 di sản UNESCO và quốc gia qua gameplay đắm chìm.",
+        },
+        {
+          year: "Hiện Tại · Nền Tảng Mở",
+          title: "Cộng Đồng & Tăng Trưởng",
+          desc: "Bất kỳ người dùng đã đăng nhập nào đều có thể đóng góp địa điểm di sản mới. Gemma tự động tạo metadata; kiểm duyệt viên xem xét trước khi phê duyệt. Kho lưu trữ phát triển cùng cộng đồng.",
+        },
+      ],
+
+      // Savannah spotlight
+      meetAIGuide: "Gặp Gỡ Hướng Dẫn Viên AI",
+      savannahTitle1: "Savannah — Chuyên Gia",
+      savannahTitle2: "Di Sản Của Bạn",
+      savannahDesc:
+        "Được hỗ trợ bởi Gemma 4 26B qua DeepInfra, Savannah cung cấp gợi ý theo ngữ cảnh mà không bao giờ tiết lộ đáp án. Cô ấy nói bằng ngôn ngữ tự nhiên, đọc to câu trả lời qua Gemini TTS (giọng Despina), và hiện thân như một nhân vật VRM 3D mà bạn có thể xem nháy mắt và hoạt ảnh theo thời gian thực.",
+      online: "TRỰC TUYẾN",
+      pillGemma: "Gemma 4 · 26B Chat",
+      pillTTS: "Gemini TTS",
+      pill3D: "Nhân Vật VRM 3D",
+      pillLang: "VI + EN",
+
+      // Hieu quote
+      hieuQuote1: "Tôi đã viết từng",
+      hieuQuoteAccent: "dòng code",
+      hieuQuote2: "với một mục tiêu: làm cho di sản Việt Nam",
+      hieuQuoteAccent2: "không thể bị lãng quên.",
+      hieuRole: "Trưởng Nhóm Phát Triển · Thiết Kế · Tác Giả",
+
+      // Team / Contact
+      craftedBy: "Được Tạo Bởi",
+      foundingTeam: "Đội Sáng Lập",
+      teamDesc:
+        "Ba học sinh tại Delta Global School, Hà Nội — cùng chung một sứ mệnh.",
+      memberRoles: [
+        "Lãnh Đạo Đổi Mới",
+        "Trưởng Nhóm Phát Triển · Thiết Kế · Tác Giả",
+        "Chuyên Gia Nội Dung Sáng Tạo",
+      ],
+      dgsTitle: "Delta Global School",
+      dgsLocation: "Hà Nội, Việt Nam",
+      dgsDesc:
+        "Heritage Guessr được thai nghén và xây dựng tại DGS như một phần của sáng kiến bảo tồn và quảng bá di sản văn hóa Việt Nam thông qua công nghệ.",
+      theTeamLabel: "Đội Ngũ",
+      meetFounders: "Gặp Gỡ Những Nhà Sáng Lập",
+      meetFoundersDesc:
+        "Xem toàn bộ đội ngũ đứng sau Heritage Guessr trên trang chủ của chúng tôi.",
+      viewFounders: "Xem Nhà Sáng Lập",
+
+      // Bottom strip
+      openSource: "Mã Nguồn Mở · Giáo Dục",
+      bottomTitle: "Được tạo ra với ❤️ cho Di Sản Văn Hóa Việt Nam",
+      copyright:
+        "Bản quyền © 2025 Lê Trung Hiếu và Đội Ngũ Heritage Guessr. Mọi quyền được bảo lưu.",
+      followUs: "Theo Dõi",
+      contributeASite: "Đóng Góp Địa Danh",
+    },
+
     // Founders section
     founders: {
       eyebrow: "Những Người Đứng Sau Nền Tảng",
       headline: "Những",
       headlineAccent: "Nhà Sáng Lập",
-      subtitle: "Một đội ngũ tận tâm bảo tồn và tôn vinh hồn Việt — từng di tích một.",
+      subtitle:
+        "Một đội ngũ tận tâm bảo tồn và tôn vinh hồn Việt — từng di tích một.",
       founderBadge: "Nhà Sáng Lập",
       viewProfile: "Xem hồ sơ →",
       connect: "Kết Nối",
@@ -546,7 +830,7 @@ const t = {
         },
         {
           name: "Lê Trung Hiếu",
-          role: "Trưởng Nhóm Kỹ Thuật & Thiết Kế",
+          role: "Lãnh Đạo Kỹ Thuật & Design",
           bio: "Phụ trách toàn bộ quá trình phát triển Heritage Guessr, từ kỹ thuật full-stack và kiến trúc backend đến thiết kế frontend, tạo ra nền tảng vững chắc biến di sản Việt Nam thành trải nghiệm số sống động.",
         },
         {
