@@ -432,24 +432,34 @@ const t = {
       quoteRole: "Innovation Leader",
       timeline: [
         {
-          year: "2024 · Conception",
-          title: "Born at Delta Global School",
-          desc: "Heritage Guessr began as a capstone project at DGS Hanoi — blending education, AI, and Vietnamese cultural preservation into a single platform.",
+          year: "Early 2025 · Genesis",
+          title: "Born in Room B410",
+          desc: "The idea took shape at DGS as a Capstone project — blending education and AI to preserve Vietnamese cultural identity. An early concept emerged for a game integrating VR interactions to explore the nation's heritage.",
         },
         {
-          year: "2024 · Build Phase",
-          title: "AI & NLP Integration",
-          desc: "Integrated Google Street View, a custom Gemma-powered chat guide named Savannah, and a multilingual NLP scoring engine that understands both English and Vietnamese guesses.",
+          year: "Summer 2025 · Chapter One",
+          title: "Beta 0.1 Takes Shape",
+          desc: "The first Beta was built, laying the groundwork for an AI and NLP-integrated platform. Initial testing reached 10–20 players from a small in-class group, with early feedback from History and Geography teachers.",
         },
         {
-          year: "2025 · Pilot Launch",
-          title: "600+ Students Onboarded",
-          desc: "Rolled out to Delta Global School and Luong Van Can High School. Players explored over 40 UNESCO and national heritage sites through immersive gameplay.",
+          year: "Late 2025 · Pilot Launch",
+          title: "Schools & Real Feedback",
+          desc: "After feature upgrades, the project was piloted at DGS Adventure (The Dewey School) and Luong Van Can High School. Over 300 students and 10 teachers participated, providing valuable reviews and feedback.",
+        },
+        {
+          year: "Mar 2026 · Beta 1.0",
+          title: "Major Upgrade",
+          desc: "The platform received a significant overhaul in UI, AI protocols, feature systems, and data processing pipelines — shaped by real teacher feedback and classroom needs — ready to reach the wider community.",
         },
         {
           year: "Now · Open Platform",
-          title: "Community & Growth",
-          desc: "Any logged-in user can contribute new heritage sites. Gemma auto-generates metadata; curators review before approval. The archive grows with the community.",
+          title: "Community Contributions",
+          desc: "Heritage Guessr is finalising its packaging to reach users. We are accelerating the movement by opening contributions not just to founders, but to the community itself.",
+        },
+        {
+          year: "Future · Horizon",
+          title: "The Sky's the Limit",
+          desc: "Heritage Guessr aims to continue expanding its technical infrastructure to meet the growing needs of players and preserve even more of Vietnam's rich cultural landscape.",
         },
       ],
 
@@ -745,24 +755,34 @@ const t = {
       quoteRole: "Lãnh Đạo Đổi Mới",
       timeline: [
         {
-          year: "2024 · Khởi Nguyên",
-          title: "Ra Đời Tại Delta Global School",
-          desc: "Heritage Guessr bắt đầu như một dự án capstone tại DGS Hà Nội — kết hợp giáo dục, AI và bảo tồn văn hóa Việt Nam vào một nền tảng duy nhất.",
+          year: "Đầu 2025 · Khởi Nguyên",
+          title: "Ra Đời Trong Phòng B410",
+          desc: "Ý tưởng được thai nghén tại DGS như một dự án Capstone — kết hợp giáo dục và AI nhằm bảo tồn bản sắc văn hóa Việt Nam. Ý tưởng ban đầu về một tựa game tích hợp tương tác VR để khám phá di sản đất nước được hình thành.",
         },
         {
-          year: "2024 · Giai Đoạn Xây Dựng",
-          title: "Tích Hợp AI & NLP",
-          desc: "Tích hợp Google Street View, hướng dẫn viên chat Savannah do Gemma điều khiển và công cụ chấm điểm NLP đa ngôn ngữ hiểu cả tiếng Anh và tiếng Việt.",
+          year: "Hè 2025 · Chương Đầu",
+          title: "Beta 0.1 Được Hình Thành",
+          desc: "Phiên bản Beta đầu tiên ra đời, đặt nền móng cho nền tảng tích hợp AI và NLP. Thử nghiệm ban đầu với 10–20 người chơi trong nhóm nhỏ trong lớp, cùng phản hồi từ giáo viên Sử và Địa.",
         },
         {
-          year: "2025 · Ra Mắt Thí Điểm",
-          title: "Hơn 600 Học Sinh Tham Gia",
-          desc: "Triển khai tại Trường Delta Global School và Trường THPT Lương Văn Can. Người chơi đã khám phá hơn 40 di sản UNESCO và quốc gia qua gameplay đắm chìm.",
+          year: "Cuối 2025 · Ra Mắt Thử Nghiệm",
+          title: "Trường Học & Phản Hồi Thực Tế",
+          desc: "Sau khi nâng cấp tính năng, dự án được thử nghiệm tại hệ DGS Adventure (The Dewey School) và Trường THPT Lương Văn Can. Hơn 300 học sinh và 10 giáo viên tham gia đưa ra nhận xét và phản hồi.",
+        },
+        {
+          year: "T3 2026 · Beta 1.0",
+          title: "Nâng Cấp Toàn Diện",
+          desc: "Sản phẩm được nâng cấp mạnh mẽ về giao diện, giao thức AI, hệ thống tính năng và quy trình xử lý dữ liệu — dựa theo phản hồi thực tiễn của giáo viên — sẵn sàng đến với cộng đồng.",
         },
         {
           year: "Hiện Tại · Nền Tảng Mở",
-          title: "Cộng Đồng & Tăng Trưởng",
-          desc: "Bất kỳ người dùng đã đăng nhập nào đều có thể đóng góp địa điểm di sản mới. Gemma tự động tạo metadata; kiểm duyệt viên xem xét trước khi phê duyệt. Kho lưu trữ phát triển cùng cộng đồng.",
+          title: "Đóng Góp Từ Cộng Đồng",
+          desc: "Heritage Guessr đang tiến đến giai đoạn đóng gói sản phẩm để đưa đến tay người dùng. Chúng tôi đẩy mạnh phong trào bằng việc cho phép không chỉ nhà sáng lập mà cả cộng đồng cùng đóng góp xây dựng nền tảng.",
+        },
+        {
+          year: "Tương Lai · Biển Trời Rộng Mở",
+          title: "Không Giới Hạn",
+          desc: "Heritage Guessr hướng đến việc tiếp tục phát triển hạ tầng kỹ thuật nhằm đáp ứng nhu cầu ngày càng lớn của người chơi và bảo tồn thêm nhiều di sản văn hóa phong phú của Việt Nam.",
         },
       ],
 

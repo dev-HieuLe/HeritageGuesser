@@ -21,24 +21,26 @@ import { useEffect, useRef, useState } from "react";
 import { useJsApiLoader } from "@react-google-maps/api";
 
 const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
-const LS_KEY  = "vr_calib_v2";
+const LS_KEY = "vr_calib_v2";
 
 // ─── Calibration defaults ────────────────────────────────────────────────────
 // Pre-filled for user's box: 30mm lenses (r=15mm), 35mm IPD, 145mm phone (14.5cm)
 const DEFAULTS = {
-  lensDistanceMM:  35,    // 3.5 cm center-to-center between lenses
-  lensRadiusMM:    15,    // 3 cm diameter lens → radius = 15mm
-  screenWidthMM:   145,   // phone ~14.5 cm long (landscape width)
-  eyeWidthVW:      24,    // fallback; auto-computed = 35/145×100 = 24.1 vw
+  lensDistanceMM: 35, // 3.5 cm center-to-center between lenses
+  lensRadiusMM: 15, // 3 cm diameter lens → radius = 15mm
+  screenWidthMM: 145, // phone ~14.5 cm long (landscape width)
+  eyeWidthVW: 24, // fallback; auto-computed = 35/145×100 = 24.1 vw
   verticalOffsetPX: 0,
-  zoom:            1,
+  zoom: 1,
 };
 
 function loadCalib() {
   try {
     const raw = JSON.parse(localStorage.getItem(LS_KEY));
     return { ...DEFAULTS, ...(raw || {}) };
-  } catch { return { ...DEFAULTS }; }
+  } catch {
+    return { ...DEFAULTS };
+  }
 }
 
 function persistCalib(c) {
@@ -54,87 +56,96 @@ function computeEyeVW(calib) {
   return null;
 }
 
-// Compute how many vw to shift each eye's panorama INWARD so the camera center
-// lands exactly behind its physical lens, not at the screen-half center.
-//
-// Physics:
-//   Left lens center from screen left  = (screenWidth - IPD) / 2
-//   Left container center (software)   = screenWidth / 4   (= 25 vw)
-//   Offset = lens_pos - container_center  (positive → shift right for left eye)
-//
-// Without this correction each eye looks slightly outward through the lens,
-// causing the brain to see two separate images instead of one fused image.
-function computeEyeOffsetVW(calib) {
-  if (calib.screenWidthMM > 0) {
-    const leftLensMM     = (calib.screenWidthMM - calib.lensDistanceMM) / 2;
-    const leftContCtrMM  = calib.screenWidthMM / 4;
-    return ((leftLensMM - leftContCtrMM) / calib.screenWidthMM) * 100;
-  }
-  return 0;
-}
-
 // Clip-path radius as % of each eye container (50vw wide).
 // rx = lensRadius / halfScreenWidth × 100
 // This sizes the goggle window to exactly the physical lens aperture.
 function computeClipRX(calib) {
   if (calib.screenWidthMM > 0) {
     const halfMM = calib.screenWidthMM / 2;
-    return parseFloat(Math.min(48, Math.max(10, (calib.lensRadiusMM / halfMM) * 100)).toFixed(1));
+    return parseFloat(
+      Math.min(48, Math.max(10, (calib.lensRadiusMM / halfMM) * 100)).toFixed(
+        1,
+      ),
+    );
   }
   return 38;
 }
 
 // ─── Street View shared options (no UI) ──────────────────────────────────────
 const PANO_UI_OFF = {
-  addressControl:        false,
-  fullscreenControl:     false,
-  linksControl:          false,
-  panControl:            false,
-  zoomControl:           false,
+  addressControl: false,
+  fullscreenControl: false,
+  linksControl: false,
+  panControl: false,
+  zoomControl: false,
   motionTrackingControl: false,
-  showRoadLabels:        false,
-  clickToGo:             false,
-  disableDefaultUI:      true,
-  visible:               true,
+  showRoadLabels: false,
+  clickToGo: false,
+  disableDefaultUI: true,
+  visible: true,
 };
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
 /** Simple [−] value [+] stepper */
-function Stepper({ value, onChange, min = -Infinity, max = Infinity, step = 1, decimals = 0, disabled = false }) {
-  const clamp = (v) => parseFloat(Math.min(max, Math.max(min, v)).toFixed(decimals));
+function Stepper({
+  value,
+  onChange,
+  min = -Infinity,
+  max = Infinity,
+  step = 1,
+  decimals = 0,
+  disabled = false,
+}) {
+  const clamp = (v) =>
+    parseFloat(Math.min(max, Math.max(min, v)).toFixed(decimals));
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 2 }}>
       <button
         onClick={() => onChange(clamp(value - step))}
         disabled={disabled || value <= min}
         style={stepBtn(disabled || value <= min)}
-      >−</button>
-      <span style={{
-        minWidth: 72, textAlign: "center",
-        fontSize: 13, fontWeight: 700,
-        color: disabled ? "rgba(192,200,195,0.28)" : "#e3e3d9",
-        userSelect: "none",
-      }}>
+      >
+        −
+      </button>
+      <span
+        style={{
+          minWidth: 72,
+          textAlign: "center",
+          fontSize: 13,
+          fontWeight: 700,
+          color: disabled ? "rgba(192,200,195,0.28)" : "#e3e3d9",
+          userSelect: "none",
+        }}
+      >
         {value.toFixed(decimals)}
       </span>
       <button
         onClick={() => onChange(clamp(value + step))}
         disabled={disabled || value >= max}
         style={stepBtn(disabled || value >= max)}
-      >+</button>
+      >
+        +
+      </button>
     </div>
   );
 }
 function stepBtn(off) {
   return {
-    width: 34, height: 34, borderRadius: 8,
+    width: 34,
+    height: 34,
+    borderRadius: 8,
     border: `1px solid ${off ? "rgba(65,73,68,0.25)" : "rgba(162,209,187,0.22)"}`,
     backgroundColor: off ? "rgba(26,28,22,0.4)" : "rgba(26,28,22,0.9)",
     color: off ? "rgba(162,209,187,0.18)" : "#a2d1bb",
-    fontSize: 20, lineHeight: 1, cursor: off ? "default" : "pointer",
-    display: "flex", alignItems: "center", justifyContent: "center",
-    fontFamily: "monospace", flexShrink: 0,
+    fontSize: 20,
+    lineHeight: 1,
+    cursor: off ? "default" : "pointer",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontFamily: "monospace",
+    flexShrink: 0,
   };
 }
 
@@ -142,12 +153,50 @@ function stepBtn(off) {
 function CalibRow({ label, display, hint, children }) {
   return (
     <div style={{ marginBottom: 20 }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-start",
+          marginBottom: 8,
+        }}
+      >
         <div>
-          <p style={{ fontSize: 11, fontWeight: 700, color: "rgba(192,200,195,0.75)", margin: 0, letterSpacing: "0.03em" }}>{label}</p>
-          {hint && <p style={{ fontSize: 9, color: "rgba(162,209,187,0.32)", margin: "3px 0 0", letterSpacing: "0.06em", lineHeight: 1.5 }}>{hint}</p>}
+          <p
+            style={{
+              fontSize: 11,
+              fontWeight: 700,
+              color: "rgba(192,200,195,0.75)",
+              margin: 0,
+              letterSpacing: "0.03em",
+            }}
+          >
+            {label}
+          </p>
+          {hint && (
+            <p
+              style={{
+                fontSize: 9,
+                color: "rgba(162,209,187,0.32)",
+                margin: "3px 0 0",
+                letterSpacing: "0.06em",
+                lineHeight: 1.5,
+              }}
+            >
+              {hint}
+            </p>
+          )}
         </div>
-        <span style={{ fontSize: 13, fontWeight: 900, color: "#e9c349", marginLeft: 12, whiteSpace: "nowrap", flexShrink: 0 }}>
+        <span
+          style={{
+            fontSize: 13,
+            fontWeight: 900,
+            color: "#e9c349",
+            marginLeft: 12,
+            whiteSpace: "nowrap",
+            flexShrink: 0,
+          }}
+        >
           {display}
         </span>
       </div>
@@ -159,15 +208,21 @@ function CalibRow({ label, display, hint, children }) {
 /** Full calibration panel rendered as an overlay inside the VR container */
 function CalibrationPanel({ draft, setDraft, onSave, onReset, onClose }) {
   const autoVW = computeEyeVW(draft);
-  const set    = (key) => (v) => setDraft((d) => ({ ...d, [key]: v }));
+  const set = (key) => (v) => setDraft((d) => ({ ...d, [key]: v }));
 
   return (
     <div
       style={{
-        position: "absolute", inset: 0, zIndex: 300,
-        backgroundColor: "rgba(6,9,6,0.92)", backdropFilter: "blur(18px)",
-        display: "flex", alignItems: "center", justifyContent: "center",
-        padding: 16, fontFamily: "'Be Vietnam Pro', sans-serif",
+        position: "absolute",
+        inset: 0,
+        zIndex: 300,
+        backgroundColor: "rgba(6,9,6,0.92)",
+        backdropFilter: "blur(18px)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: 16,
+        fontFamily: "'Be Vietnam Pro', sans-serif",
       }}
       onClick={onClose}
     >
@@ -175,22 +230,60 @@ function CalibrationPanel({ draft, setDraft, onSave, onReset, onClose }) {
         style={{
           backgroundColor: "#191d17",
           border: "1px solid rgba(65,73,68,0.55)",
-          borderRadius: 22, padding: "26px 24px 22px",
+          borderRadius: 22,
+          padding: "26px 24px 22px",
           width: "min(100%, 370px)",
-          maxHeight: "92vh", overflowY: "auto",
+          maxHeight: "92vh",
+          overflowY: "auto",
           boxShadow: "0 48px 96px rgba(0,0,0,0.7)",
         }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24 }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "flex-start",
+            marginBottom: 24,
+          }}
+        >
           <div>
-            <h2 style={{ fontSize: 16, fontWeight: 900, color: "#e3e3d9", margin: 0, letterSpacing: "-0.01em" }}>VR Calibration</h2>
-            <p style={{ fontSize: 9, color: "rgba(162,209,187,0.3)", margin: "4px 0 0", letterSpacing: "0.15em", textTransform: "uppercase" }}>
+            <h2
+              style={{
+                fontSize: 16,
+                fontWeight: 900,
+                color: "#e3e3d9",
+                margin: 0,
+                letterSpacing: "-0.01em",
+              }}
+            >
+              VR Calibration
+            </h2>
+            <p
+              style={{
+                fontSize: 9,
+                color: "rgba(162,209,187,0.3)",
+                margin: "4px 0 0",
+                letterSpacing: "0.15em",
+                textTransform: "uppercase",
+              }}
+            >
               Adjust to match your cardboard headset
             </p>
           </div>
-          <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", color: "rgba(162,209,187,0.35)", fontSize: 24, lineHeight: 1, padding: "0 0 0 12px" }}>
+          <button
+            onClick={onClose}
+            style={{
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              color: "rgba(162,209,187,0.35)",
+              fontSize: 24,
+              lineHeight: 1,
+              padding: "0 0 0 12px",
+            }}
+          >
             ✕
           </button>
         </div>
@@ -208,7 +301,9 @@ function CalibrationPanel({ draft, setDraft, onSave, onReset, onClose }) {
           <Stepper
             value={draft.eyeWidthVW}
             onChange={set("eyeWidthVW")}
-            min={25} max={60} step={1}
+            min={25}
+            max={60}
+            step={1}
             disabled={draft.screenWidthMM > 0}
           />
         </CalibRow>
@@ -222,7 +317,9 @@ function CalibrationPanel({ draft, setDraft, onSave, onReset, onClose }) {
           <Stepper
             value={draft.verticalOffsetPX}
             onChange={set("verticalOffsetPX")}
-            min={-200} max={200} step={5}
+            min={-200}
+            max={200}
+            step={5}
           />
         </CalibRow>
 
@@ -235,13 +332,31 @@ function CalibrationPanel({ draft, setDraft, onSave, onReset, onClose }) {
           <Stepper
             value={draft.zoom}
             onChange={set("zoom")}
-            min={0} max={3} step={0.1} decimals={1}
+            min={0}
+            max={3}
+            step={0.1}
+            decimals={1}
           />
         </CalibRow>
 
         {/* Divider */}
-        <div style={{ height: 1, backgroundColor: "rgba(65,73,68,0.3)", margin: "8px 0 22px" }} />
-        <p style={{ fontSize: 9, fontWeight: 900, letterSpacing: "0.2em", color: "rgba(162,209,187,0.28)", textTransform: "uppercase", margin: "0 0 18px" }}>
+        <div
+          style={{
+            height: 1,
+            backgroundColor: "rgba(65,73,68,0.3)",
+            margin: "8px 0 22px",
+          }}
+        />
+        <p
+          style={{
+            fontSize: 9,
+            fontWeight: 900,
+            letterSpacing: "0.2em",
+            color: "rgba(162,209,187,0.28)",
+            textTransform: "uppercase",
+            margin: "0 0 18px",
+          }}
+        >
           Precision — Cardboard optics
         </p>
 
@@ -254,35 +369,53 @@ function CalibrationPanel({ draft, setDraft, onSave, onReset, onClose }) {
           <Stepper
             value={draft.lensDistanceMM}
             onChange={set("lensDistanceMM")}
-            min={40} max={90} step={0.5} decimals={1}
+            min={40}
+            max={90}
+            step={0.5}
+            decimals={1}
           />
         </CalibRow>
 
         {/* ── 5. Screen Width ── */}
         <CalibRow
           label="Phone Screen Width"
-          display={draft.screenWidthMM > 0 ? `${draft.screenWidthMM} mm` : "Unknown"}
+          display={
+            draft.screenWidthMM > 0 ? `${draft.screenWidthMM} mm` : "Unknown"
+          }
           hint={`Measure the horizontal screen width in landscape (long side).  Set to 0 to use manual eye width.`}
         >
           <Stepper
             value={draft.screenWidthMM}
             onChange={set("screenWidthMM")}
-            min={0} max={200} step={1}
+            min={0}
+            max={200}
+            step={1}
           />
         </CalibRow>
 
         {/* Auto-computed result callout */}
         {autoVW && (
-          <div style={{
-            backgroundColor: "rgba(162,209,187,0.06)",
-            border: "1px solid rgba(162,209,187,0.18)",
-            borderRadius: 10, padding: "10px 14px",
-            textAlign: "center", marginBottom: 20,
-          }}>
+          <div
+            style={{
+              backgroundColor: "rgba(162,209,187,0.06)",
+              border: "1px solid rgba(162,209,187,0.18)",
+              borderRadius: 10,
+              padding: "10px 14px",
+              textAlign: "center",
+              marginBottom: 20,
+            }}
+          >
             <p style={{ fontSize: 11, color: "#a2d1bb", margin: 0 }}>
               Computed eye window: <strong>{autoVW} vw</strong>
             </p>
-            <p style={{ fontSize: 9, color: "rgba(162,209,187,0.42)", margin: "4px 0 0", letterSpacing: "0.06em" }}>
+            <p
+              style={{
+                fontSize: 9,
+                color: "rgba(162,209,187,0.42)",
+                margin: "4px 0 0",
+                letterSpacing: "0.06em",
+              }}
+            >
               = {draft.lensDistanceMM} mm ÷ {draft.screenWidthMM} mm × 100
             </p>
           </div>
@@ -292,11 +425,18 @@ function CalibrationPanel({ draft, setDraft, onSave, onReset, onClose }) {
         <button
           onClick={onSave}
           style={{
-            width: "100%", padding: "13px 0", borderRadius: 12,
-            backgroundColor: "#a2d1bb", color: "#12140e",
-            border: "none", fontSize: 12, fontWeight: 900,
-            letterSpacing: "0.12em", textTransform: "uppercase",
-            cursor: "pointer", marginBottom: 8,
+            width: "100%",
+            padding: "13px 0",
+            borderRadius: 12,
+            backgroundColor: "#a2d1bb",
+            color: "#12140e",
+            border: "none",
+            fontSize: 12,
+            fontWeight: 900,
+            letterSpacing: "0.12em",
+            textTransform: "uppercase",
+            cursor: "pointer",
+            marginBottom: 8,
             fontFamily: "'Be Vietnam Pro', sans-serif",
           }}
         >
@@ -305,11 +445,18 @@ function CalibrationPanel({ draft, setDraft, onSave, onReset, onClose }) {
         <button
           onClick={onReset}
           style={{
-            width: "100%", padding: "10px 0", borderRadius: 12,
-            backgroundColor: "transparent", color: "rgba(192,200,195,0.4)",
-            border: "1px solid rgba(65,73,68,0.4)", fontSize: 11, fontWeight: 700,
-            letterSpacing: "0.08em", textTransform: "uppercase",
-            cursor: "pointer", fontFamily: "'Be Vietnam Pro', sans-serif",
+            width: "100%",
+            padding: "10px 0",
+            borderRadius: 12,
+            backgroundColor: "transparent",
+            color: "rgba(192,200,195,0.4)",
+            border: "1px solid rgba(65,73,68,0.4)",
+            fontSize: 11,
+            fontWeight: 700,
+            letterSpacing: "0.08em",
+            textTransform: "uppercase",
+            cursor: "pointer",
+            fontFamily: "'Be Vietnam Pro', sans-serif",
           }}
         >
           Reset to Defaults
@@ -323,42 +470,44 @@ function CalibrationPanel({ draft, setDraft, onSave, onReset, onClose }) {
 export default function VRMode({ location, permissionGranted, onExit }) {
   const containerRef = useRef(null);
   // These refs are the CONTAINERS — the actual pano divs are inside them
-  const leftContRef  = useRef(null);
+  const leftContRef = useRef(null);
   const rightContRef = useRef(null);
   // These refs are the pano canvas divs (resized by calibration)
-  const leftPaneRef  = useRef(null);
+  const leftPaneRef = useRef(null);
   const rightPaneRef = useRef(null);
 
-  const leftPano    = useRef(null);
-  const rightPano   = useRef(null);
-  const syncing     = useRef(false); // guard against pov feedback loop
+  const leftPano = useRef(null);
+  const rightPano = useRef(null);
+  const syncing = useRef(false); // guard against pov feedback loop
 
-  const [calib,      setCalib]      = useState(loadCalib);
-  const [draft,      setDraft]      = useState(loadCalib);
-  const [panoReady,  setPanoReady]  = useState(false);
-  const [isCalib,    setIsCalib]    = useState(false);
+  const [calib, setCalib] = useState(loadCalib);
+  const [draft, setDraft] = useState(loadCalib);
+  const [panoReady, setPanoReady] = useState(false);
+  const [isCalib, setIsCalib] = useState(false);
 
   const { isLoaded } = useJsApiLoader({ googleMapsApiKey: API_KEY });
 
-  // Horizontal shift (vw) to align each camera behind its physical lens
-  const eyeOffset = computeEyeOffsetVW(calib);
-  // Lens center as % of each 50%-wide container (used for clip-path + pane left)
-  const leftCX    = 50 + 2 * eyeOffset;
-  const rightCX   = 50 - 2 * eyeOffset;
+  // Both panes centered identically in their containers
+  const leftCX = 50;
+  const rightCX = 50;
 
   // Window size: 1.3× the physical lens aperture for a bigger window.
   // clipRX drives the visible hole size.
   // eyeVW = clipRX exactly fills the hole with panorama content (no over-render).
   // Camera centers (leftCX / rightCX) are untouched → fusion preserved.
   const clipRX = computeClipRX(calib) * 3.1;
-  const eyeVW  = Math.max(computeEyeVW(calib) ?? calib.eyeWidthVW, clipRX);
+  const eyeVW = Math.max(computeEyeVW(calib) ?? calib.eyeWidthVW, clipRX);
 
   // ── Fullscreen + orientation lock ───────────────────────────────────────────
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
 
-    (el.requestFullscreen?.() ?? el.webkitRequestFullscreen?.() ?? Promise.resolve()).catch(() => {});
+    (
+      el.requestFullscreen?.() ??
+      el.webkitRequestFullscreen?.() ??
+      Promise.resolve()
+    ).catch(() => {});
 
     if (screen.orientation?.lock) {
       screen.orientation.lock("landscape").catch(() => {});
@@ -377,7 +526,14 @@ export default function VRMode({ location, permissionGranted, onExit }) {
 
   // ── Create/recreate panoramas when API loads or location changes ────────────
   useEffect(() => {
-    console.log("[VRMode] isLoaded:", isLoaded, "leftPane:", !!leftPaneRef.current, "rightPane:", !!rightPaneRef.current);
+    console.log(
+      "[VRMode] isLoaded:",
+      isLoaded,
+      "leftPane:",
+      !!leftPaneRef.current,
+      "rightPane:",
+      !!rightPaneRef.current,
+    );
     if (!isLoaded || !leftPaneRef.current || !rightPaneRef.current) return;
 
     console.log("[VRMode] Creating panoramas for location:", location);
@@ -391,23 +547,29 @@ export default function VRMode({ location, permissionGranted, onExit }) {
     const sharedCfg = {
       ...PANO_UI_OFF,
       ...(location.panoId ? { pano: location.panoId } : { position }),
-      pov:  { heading: 0, pitch: 0 },
+      pov: { heading: 0, pitch: 0 },
       zoom: calib.zoom,
     };
 
     // ── Left eye: gyroscope enabled ──────────────────────────────────────────
-    const left = new window.google.maps.StreetViewPanorama(leftPaneRef.current, {
-      ...sharedCfg,
-      motionTracking: !!permissionGranted,
-    });
+    const left = new window.google.maps.StreetViewPanorama(
+      leftPaneRef.current,
+      {
+        ...sharedCfg,
+        motionTracking: !!permissionGranted,
+      },
+    );
 
     // ── Right eye: mirrors left, no independent motion ───────────────────────
-    const right = new window.google.maps.StreetViewPanorama(rightPaneRef.current, {
-      ...sharedCfg,
-      motionTracking: false,
-    });
+    const right = new window.google.maps.StreetViewPanorama(
+      rightPaneRef.current,
+      {
+        ...sharedCfg,
+        motionTracking: false,
+      },
+    );
 
-    leftPano.current  = left;
+    leftPano.current = left;
     rightPano.current = right;
 
     // ── Sync listeners (left → right, no offset) ────────────────────────────
@@ -446,7 +608,7 @@ export default function VRMode({ location, permissionGranted, onExit }) {
       setPanoReady(true);
     });
     // Fallback: also accept status_changed OK (some devices fire this instead)
-    const statL  = left.addListener("status_changed", () => {
+    const statL = left.addListener("status_changed", () => {
       const status = left.getStatus();
       console.log("[VRMode] status_changed:", status);
       if (status === "OK") setPanoReady(true);
@@ -454,11 +616,11 @@ export default function VRMode({ location, permissionGranted, onExit }) {
 
     return () => {
       [povL, zoomL, posL, tilesL, statL].forEach((l) =>
-        window.google?.maps.event.removeListener(l)
+        window.google?.maps.event.removeListener(l),
       );
       window.google?.maps.event.clearInstanceListeners(left);
       window.google?.maps.event.clearInstanceListeners(right);
-      leftPano.current  = null;
+      leftPano.current = null;
       rightPano.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -510,13 +672,13 @@ export default function VRMode({ location, permissionGranted, onExit }) {
   // lens rather than at the container midpoint, fixing the "two screens" issue.
   //
   const basePane = {
-    position:  "absolute",
-    width:     `${eyeVW}vw`,
-    height:    "100%",
-    top:       0,
+    position: "absolute",
+    width: `${eyeVW}vw`,
+    height: "100%",
+    top: 0,
     transform: `translateX(-50%) translateY(${calib.verticalOffsetPX}px)`,
   };
-  const leftPaneStyle  = { ...basePane, left: `${leftCX}%`  };
+  const leftPaneStyle = { ...basePane, left: `calc(${leftCX}% + 5cm)` };
   const rightPaneStyle = { ...basePane, left: `${rightCX}%` };
 
   return (
@@ -549,38 +711,75 @@ export default function VRMode({ location, permissionGranted, onExit }) {
 
       {/* Portrait warning (CSS-driven) */}
       <div className="vr-portrait">
-        <span className="material-symbols-outlined" style={{ fontSize: 60, animation: "vr-rot 1.6s ease-in-out infinite" }}>
+        <span
+          className="material-symbols-outlined"
+          style={{
+            fontSize: 60,
+            animation: "vr-rot 1.6s ease-in-out infinite",
+          }}
+        >
           screen_rotation
         </span>
-        <p style={{ fontSize: 17, fontWeight: 900, margin: 0, letterSpacing: "0.02em" }}>Rotate to landscape</p>
-        <p style={{ fontSize: 12, color: "rgba(162,209,187,0.5)", margin: 0 }}>VR requires horizontal orientation</p>
+        <p
+          style={{
+            fontSize: 17,
+            fontWeight: 900,
+            margin: 0,
+            letterSpacing: "0.02em",
+          }}
+        >
+          Rotate to landscape
+        </p>
+        <p style={{ fontSize: 12, color: "rgba(162,209,187,0.5)", margin: 0 }}>
+          VR requires horizontal orientation
+        </p>
       </div>
 
       {/* ── VR root ─────────────────────────────────────────────────────────── */}
       <div
         ref={containerRef}
         style={{
-          position: "fixed", inset: 0, zIndex: 9999,
+          position: "fixed",
+          inset: 0,
+          zIndex: 9999,
           backgroundColor: "#000",
-          display: "flex", flexDirection: "row",
+          display: "flex",
+          flexDirection: "row",
           overflow: "hidden",
         }}
       >
         {/* Loading overlay */}
         {!panoReady && (
-          <div style={{
-            position: "absolute", inset: 0, zIndex: 50,
-            backgroundColor: "#0a0c09",
-            display: "flex", flexDirection: "column",
-            alignItems: "center", justifyContent: "center",
-            gap: 16, color: "#a2d1bb",
-            fontFamily: "'Be Vietnam Pro', sans-serif",
-          }}>
-            <span className="material-symbols-outlined"
-              style={{ fontSize: 48, animation: "vr-spin 1s linear infinite" }}>
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              zIndex: 50,
+              backgroundColor: "#0a0c09",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 16,
+              color: "#a2d1bb",
+              fontFamily: "'Be Vietnam Pro', sans-serif",
+            }}
+          >
+            <span
+              className="material-symbols-outlined"
+              style={{ fontSize: 48, animation: "vr-spin 1s linear infinite" }}
+            >
               progress_activity
             </span>
-            <p style={{ fontSize: 13, fontWeight: 700, margin: 0, letterSpacing: "0.08em", textTransform: "uppercase" }}>
+            <p
+              style={{
+                fontSize: 13,
+                fontWeight: 700,
+                margin: 0,
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+              }}
+            >
               Loading panorama…
             </p>
           </div>
@@ -589,34 +788,30 @@ export default function VRMode({ location, permissionGranted, onExit }) {
         {/* ── SVG clip-path definitions (goggle lens shapes) ───────────────── */}
         {/*
           objectBoundingBox coords (0–1) scale to each 50vw×100vh container.
-          Left window: inner-right edge bows OUT to x≈0.985 at center (y=0.5),
-          retreating to x≈0.80 at top/bottom → gap widens toward corners.
-          Right window is the horizontal mirror.
-          Center gap at mid-height ≈ 2×(1-0.985)×50vw ≈ 1.5vw ≈ 0.4cm.
+          Inner edge is straight (L command) with gently rounded corners.
+          Outer edge bows outward. Center gap ≈ 0.3cm.
         */}
-        <svg width="0" height="0" style={{ position: "absolute", overflow: "hidden" }}>
+        <svg
+          width="0"
+          height="0"
+          style={{ position: "absolute", overflow: "hidden" }}
+        >
           <defs>
-            <clipPath id="vr-left-clip" clipPathUnits="objectBoundingBox">
-              <path d="
-                M 0.14,0.10
-                C 0.35,0.08 0.60,0.08 0.80,0.10
-                C 0.95,0.18 0.985,0.34 0.985,0.50
-                C 0.985,0.66 0.95,0.82 0.80,0.90
-                C 0.60,0.92 0.35,0.92 0.14,0.90
-                C 0.07,0.82 0.07,0.18 0.14,0.10
+            <clipPath id="vr-eye-clip" clipPathUnits="objectBoundingBox">
+              <path
+                d="
+                M 0.10,0.07
+                C 0.35,0.04 0.65,0.04 0.90,0.07
+                C 0.975,0.12 0.979,0.22 0.979,0.35
+                L 0.979,0.65
+                C 0.979,0.78 0.975,0.88 0.90,0.93
+                C 0.65,0.96 0.35,0.96 0.10,0.93
+                C 0.025,0.88 0.021,0.78 0.021,0.65
+                L 0.021,0.35
+                C 0.021,0.22 0.025,0.12 0.10,0.07
                 Z
-              " />
-            </clipPath>
-            <clipPath id="vr-right-clip" clipPathUnits="objectBoundingBox">
-              <path d="
-                M 0.86,0.10
-                C 0.65,0.08 0.40,0.08 0.20,0.10
-                C 0.05,0.18 0.015,0.34 0.015,0.50
-                C 0.015,0.66 0.05,0.82 0.20,0.90
-                C 0.40,0.92 0.65,0.92 0.86,0.90
-                C 0.93,0.82 0.93,0.18 0.86,0.10
-                Z
-              " />
+              "
+              />
             </clipPath>
           </defs>
         </svg>
@@ -625,34 +820,50 @@ export default function VRMode({ location, permissionGranted, onExit }) {
         <div
           ref={leftContRef}
           style={{
-            width: "50%", height: "100%",
-            position: "relative", overflow: "hidden",
-            flexShrink: 0, backgroundColor: "#000",
-            clipPath: "url(#vr-left-clip)",
+            width: "50%",
+            height: "100%",
+            position: "relative",
+            overflow: "hidden",
+            flexShrink: 0,
+            backgroundColor: "#000",
+            clipPath: "url(#vr-eye-clip)",
           }}
         >
           <div ref={leftPaneRef} className="vr-eye" style={leftPaneStyle} />
-          <div style={{
-            position: "absolute", inset: 0, zIndex: 10, pointerEvents: "none",
-            background: `radial-gradient(ellipse 80% 75% at ${leftCX}% 50%, transparent 55%, rgba(0,0,0,0.55) 100%)`,
-          }} />
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              zIndex: 10,
+              pointerEvents: "none",
+              background: `radial-gradient(ellipse 80% 75% at ${leftCX}% 50%, transparent 55%, rgba(0,0,0,0.55) 100%)`,
+            }}
+          />
         </div>
 
         {/* ── Right eye container ──────────────────────────────────────────── */}
         <div
           ref={rightContRef}
           style={{
-            width: "50%", height: "100%",
-            position: "relative", overflow: "hidden",
-            flexShrink: 0, backgroundColor: "#000",
-            clipPath: "url(#vr-right-clip)",
+            width: "50%",
+            height: "100%",
+            position: "relative",
+            overflow: "hidden",
+            flexShrink: 0,
+            backgroundColor: "#000",
+            clipPath: "url(#vr-eye-clip)",
           }}
         >
           <div ref={rightPaneRef} className="vr-eye" style={rightPaneStyle} />
-          <div style={{
-            position: "absolute", inset: 0, zIndex: 10, pointerEvents: "none",
-            background: `radial-gradient(ellipse 80% 75% at ${rightCX}% 50%, transparent 55%, rgba(0,0,0,0.55) 100%)`,
-          }} />
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              zIndex: 10,
+              pointerEvents: "none",
+              background: `radial-gradient(ellipse 80% 75% at ${rightCX}% 50%, transparent 55%, rgba(0,0,0,0.55) 100%)`,
+            }}
+          />
         </div>
 
         {/* ── HUD — minimal icon buttons matching reference screenshot ──────── */}
@@ -660,10 +871,18 @@ export default function VRMode({ location, permissionGranted, onExit }) {
         <button
           onClick={onExit}
           style={{
-            position: "absolute", top: 14, left: 14, zIndex: 60,
-            background: "none", border: "none", cursor: "pointer",
-            color: "#fff", padding: 6, lineHeight: 1,
-            fontSize: 26, fontWeight: 300,
+            position: "absolute",
+            top: 14,
+            left: 14,
+            zIndex: 60,
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            color: "#fff",
+            padding: 6,
+            lineHeight: 1,
+            fontSize: 26,
+            fontWeight: 300,
             textShadow: "0 1px 4px rgba(0,0,0,0.6)",
           }}
           aria-label="Exit VR"
@@ -675,14 +894,27 @@ export default function VRMode({ location, permissionGranted, onExit }) {
         <button
           onClick={openCalib}
           style={{
-            position: "absolute", top: 10, right: 10, zIndex: 60,
-            background: "none", border: "none", cursor: "pointer",
-            color: "#fff", padding: 6,
-            display: "flex", alignItems: "center",
+            position: "absolute",
+            top: 10,
+            right: 10,
+            zIndex: 60,
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            color: "#fff",
+            padding: 6,
+            display: "flex",
+            alignItems: "center",
           }}
           aria-label="Calibrate"
         >
-          <span className="material-symbols-outlined" style={{ fontSize: 30, filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.6))" }}>
+          <span
+            className="material-symbols-outlined"
+            style={{
+              fontSize: 30,
+              filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.6))",
+            }}
+          >
             settings
           </span>
         </button>
