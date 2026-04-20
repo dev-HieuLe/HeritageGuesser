@@ -1,9 +1,5 @@
 import { useState, useEffect, useRef, useContext } from "react";
-import {
-  GoogleMap,
-  StreetViewPanorama,
-  LoadScriptNext,
-} from "@react-google-maps/api";
+import { useJsApiLoader } from "@react-google-maps/api";
 import axios from "axios";
 import Confetti from "react-confetti";
 import { useWindowSize } from "react-use";
@@ -58,6 +54,10 @@ const glassPanel = {
 };
 
 export default function RankPlay() {
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
+  });
+
   const [heritage, setHeritage] = useState("");
   const [ageGuess, setAgeGuess] = useState("");
   const [messages, setMessages] = useState([]);
@@ -65,6 +65,8 @@ export default function RankPlay() {
 
   const [canPlay, setCanPlay] = useState(true);
   const [playsLeft, setPlaysLeft] = useState(15);
+  const [todayDbCount, setTodayDbCount] = useState(0);
+  const [maintenanceMode, setMaintenanceMode] = useState(false);
 
   const [sessionLocations, setSessionLocations] = useState([]);
   const [sessionIndex, setSessionIndex] = useState(0);
@@ -79,7 +81,6 @@ export default function RankPlay() {
   const [showConfetti, setShowConfetti] = useState(false);
   const [rankChangeMsg, setRankChangeMsg] = useState(null);
   const [timesUp, setTimesUp] = useState(false);
-  const [roundKey, setRoundKey] = useState(0); // increments each round to force StreetView remount
 
   const {
     user,
@@ -104,7 +105,11 @@ export default function RankPlay() {
   const messagesEndRef = useRef(null);
   const countdownRef = useRef(null);
   const timerRef = useRef(null);
+  const svContainerRef = useRef(null);
+  const svPanoramaRef = useRef(null);
+  const svLoadRecordedRef = useRef(false); // ensure sv-load is called exactly once per mount
   const { width, height } = useWindowSize();
+
   const [sending, setSending] = useState(false);
 
   // ── Avatar TTS ─────────────────────────────────────────────────────────────
@@ -121,28 +126,37 @@ export default function RankPlay() {
 
   const current = sessionLocations[sessionIndex] || null;
 
-  const getStorageKey = () => `rankGameUsage_${user?.id ?? "guest"}`;
+  // Initialize Street View panorama once — only after Maps API is loaded
+  useEffect(() => {
+    if (!isLoaded || !svContainerRef.current || svPanoramaRef.current) return;
+    svPanoramaRef.current = new window.google.maps.StreetViewPanorama(svContainerRef.current, {
+      disableDefaultUI: true,
+      clickToGo: false,
+      linksControl: false,
+      addressControl: false,
+      motionTracking: false,
+      motionTrackingControl: false,
+      enableCloseButton: false,
+      scrollwheel: true,
+    });
+  }, [isLoaded]);
 
-  const getTodayData = () => {
-    const today = new Date().toDateString();
-    const data = JSON.parse(localStorage.getItem(getStorageKey())) || {};
-    if (data.date !== today) {
-      const newData = { date: today, count: 0 };
-      localStorage.setItem(getStorageKey(), JSON.stringify(newData));
-      return newData;
-    }
-    return data;
-  };
+  // Update position each round — no remount, no extra billing
+  useEffect(() => {
+    if (!svPanoramaRef.current || !current) return;
+    svPanoramaRef.current.setPosition({ lat: current.lat, lng: current.lng });
+    svPanoramaRef.current.setPov({ heading: Math.floor(Math.random() * 360), pitch: 0 });
+    svPanoramaRef.current.setZoom(1);
+  }, [current]);
 
-  const updateLimitState = () => {
+  const applyLimitFromCount = (count) => {
     const limit = user?.max_play ?? 15;
     if (limit === -1) {
       setPlaysLeft(Infinity);
       setCanPlay(true);
       return;
     }
-    const data = getTodayData();
-    const remaining = limit - data.count;
+    const remaining = limit - count;
     setPlaysLeft(remaining);
     setCanPlay(remaining > 0);
     if (remaining <= 0) {
@@ -157,34 +171,57 @@ export default function RankPlay() {
   }, [messages, loadingReply]);
 
   useEffect(() => {
-    // Wait for reCAPTCHA to finish loading before attempting the fetch.
-    // Without this guard, executeRecaptcha is null on first render and the
-    // backend rejects the request with 400 (missing token).
     if (!isMobile && !executeRecaptcha) return;
+    if (!user) return;
 
-    updateLimitState();
     const loadInitial = async () => {
+      // Guard: only record once per component lifetime (prevents Strict Mode double-fire)
+      if (!svLoadRecordedRef.current) {
+        svLoadRecordedRef.current = true;
+        try {
+          const svRes = await axios.post(
+            `${import.meta.env.VITE_API_BASE_URL}/status/sv-load`,
+            {},
+            { withCredentials: true }
+          );
+          if (svRes.data?.maintenanceMode) {
+            setMaintenanceMode(true);
+            return;
+          }
+        } catch (err) {
+          if (err.response?.status === 403) {
+            setMaintenanceMode(true);
+            return;
+          }
+          // Network/server error — don't block the game
+        }
+      }
+
       try {
-        const token = isMobile ? null : await executeRecaptcha("load_game");
-        const query = isMobile ? "count=20&type=mobile" : `count=20&recaptchaToken=${token}`;
-        const res = await axios.get(
-          `${import.meta.env.VITE_API_BASE_URL}/locations/random?${query}`,
-        );
-        const shuffled = res.data.sort(() => Math.random() - 0.5);
+        const [locRes, countRes] = await Promise.all([
+          (async () => {
+            const token = isMobile ? null : await executeRecaptcha("load_game");
+            const query = isMobile ? "count=15&type=mobile" : `count=15&recaptchaToken=${token}`;
+            return axios.get(`${import.meta.env.VITE_API_BASE_URL}/locations/random?${query}`);
+          })(),
+          axios.get(`${import.meta.env.VITE_API_BASE_URL}/player/history/today-count`, { withCredentials: true }),
+        ]);
+
+        const shuffled = locRes.data.sort(() => Math.random() - 0.5);
         setSessionLocations(shuffled);
         setSessionIndex(0);
+
+        const dbCount = countRes.data.count || 0;
+        setTodayDbCount(dbCount);
+
         if (isUnlimited) {
           setCanPlay(true);
-          startNewRound();
+          startNewRound(0);
           return;
         }
-        const data = getTodayData();
-        const remaining = MAX_DAILY_PLAYS - data.count;
-        if (remaining > 0) {
-          setCanPlay(true);
-          startNewRound();
-        } else {
-          setCanPlay(false);
+        applyLimitFromCount(dbCount);
+        if (dbCount < (user?.max_play ?? 15)) {
+          startNewRound(dbCount);
         }
       } catch (err) {
         console.error("Failed to load locations:", err);
@@ -197,21 +234,21 @@ export default function RankPlay() {
     };
   }, [user?.id, executeRecaptcha]);
 
-  const startNewRound = () => {
+  const startNewRound = (overrideCount) => {
     const limit = user?.max_play ?? 15;
     if (limit !== -1) {
-      const data = getTodayData();
-      const remaining = limit - data.count;
-      if (remaining <= 0) {
+      // Use overrideCount (passed from loadInitial where we have the fresh DB value)
+      // or fall back to the current state value for subsequent rounds
+      const currentCount = overrideCount ?? todayDbCount;
+      if (currentCount >= limit) {
         setCanPlay(false);
         setIsBlurred(true);
         return;
       }
-      data.count += 1;
-      localStorage.setItem(getStorageKey(), JSON.stringify(data));
-      const newRemaining = limit - data.count;
-      setPlaysLeft(newRemaining);
-      setCanPlay(newRemaining > 0);
+      setTodayDbCount(currentCount + 1);
+      const remaining = limit - (currentCount + 1);
+      setPlaysLeft(remaining);
+      setCanPlay(remaining > 0);
     }
 
     clearInterval(countdownRef.current);
@@ -424,15 +461,13 @@ export default function RankPlay() {
     if (nextIndex >= sessionLocations.length) {
       try {
         const token = isMobile ? null : executeRecaptcha ? await executeRecaptcha("next_round") : null;
-        const query = isMobile ? "count=20&type=mobile" : `count=20&recaptchaToken=${token}`;
+        const query = isMobile ? "count=15&type=mobile" : `count=15&recaptchaToken=${token}`;
         const res = await axios.get(
           `${import.meta.env.VITE_API_BASE_URL}/locations/random?${query}`,
         );
         const fresh = res.data.sort(() => Math.random() - 0.5);
         setSessionLocations(fresh);
         setSessionIndex(0);
-        // Use a unique round key so StreetViewPanorama always remounts
-        setRoundKey((k) => k + 1);
       } catch (err) {
         console.error("Failed to reload locations:", err);
         setFinished(true);
@@ -440,7 +475,6 @@ export default function RankPlay() {
       }
     } else {
       setSessionIndex(nextIndex);
-      setRoundKey((k) => k + 1);
     }
 
     startNewRound();
@@ -458,7 +492,6 @@ export default function RankPlay() {
   const fb = result ? getFeedback(result.total) : null;
 
   return (
-    <LoadScriptNext googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
       <div
         className="w-screen h-screen overflow-hidden relative"
         style={{
@@ -627,7 +660,7 @@ export default function RankPlay() {
                   fontWeight: "700",
                 }}
               >
-                {sessionIndex + 1}/{sessionLocations.length || 20}
+                {sessionIndex + 1}/{sessionLocations.length || 15}
               </span>
             </div>
             {/* Account */}
@@ -647,40 +680,7 @@ export default function RankPlay() {
 
         {/* ── STREET VIEW CANVAS (full screen behind everything) ── */}
         <div className="fixed inset-0 z-0">
-          {canPlay && current && (
-            <GoogleMap
-              mapContainerStyle={{ width: "100%", height: "100%" }}
-              center={{ lat: current.lat, lng: current.lng }}
-              zoom={14}
-              options={{
-                disableDefaultUI: true,
-                gestureHandling: "none",
-                keyboardShortcuts: false,
-              }}
-            >
-              <StreetViewPanorama
-                key={`${roundKey}-${sessionIndex}`}
-                position={{ lat: current.lat, lng: current.lng }}
-                visible
-                options={{
-                  disableDefaultUI: true,
-                  clickToGo: true,
-                  linksControl: true,
-                  addressControl: false,
-                  motionTracking: true,
-                  motionTrackingControl: false,
-                  enableCloseButton: false,
-                }}
-                onLoad={(pano) => {
-                  pano.setPov({
-                    heading: Math.floor(Math.random() * 360),
-                    pitch: 0,
-                  });
-                  pano.setZoom(1);
-                }}
-              />
-            </GoogleMap>
-          )}
+          <div ref={svContainerRef} style={{ width: "100%", height: "100%" }} />
           {/* Vignette */}
           <div
             className="absolute inset-0 pointer-events-none"
@@ -695,6 +695,34 @@ export default function RankPlay() {
             }}
           />
         </div>
+
+        {/* ── MAINTENANCE WALL ── */}
+        {maintenanceMode && (
+          <div
+            className="fixed inset-0 z-[60] flex flex-col items-center justify-center"
+            style={{ backgroundColor: "rgba(14,21,19,0.97)" }}
+          >
+            <span
+              className="material-symbols-outlined mb-4"
+              style={{ color: "#e9c349", fontSize: "64px", fontVariationSettings: "'FILL' 1" }}
+            >
+              construction
+            </span>
+            <h2 className="font-black mb-2" style={{ color: "#e3e3d9", fontSize: "28px" }}>
+              Under Maintenance
+            </h2>
+            <p style={{ color: "rgba(192,200,195,0.6)", fontSize: "14px", textAlign: "center", maxWidth: "320px" }}>
+              The Ranked Archive is temporarily closed for maintenance. Please check back later.
+            </p>
+            <Link
+              to="/"
+              className="mt-8 px-8 py-3 font-black uppercase tracking-widest"
+              style={{ backgroundColor: "#1e201a", color: "#a2d1bb", border: "1px solid rgba(162,209,187,0.2)", borderRadius: "4px", fontSize: "11px", textDecoration: "none" }}
+            >
+              Back to Home
+            </Link>
+          </div>
+        )}
 
         {/* ── DAILY LIMIT WALL ── */}
         {!canPlay && (
@@ -785,7 +813,7 @@ export default function RankPlay() {
                           fontWeight: "700",
                         }}
                       >
-                        {sessionIndex} / {sessionLocations.length || 20}
+                        {sessionIndex} / {sessionLocations.length || 15}
                       </span>
                     </div>
                     <div
@@ -1379,6 +1407,5 @@ export default function RankPlay() {
           />
         </div>
       </div>
-    </LoadScriptNext>
   );
 }

@@ -235,7 +235,7 @@ export const AuthProvider = ({ children }) => {
 
   // Run checkAuth on path change
   useEffect(() => {
-    const protectedPaths = ["/rank", "/game", "/settings", "/vr-discovery"];
+    const protectedPaths = ["/rank", "/game/rank", "/settings", "/vr-discovery"];
     const isProtected = protectedPaths.some((path) =>
       location.pathname.startsWith(path)
     );

@@ -1,5 +1,20 @@
 import db from "../Config/db.js";
 
+export const getTodayCount = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD in UTC
+    const [rows] = await db.execute(
+      `SELECT COUNT(*) as count FROM player_history WHERE user_id = ? AND DATE(date_played) = ?`,
+      [userId, today]
+    );
+    res.json({ count: rows[0].count });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch today's count" });
+  }
+};
+
 export const recordHistory = async (req, res) => {
   try {
     const userId = req.user.id; // from verifyUser middleware

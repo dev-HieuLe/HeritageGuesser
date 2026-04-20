@@ -17,6 +17,7 @@ import historyRoutes from "./Routes/historyRoutes.js";
 import personalizeRoutes from "./Routes/PersonalizeRoutes.js";
 import contributeLocationRoutes from "./Routes/contributeLocationRoutes.js";
 import ttsRoutes from "./Routes/ttsRoutes.js";
+import statusRoutes from "./Routes/statusRoutes.js";
 
 const app = express();
 
@@ -82,6 +83,7 @@ app.use("/api/player/history", historyRoutes);
 app.use("/api/personalize", personalizeRoutes);
 app.use("/api/contribute", contributeLocationRoutes);
 app.use("/api", ttsRoutes);
+app.use("/api", statusRoutes);
 
 console.log("NODE_ENV:", process.env.NODE_ENV);
 

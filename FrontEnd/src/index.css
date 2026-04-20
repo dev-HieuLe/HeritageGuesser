@@ -75,6 +75,41 @@ html, body, #root {
   to   { opacity: 1; transform: translateX(0); }
 }
 
+/* Rank Now button — gaming/tech CTA */
+@keyframes rankGlow {
+  0%, 100% { box-shadow: 0 0 10px rgba(233,195,73,0.18), 0 0 20px rgba(162,209,187,0.06), inset 0 1px 0 rgba(233,195,73,0.07); }
+  50%       { box-shadow: 0 0 20px rgba(233,195,73,0.32), 0 0 40px rgba(162,209,187,0.12), inset 0 1px 0 rgba(233,195,73,0.12); }
+}
+.rank-now-btn {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, rgba(15,61,46,0.75) 0%, rgba(14,21,19,0.92) 55%, rgba(15,61,46,0.6) 100%);
+  border: 1px solid rgba(233,195,73,0.42);
+  color: #e9c349;
+  animation: rankGlow 2.8s ease-in-out infinite;
+  transition: background 0.28s ease, border-color 0.28s ease, color 0.28s ease, box-shadow 0.28s ease, transform 0.18s ease;
+}
+.rank-now-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 30%, rgba(233,195,73,0.13) 50%, transparent 70%);
+  background-size: 200% 100%;
+  background-position: -200% center;
+  transition: background-position 0.55s ease;
+  pointer-events: none;
+}
+.rank-now-btn:hover::before { background-position: 200% center; }
+.rank-now-btn:hover {
+  background: linear-gradient(135deg, #d4ae3e 0%, #e9c349 45%, #a2d1bb 100%);
+  border-color: #e9c349;
+  color: #0e1513;
+  box-shadow: 0 0 28px rgba(233,195,73,0.55), 0 0 56px rgba(233,195,73,0.18), inset 0 1px 0 rgba(255,255,255,0.18);
+  transform: translateY(-2px);
+  animation: none;
+}
+.rank-now-btn:active { transform: translateY(0) scale(0.97); }
+
 /* Glass panel utility */
 .glass-panel {
   background: rgba(30, 32, 26, 0.7);

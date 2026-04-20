@@ -12,13 +12,11 @@ export default function Navbar({ onMenuClick }) {
 
   const navLinks = [
     { label: tx.nav.home, to: "/" },
-    { label: tx.nav.rank, to: "/rank" },
+    { label: tx.nav.about, to: "/about" },
     { label: tx.nav.leaderboard, to: "/leaderboard" },
-    { label: tx.nav.explore, to: "/explore" },
     { label: tx.nav.study, to: "/study" },
     { label: tx.nav.contribute, to: "/contribute" },
     { label: tx.nav.shop, to: "/shop" },
-    { label: tx.nav.vrDiscovery, to: "/vr-discovery", badge: "Beta" },
     { label: tx.nav.tutorial, to: "/tutorial" },
   ];
 

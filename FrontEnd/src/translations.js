@@ -3,10 +3,11 @@ const t = {
     // Nav (Homepage top bar)
     nav: {
       home: "Home",
+      about: "About",
+      rank: "Play Rank",
       explore: "Atlas",
       leaderboard: "Global Ranks",
       study: "Academy",
-      rank: "Play Rank",
       atlas: "Atlas",
       tutorial: "Tutorial",
       contribute: "Contribute",
@@ -21,6 +22,7 @@ const t = {
     // Sidebar nav items
     sidebar: {
       sanctuary: "Sanctuary",
+      about: "About",
       PlayRank: "Play Rank",
       globalRanks: "Global Ranks",
       atlas: "Atlas",
@@ -29,8 +31,6 @@ const t = {
       contribute: "Contribute",
       shop: "Shop",
       vrDiscovery: "VR Discovery",
-      dailyQuest: "Daily Quest",
-      dailyChallenge: "Daily Challenge",
       feedback: "Feedback",
       feedbackPlaceholder:
         "Share your thoughts, report a bug, or suggest a feature… (max 100 words)",
@@ -359,6 +359,34 @@ const t = {
       },
     },
 
+    // Founders section
+    founders: {
+      eyebrow: "The People Behind the Platform",
+      headline: "Our",
+      headlineAccent: "Founders",
+      subtitle: "A devoted team preserving and celebrating the soul of Vietnam — one landmark at a time.",
+      founderBadge: "Founder",
+      viewProfile: "View profile →",
+      connect: "Connect",
+      members: [
+        {
+          name: "Đặng Thái Hoà",
+          role: "Innovation Leader",
+          bio: "Shapes the strategic vision of Heritage Guessr, applying design thinking and creative direction to craft meaningful experiences that redefine how Vietnamese heritage is explored online.",
+        },
+        {
+          name: "Lê Trung Hiếu",
+          role: "Full-Stack Engineering Lead & Designer",
+          bio: "Leads the end-to-end development of Heritage Guessr, from full-stack engineering and backend architecture to polished frontend design, creating a robust, scalable platform that transforms Vietnamese heritage into an immersive digital experience.",
+        },
+        {
+          name: "Nguyễn Thái Sơn",
+          role: "Creative Content Specialist",
+          bio: "Breathes cultural soul into every corner of the platform — crafting stories, imagery, and experiences that make Vietnam's heritage unforgettable.",
+        },
+      ],
+    },
+
     // Loading
     loading: "Loading…",
   },
@@ -367,10 +395,11 @@ const t = {
     // Nav
     nav: {
       home: "Trang Chủ",
+      about: "Giới Thiệu",
+      rank: "Chơi Rank",
       explore: "Bản Đồ",
       leaderboard: "Xếp Hạng",
       study: "Học Viện",
-      rank: "Chơi Rank",
       atlas: "Bản Đồ",
       tutorial: "Hướng Dẫn",
       contribute: "Đóng Góp",
@@ -385,6 +414,7 @@ const t = {
     // Sidebar
     sidebar: {
       sanctuary: "Thánh Địa",
+      about: "Giới Thiệu",
       PlayRank: "Chơi Rank",
       globalRanks: "Xếp Hạng Toàn Cầu",
       atlas: "Bản Đồ",
@@ -393,8 +423,6 @@ const t = {
       contribute: "Đóng Góp",
       shop: "Cửa Hàng",
       vrDiscovery: "Khám Phá VR",
-      dailyQuest: "Nhiệm Vụ Hằng Ngày",
-      dailyChallenge: "Thử Thách Hằng Ngày",
       feedback: "Phản Hồi",
       feedbackPlaceholder:
         "Chia sẻ ý kiến, báo lỗi hoặc đề xuất tính năng… (tối đa 100 từ)",
@@ -497,6 +525,34 @@ const t = {
           value: "github.com/dev-HieuLe/HeritageGuessr",
           href: "https://github.com/dev-HieuLe/HeritageGuesser/blob/main/README.md",
           cta: "Xem mã nguồn",
+        },
+      ],
+    },
+
+    // Founders section
+    founders: {
+      eyebrow: "Những Người Đứng Sau Nền Tảng",
+      headline: "Những",
+      headlineAccent: "Nhà Sáng Lập",
+      subtitle: "Một đội ngũ tận tâm bảo tồn và tôn vinh hồn Việt — từng di tích một.",
+      founderBadge: "Nhà Sáng Lập",
+      viewProfile: "Xem hồ sơ →",
+      connect: "Kết Nối",
+      members: [
+        {
+          name: "Đặng Thái Hoà",
+          role: "Lãnh Đạo Đổi Mới",
+          bio: "Dẫn dắt tầm nhìn đằng sau các tính năng đột phá của Heritage Guessr, không ngừng mở rộng giới hạn của một nền tảng edutainment.",
+        },
+        {
+          name: "Lê Trung Hiếu",
+          role: "Trưởng Nhóm Kỹ Thuật & Thiết Kế",
+          bio: "Phụ trách toàn bộ quá trình phát triển Heritage Guessr, từ kỹ thuật full-stack và kiến trúc backend đến thiết kế frontend, tạo ra nền tảng vững chắc biến di sản Việt Nam thành trải nghiệm số sống động.",
+        },
+        {
+          name: "Nguyễn Thái Sơn",
+          role: "Chuyên Gia Nội Dung Sáng Tạo",
+          bio: "Thổi hồn văn hóa vào từng ngóc ngách của nền tảng — tạo ra những câu chuyện, hình ảnh và trải nghiệm khiến di sản Việt Nam trở nên khó quên.",
         },
       ],
     },

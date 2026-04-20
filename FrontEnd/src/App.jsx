@@ -7,7 +7,6 @@ import RankPlay from "./Components/Rank/RankPlay";
 import Sidebar from "./Components/Sidebar/Sidebar";
 import Login from "./Components/Login";
 import Signup from "./Components/Register";
-import Game from "./Components/Game/Game";
 import Leaderboard from "./Components/Leaderboard/Leaderboard";
 import Discover from "./Components/Discover/Discover";
 import StudyPage from "./Components/Study/Studypage";
@@ -20,6 +19,7 @@ import Settings from "./Components/Settings/Settings";
 import AuthCallback from "./Components/AuthCallback";
 import PageWrapper from "./Components/Animations/PageWrapper";
 import Navbar from "./Components/Navbar";
+import AboutUs from "./Components/About/AboutUs";
 
 import "leaflet/dist/leaflet.css";
 
@@ -44,12 +44,10 @@ export default function App() {
     );
   }
 
-  // Full-screen game pages — no navbar or sidebar
-  const isGamePage = ["/game", "/game/rank"].includes(location.pathname);
-  if (isGamePage) {
+  // Full-screen RankPlay — no navbar or sidebar
+  if (location.pathname === "/game/rank") {
     return (
       <Routes location={location} key={location.pathname}>
-        <Route path="/game" element={<Game />} />
         <Route path="/game/rank" element={<RankPlay />} />
       </Routes>
     );
@@ -90,6 +88,7 @@ export default function App() {
           <Routes location={location} key={location.pathname}>
             <Route path="/login"       element={<PageWrapper><Login /></PageWrapper>} />
             <Route path="/register"    element={<PageWrapper><Signup /></PageWrapper>} />
+            <Route path="/about"       element={<PageWrapper><AboutUs /></PageWrapper>} />
             <Route path="/rank"        element={<PageWrapper><RankDashboard /></PageWrapper>} />
             <Route path="/leaderboard" element={<PageWrapper><Leaderboard /></PageWrapper>} />
             <Route path="/explore"     element={<PageWrapper><Discover /></PageWrapper>} />

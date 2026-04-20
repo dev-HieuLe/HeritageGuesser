@@ -20,6 +20,7 @@ import {
   Play,
 } from "lucide-react";
 import { FaYoutube, FaFacebook, FaGithub } from "react-icons/fa";
+import FoundersSection from "./FoundersSection";
 
 const CHANNEL_ICONS = {
   youtube: FaYoutube,
@@ -68,13 +69,6 @@ export default function Homepage() {
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const getDailyDone = () => {
-    try {
-      const raw = JSON.parse(localStorage.getItem("dailyChallenge")) || {};
-      return raw.date === new Date().toDateString() && raw.completed === true;
-    } catch { return false; }
-  };
-  const [dailyDone, setDailyDone] = useState(getDailyDone);
   const [showFeedback, setShowFeedback] = useState(false);
   const [topPlayers, setTopPlayers] = useState([]);
   const [loadingDone, setLoadingDone] = useState(
@@ -87,23 +81,15 @@ export default function Homepage() {
 
   const NAV_ITEMS = [
     { to: "/", label: tx.sidebar.sanctuary, icon: "home" },
-    { to: "/rank", label: tx.sidebar.PlayRank, icon: "history_edu" },
+    { to: "/about", label: tx.sidebar.about, icon: "info" },
     { to: "/leaderboard", label: tx.sidebar.globalRanks, icon: "leaderboard" },
     { to: "/explore", label: tx.sidebar.atlas, icon: "explore" },
     { to: "/study", label: tx.sidebar.academy, icon: "school" },
-    {
-      to: "/contribute",
-      label: tx.sidebar.contribute,
-      icon: "add_location_alt",
-    },
+    { to: "/contribute", label: tx.sidebar.contribute, icon: "add_location_alt" },
     { to: "/shop", label: tx.sidebar.shop, icon: "storefront" },
     { to: "/vr-discovery", label: tx.sidebar.vrDiscovery, icon: "view_in_ar", badge: "Beta" },
     { to: "/tutorial", label: tx.sidebar.tutorial, icon: "help_center" },
   ];
-
-  useEffect(() => {
-    if (sidebarOpen) setDailyDone(getDailyDone());
-  }, [sidebarOpen]);
 
   useEffect(() => {
     axios
@@ -209,9 +195,8 @@ export default function Homepage() {
         <div className="absolute left-1/2 -translate-x-1/2 hidden md:flex items-center gap-7">
           {[
             { label: tx.nav.home,        to: "/",             active: true  },
-            { label: tx.nav.rank,        to: "/rank",         active: false },
+            { label: tx.nav.about,       to: "/about",        active: false },
             { label: tx.nav.leaderboard, to: "/leaderboard",  active: false },
-            { label: tx.nav.explore,     to: "/explore",      active: false },
             { label: tx.nav.study,       to: "/study",        active: false },
             { label: tx.nav.contribute,  to: "/contribute",   active: false },
             { label: tx.nav.shop,        to: "/shop",         active: false },
@@ -363,39 +348,17 @@ export default function Homepage() {
 
         {/* Bottom */}
         <div className="p-4">
-          {/* Daily challenge tickbox */}
-          <div className="flex items-center gap-2.5 px-1 mb-2">
-            <div
-              className="flex items-center justify-center rounded flex-shrink-0"
-              style={{
-                width: "17px", height: "17px",
-                backgroundColor: dailyDone ? "#e9c349" : "transparent",
-                border: dailyDone ? "none" : "1.5px solid rgba(233,195,73,0.35)",
-                transition: "all 0.2s",
-              }}
-            >
-              {dailyDone && (
-                <span className="material-symbols-outlined" style={{ fontSize: "12px", color: "#12140e", fontVariationSettings: "'FILL' 1" }}>
-                  check
-                </span>
-              )}
-            </div>
-            <span style={{ color: dailyDone ? "#e9c349" : "rgba(192,200,195,0.5)", fontSize: "11px", fontWeight: "700", letterSpacing: "0.08em", textTransform: "uppercase" }}>
-              {tx.sidebar.dailyChallenge}
-            </span>
-          </div>
-
           <Link
-            to="/game"
+            to="/rank"
             onClick={() => setSidebarOpen(false)}
-            className="block w-full p-3 border text-[12px] font-black uppercase tracking-[0.15em] text-center no-underline rounded-xl mb-6 transition-colors duration-150 box-border"
-            style={{
-              backgroundColor: dailyDone ? "rgba(233,195,73,0.05)" : "rgba(233,195,73,0.1)",
-              borderColor: dailyDone ? "rgba(233,195,73,0.15)" : "rgba(233,195,73,0.2)",
-              color: dailyDone ? "rgba(233,195,73,0.4)" : "#e9c349",
-            }}
+            className="rank-now-btn block w-full py-[11px] px-3 text-[11px] font-black uppercase text-center no-underline rounded-xl mb-6 box-border"
+            style={{ letterSpacing: "0.22em" }}
           >
-            {dailyDone ? "✓ " : ""}{tx.sidebar.dailyQuest}
+            <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "7px" }}>
+              <span className="material-symbols-outlined" style={{ fontSize: "13px", fontVariationSettings: "'FILL' 1" }}>military_tech</span>
+              Rank Now
+              <span className="material-symbols-outlined" style={{ fontSize: "13px" }}>chevron_right</span>
+            </span>
           </Link>
 
           <div className="border-t border-white/[0.05] pt-3 flex flex-col gap-1">
@@ -473,7 +436,7 @@ export default function Homepage() {
 
             <div className="flex flex-wrap gap-3 sm:gap-4">
               <Link
-                to="/rank"
+                to="/leaderboard"
                 style={{
                   background: "linear-gradient(135deg, #e9c349, #f0d060)",
                   transition: ease,
@@ -742,6 +705,9 @@ export default function Homepage() {
             </motion.div>
           </div>
         </section>
+
+        {/* ─── FOUNDERS ─── */}
+        <FoundersSection />
 
         {/* ─── FAQ ─── */}
         <section className="px-4 sm:px-8 pb-12 sm:pb-20 md:pb-24">

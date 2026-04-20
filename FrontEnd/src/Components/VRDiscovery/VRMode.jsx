@@ -350,8 +350,10 @@ export default function VRMode({ location, permissionGranted, onExit }) {
 
   // ── Create/recreate panoramas when API loads or location changes ────────────
   useEffect(() => {
+    console.log("[VRMode] isLoaded:", isLoaded, "leftPane:", !!leftPaneRef.current, "rightPane:", !!rightPaneRef.current);
     if (!isLoaded || !leftPaneRef.current || !rightPaneRef.current) return;
 
+    console.log("[VRMode] Creating panoramas for location:", location);
     setPanoReady(false);
 
     // Base position — prefer panoId for exact panorama
@@ -412,10 +414,15 @@ export default function VRMode({ location, permissionGranted, onExit }) {
     });
 
     // Mark ready once left pano has tiles
-    const tilesL = left.addListener("tilesloaded", () => setPanoReady(true));
+    const tilesL = left.addListener("tilesloaded", () => {
+      console.log("[VRMode] tilesloaded fired ✓");
+      setPanoReady(true);
+    });
     // Fallback: also accept status_changed OK (some devices fire this instead)
     const statL  = left.addListener("status_changed", () => {
-      if (left.getStatus() === "OK") setPanoReady(true);
+      const status = left.getStatus();
+      console.log("[VRMode] status_changed:", status);
+      if (status === "OK") setPanoReady(true);
     });
 
     return () => {

@@ -3,6 +3,8 @@ import { useLang } from "../../Context/languageContext";
 import t from "../../translations";
 import { vrLocations } from "./vrLocations";
 import VRMode from "./VRMode";
+import axios from "axios";
+import { Link } from "react-router-dom";
 
 // ─── Onboarding steps ────────────────────────────────────────────────────────
 const STEPS = [
@@ -403,6 +405,13 @@ function LocationCard({ loc, lang, onDiveIn }) {
 // ─── Main page ────────────────────────────────────────────────────────────────
 export default function VRDiscovery() {
   const { lang } = useLang();
+  const [maintenanceMode, setMaintenanceMode] = useState(false);
+
+  useEffect(() => {
+    axios.get(`${import.meta.env.VITE_API_BASE_URL}/status`)
+      .then(r => { if (r.data?.maintenanceMode) setMaintenanceMode(true); })
+      .catch(() => {});
+  }, []);
 
   const [activeCat,  setActiveCat]  = useState(null);
   const [search,     setSearch]     = useState("");
@@ -411,6 +420,21 @@ export default function VRDiscovery() {
   const [vrActive,   setVrActive]   = useState(false);
   const [vrLocation, setVrLocation] = useState(null);
   const [permGranted, setPermGranted] = useState(false);
+
+  if (maintenanceMode) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen" style={{ backgroundColor: "#12140e" }}>
+        <span className="material-symbols-outlined mb-4" style={{ color: "#e9c349", fontSize: "64px", fontVariationSettings: "'FILL' 1" }}>construction</span>
+        <h2 className="font-black mb-2" style={{ color: "#e3e3d9", fontSize: "28px" }}>Under Maintenance</h2>
+        <p style={{ color: "rgba(192,200,195,0.6)", fontSize: "14px", textAlign: "center", maxWidth: "320px" }}>
+          VR Discovery is temporarily closed for maintenance. Please check back later.
+        </p>
+        <Link to="/" className="mt-8 px-8 py-3 font-black uppercase tracking-widest" style={{ backgroundColor: "#1e201a", color: "#a2d1bb", border: "1px solid rgba(162,209,187,0.2)", borderRadius: "4px", fontSize: "11px", textDecoration: "none" }}>
+          Back to Home
+        </Link>
+      </div>
+    );
+  }
 
   const filtered = vrLocations.filter((l) => {
     const matchCat    = !activeCat || l.type === activeCat;
