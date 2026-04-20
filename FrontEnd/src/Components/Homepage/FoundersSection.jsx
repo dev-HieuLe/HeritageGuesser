@@ -17,8 +17,8 @@ const foundersMeta = [
     image: "/founder_pic/hoapfp.jpg",
     initials: "TH",
     social: {
-      linkedin: "#",
-      facebook: "#",
+      linkedin: "https://www.linkedin.com/in/thaihoadang/",
+      facebook: "https://www.facebook.com/hoadang.thai.395/",
       email: "mailto:dthoa@stu.dgs.org.vn",
     },
   },
@@ -26,8 +26,8 @@ const foundersMeta = [
     image: "/founder_pic/hieupfp.jpg",
     initials: "TH",
     social: {
-      linkedin: "#",
-      facebook: "#",
+      linkedin: "https://www.linkedin.com/in/hieule-dev/",
+      facebook: "https://www.facebook.com/hieu.le.791557",
       email: "mailto:lthieu@stu.dgs.org.vn",
     },
   },
@@ -35,8 +35,8 @@ const foundersMeta = [
     image: "/founder_pic/Tommypfp.jpg",
     initials: "TS",
     social: {
-      linkedin: "#",
-      facebook: "#",
+      linkedin: "https://www.linkedin.com/in/tony-nguyen-5b0a0b1b0/",
+      facebook: "https://www.facebook.com/tommy.nguyen.598125/",
       email: "mailto:ntson@stu.dgs.org.vn",
     },
   },
