@@ -1,6 +1,6 @@
 """
 RAG-assisted metadata generation + heritage validation for contributions.
-Uses Qwen/Qwen3-35B-A3B via Deep Infra with ChromaDB knowledge retrieval.
+Uses Qwen/Qwen3.6-35B-A3B via Deep Infra with ChromaDB knowledge retrieval.
 
 Flow:
   1. Receive { name, lat, lng, userDescription } from Node.js backend
@@ -35,7 +35,7 @@ _client = OpenAI(
     base_url="https://api.deepinfra.com/v1/openai",
     api_key=os.getenv("DEEPINFRA_API_KEY", ""),
 )
-_QWEN_MODEL = os.getenv("DEEPINFRA_QWEN_MODEL", "Qwen/Qwen3-35B-A3B")
+_QWEN_MODEL = os.getenv("DEEPINFRA_QWEN_MODEL", "Qwen/Qwen3.6-35B-A3B")
 
 
 # ── Request / Response schemas ────────────────────────────────────────────────
@@ -148,14 +148,18 @@ async def rag_contribute(req: ContributeRequest):
     prompt = _build_prompt(name, req.lat, req.lng, description_hint, context, context_names)
 
     # ── Step 3: Call Qwen via Deep Infra ──────────────────────────────────────
+    # Disable Qwen3 thinking mode — without this, content is empty.
     completion = _client.chat.completions.create(
         model=_QWEN_MODEL,
         messages=[{"role": "user", "content": prompt}],
-        temperature=0.2,    # Low temp → factual, consistent
+        temperature=0.2,
         max_tokens=1024,
+        extra_body={"enable_thinking": False},
     )
-    raw = completion.choices[0].message.content.strip()
-    logger.info("[rag-contribute] raw Qwen output: %s", raw[:300])
+    msg = completion.choices[0].message
+    raw = (msg.content or "").strip()
+    logger.info("[rag-contribute] finish_reason=%s content_len=%d msg_fields=%s raw[:500]=%s",
+                completion.choices[0].finish_reason, len(raw), list(vars(msg).keys()), raw[:500])
 
     # ── Step 4: Parse JSON ────────────────────────────────────────────────────
     try:
