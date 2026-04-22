@@ -3,6 +3,14 @@ ChromaDB-backed knowledge base for Vietnamese heritage RAG.
 Auto-seeds from seed_data.py on first run.
 """
 
+import sys
+# pysqlite3-binary provides sqlite3 >= 3.35.0 required by chromadb on older systems
+try:
+    __import__("pysqlite3")
+    sys.modules["sqlite3"] = sys.modules.pop("pysqlite3")
+except ImportError:
+    pass
+
 import os
 from typing import List, Tuple
 
