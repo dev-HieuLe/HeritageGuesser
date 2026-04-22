@@ -5,6 +5,7 @@ import { vrLocations } from "./vrLocations";
 import VRMode from "./VRMode";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import vrAmbientSound from "./Sounds.mp3";
 
 // ─── Onboarding steps ────────────────────────────────────────────────────────
 const STEPS = [
@@ -462,8 +463,35 @@ export default function VRDiscovery() {
     setOnboarding(true);
   };
 
-  const launchVR = () => { setOnboarding(false); setVrActive(true); };
-  const exitVR   = () => { setVrActive(false); setVrLocation(null); };
+  const vrAudioRef = useRef(null);
+
+  const launchVR = () => {
+    console.log("[VR Audio] launchVR called");
+    console.log("[VR Audio] vrAmbientSound src:", vrAmbientSound);
+    const audio = new Audio(vrAmbientSound);
+    audio.loop = true;
+    console.log("[VR Audio] Audio object created:", audio);
+    const promise = audio.play();
+    console.log("[VR Audio] play() promise:", promise);
+    if (promise !== undefined) {
+      promise
+        .then(() => console.log("[VR Audio] play() resolved — sound is playing"))
+        .catch((err) => console.error("[VR Audio] play() rejected:", err));
+    }
+    vrAudioRef.current = audio;
+    setOnboarding(false);
+    setVrActive(true);
+  };
+
+  const exitVR = () => {
+    if (vrAudioRef.current) {
+      vrAudioRef.current.pause();
+      vrAudioRef.current.src = "";
+      vrAudioRef.current = null;
+    }
+    setVrActive(false);
+    setVrLocation(null);
+  };
 
   return (
     <div style={{ backgroundColor: "#101612", minHeight: "100vh", color: "#dfe8e2", fontFamily: "'Be Vietnam Pro', sans-serif" }}>
