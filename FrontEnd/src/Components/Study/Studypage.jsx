@@ -2,19 +2,23 @@ import { useState, useEffect, useRef, useContext, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { lessons } from "./lessons";
 import { AuthContext } from "../../Context/authContext";
-
-const CATS = [
-  { label: "TẤT CẢ", value: null },
-  { label: "THIÊN NHIÊN", value: "Natural Heritage" },
-  { label: "LỊCH SỬ", value: "Historical Site" },
-  { label: "DANH THẮNG", value: "Scenic Heritage" },
-];
+import ProgressAnalysis from "./ProgressAnalysis";
+import { useLang } from "../../Context/languageContext";
+import t from "../../translations";
 
 const SLIDE_INTERVAL = 5700;
 
 export default function StudyPage() {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
+  const { lang } = useLang();
+  const tx = t[lang].studyPage;
+  const CATS = [
+    { label: tx.catAll, value: null },
+    { label: tx.catNatural, value: "Natural Heritage" },
+    { label: tx.catHistorical, value: "Historical Site" },
+    { label: tx.catScenic, value: "Scenic Heritage" },
+  ];
   const [activeCat, setActiveCat] = useState(null);
   const [search, setSearch] = useState("");
 
@@ -58,7 +62,7 @@ export default function StudyPage() {
     const matchSearch =
       !search ||
       l.name.toLowerCase().includes(search.toLowerCase()) ||
-      l.desc.toLowerCase().includes(search.toLowerCase());
+      (l.desc[lang] ?? l.desc.en).toLowerCase().includes(search.toLowerCase());
     return matchCat && matchSearch;
   });
 
@@ -117,7 +121,7 @@ export default function StudyPage() {
 
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
             <span style={{ fontSize: 9, fontWeight: 900, letterSpacing: "0.1em", backgroundColor: "#a2d1bb", color: "#12140e", padding: "4px 11px", borderRadius: 4 }}>
-              🔥 MỚI NHẤT
+              🔥 {tx.newest}
             </span>
             <span style={{ fontSize: 13, color: "rgba(192,200,195,0.5)" }}>
               ⏱ {featured.year}
@@ -125,7 +129,7 @@ export default function StudyPage() {
           </div>
 
           <p style={{ fontSize: 14, color: "rgba(192,200,195,0.82)", lineHeight: 1.7, marginBottom: 26 }}>
-            {featured.desc}
+            {featured.desc[lang] ?? featured.desc.en}
           </p>
 
           <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
@@ -133,7 +137,7 @@ export default function StudyPage() {
               onClick={() => navigate(`/study/${featured.id}`)}
               style={{ display: "flex", alignItems: "center", gap: 8, backgroundColor: "#a2d1bb", color: "#12140e", border: "none", borderRadius: 24, padding: "12px 26px", fontSize: 13, fontWeight: 900, cursor: "pointer", letterSpacing: "0.06em" }}
             >
-              ▶ ĐỌC NGAY
+              ▶ {tx.readNow}
             </button>
             <button
               style={{ width: 42, height: 42, borderRadius: "50%", border: "1px solid rgba(162,209,187,0.3)", backgroundColor: "rgba(162,209,187,0.08)", cursor: "pointer", color: "rgba(162,209,187,0.65)", fontSize: 20, display: "flex", alignItems: "center", justifyContent: "center" }}
@@ -222,7 +226,7 @@ export default function StudyPage() {
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Nhập tên bài viết, địa danh..."
+            placeholder={tx.searchPlaceholder}
             style={{ width: "100%", padding: "13px 48px 13px 46px", borderRadius: 32, backgroundColor: "rgba(255,255,255,0.035)", border: "1px solid rgba(162,209,187,0.12)", color: "#e3e3d9", fontSize: 13, outline: "none", boxSizing: "border-box" }}
           />
           {search && (
@@ -259,14 +263,17 @@ export default function StudyPage() {
       {/* ── CARD GRID ── */}
       <div style={{ padding: "8px 32px 52px", display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 20 }}>
         {filtered.map((l) => (
-          <LessonCard key={l.id} lesson={l} isRead={readLessonIds.has(l.id)} onClick={() => navigate(`/study/${l.id}`)} />
+          <LessonCard key={l.id} lesson={l} isRead={readLessonIds.has(l.id)} onClick={() => navigate(`/study/${l.id}`)} tx={tx} lang={lang} />
         ))}
         {!filtered.length && (
           <p style={{ gridColumn: "1 / -1", textAlign: "center", color: "rgba(192,200,195,0.25)", fontSize: 13, padding: "60px 0" }}>
-            Không tìm thấy bài học phù hợp.
+            {tx.noResults}
           </p>
         )}
       </div>
+
+      {/* ── PROGRESS ANALYSIS ── */}
+      <ProgressAnalysis />
 
       {/* ── KEYFRAME STYLES ── */}
       <style>{`
@@ -284,7 +291,9 @@ export default function StudyPage() {
 }
 
 // ── Lesson card ────────────────────────────────────────────────────────────────
-function LessonCard({ lesson, onClick, isRead = false }) {
+function LessonCard({ lesson, onClick, isRead = false, tx, lang = "vi" }) {
+  const lessonType = lang === "vi" ? lesson.typeVi : lang === "cn" ? lesson.typeCn : lang === "fr" ? (lesson.typeFr ?? lesson.typeEn) : lesson.typeEn;
+  const lessonDesc = lesson.desc[lang] ?? lesson.desc.en;
   const [imgErr, setImgErr] = useState(false);
   const [hovered, setHovered] = useState(false);
 
@@ -333,7 +342,7 @@ function LessonCard({ lesson, onClick, isRead = false }) {
           transition: "background-color 0.2s, border-color 0.2s",
         }}>
           <span style={{ fontSize: 8, fontWeight: 900, color: lesson.typeColor, letterSpacing: "0.12em", textTransform: "uppercase" }}>
-            {lesson.typeVi}
+            {lessonType}
           </span>
         </div>
 
@@ -346,7 +355,7 @@ function LessonCard({ lesson, onClick, isRead = false }) {
             borderRadius: 4, padding: "3px 8px", backdropFilter: "blur(6px)",
           }}>
             <span className="material-symbols-outlined" style={{ fontSize: 11, color: "#a2d1bb", fontVariationSettings: "'FILL' 1" }}>check_circle</span>
-            <span style={{ fontSize: 8, fontWeight: 900, color: "#a2d1bb", letterSpacing: "0.1em", textTransform: "uppercase" }}>Đã đọc</span>
+            <span style={{ fontSize: 8, fontWeight: 900, color: "#a2d1bb", letterSpacing: "0.1em", textTransform: "uppercase" }}>{tx.readBadge}</span>
           </div>
         )}
 
@@ -372,12 +381,12 @@ function LessonCard({ lesson, onClick, isRead = false }) {
           {lesson.name}
         </h3>
         <p style={{ fontSize: 12, color: "rgba(192,200,195,0.6)", lineHeight: 1.6, marginBottom: 12, display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
-          {lesson.desc}
+          {lessonDesc}
         </p>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", borderTop: `1px solid ${hovered ? lesson.typeColor + "33" : "rgba(65,73,68,0.4)"}`, paddingTop: 10, transition: "border-color 0.2s" }}>
           <span style={{ fontSize: 11, color: "rgba(192,200,195,0.38)" }}>{lesson.year}</span>
           <span style={{ fontSize: 11, fontWeight: 700, color: hovered ? lesson.typeColor : "#a2d1bb", letterSpacing: "0.04em", transition: "color 0.2s" }}>
-            XEM &gt;
+            {tx.viewBtn}
           </span>
         </div>
       </div>

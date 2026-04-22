@@ -74,12 +74,12 @@ export default function RankDashboard() {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen" style={{ backgroundColor: "#12140e" }}>
         <span className="material-symbols-outlined mb-4" style={{ color: "#e9c349", fontSize: "64px", fontVariationSettings: "'FILL' 1" }}>construction</span>
-        <h2 className="font-black mb-2" style={{ color: "#e3e3d9", fontSize: "28px" }}>Under Maintenance</h2>
+        <h2 className="font-black mb-2" style={{ color: "#e3e3d9", fontSize: "28px" }}>{tx.ranking.maintenance}</h2>
         <p style={{ color: "rgba(192,200,195,0.6)", fontSize: "14px", textAlign: "center", maxWidth: "320px" }}>
-          The Ranked Archive is temporarily closed for maintenance. Please check back later.
+          {tx.ranking.maintenanceDesc}
         </p>
         <Link to="/" className="mt-8 px-8 py-3 font-black uppercase tracking-widest" style={{ backgroundColor: "#1e201a", color: "#a2d1bb", border: "1px solid rgba(162,209,187,0.2)", borderRadius: "4px", fontSize: "11px", textDecoration: "none" }}>
-          Back to Home
+          {tx.ranking.backHome}
         </Link>
       </div>
     );
@@ -94,7 +94,7 @@ export default function RankDashboard() {
         <span className="material-symbols-outlined animate-spin mr-2">
           progress_activity
         </span>
-        Loading rank data...
+        {tx.ranking.loading}
       </div>
     );
   }
@@ -103,7 +103,6 @@ export default function RankDashboard() {
     0,
     Math.min((user.rank || 1) - 1, rankNames.length - 1),
   );
-  const rankName = rankNames[rankIndex];
   const rankColor = rankColors[rankIndex];
   const rankGlow = rankGlows[rankIndex];
   const rankRing = rankRingGradients[rankIndex];
@@ -128,13 +127,13 @@ export default function RankDashboard() {
             className="uppercase tracking-widest font-bold"
             style={{ fontSize: "10px", color: "#a2d1bb" }}
           >
-            Chronicles
+            {tx.ranking.chronicles}
           </p>
           <h2
             className="text-2xl font-black tracking-tight"
             style={{ color: "#a2d1bb" }}
           >
-            Your Rank
+            {tx.ranking.yourRank}
           </h2>
         </div>
 
@@ -156,7 +155,7 @@ export default function RankDashboard() {
           >
             play_arrow
           </span>
-          Rank Now
+          {tx.ranking.rankNow}
         </Link>
       </header>
 
@@ -246,7 +245,7 @@ export default function RankDashboard() {
                     boxShadow: `0 4px 20px ${rankGlow}`,
                   }}
                 >
-                  {rankName}
+                  {tx.ranking.rankNames[rankIndex]}
                 </div>
               </motion.div>
 
@@ -264,7 +263,7 @@ export default function RankDashboard() {
                   letterSpacing: "0.1em",
                 }}
               >
-                RANK {user.rank || 1} — {rankName.toUpperCase()}
+                {tx.ranking.rankLabel(user.rank || 1, tx.ranking.rankNames[rankIndex].toUpperCase())}
               </p>
 
               {/* Stars */}
@@ -314,7 +313,7 @@ export default function RankDashboard() {
                       fontWeight: "700",
                     }}
                   >
-                    {stars} / 5 stars
+                    {tx.ranking.starsOf(stars)}
                   </span>
                 </div>
                 <div

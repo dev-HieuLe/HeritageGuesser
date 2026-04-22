@@ -8,6 +8,8 @@ import { Link, useNavigate } from "react-router-dom";
 import AvatarCanvas from "../Avatar/AvatarCanvas";
 import { useGeminiTTS } from "../../hooks/useGeminiTTS";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
+import { useLang } from "../../Context/languageContext";
+import t from "../../translations";
 
 const rankNames = [
   "Iron",
@@ -22,28 +24,12 @@ const rankNames = [
   "Challenger",
 ];
 
-const getFeedback = (score) => {
-  if (score === 10)
-    return {
-      label: "Perfect Curation",
-      color: "#e9c349",
-      icon: "workspace_premium",
-    };
-  if (score >= 8)
-    return {
-      label: "Exceptional Record",
-      color: "#a2d1bb",
-      icon: "military_tech",
-    };
-  if (score >= 6)
-    return {
-      label: "On the Right Track",
-      color: "#e9c349",
-      icon: "trending_up",
-    };
-  if (score >= 4)
-    return { label: "Partial Archive", color: "#ffb4a9", icon: "history_edu" };
-  return { label: "Record Lost", color: "#bb0308", icon: "cancel" };
+const getFeedback = (score, feedbacks) => {
+  if (score === 10) return { label: feedbacks.perfect, color: "#e9c349", icon: "workspace_premium" };
+  if (score >= 8) return { label: feedbacks.exceptional, color: "#a2d1bb", icon: "military_tech" };
+  if (score >= 6) return { label: feedbacks.onTrack, color: "#e9c349", icon: "trending_up" };
+  if (score >= 4) return { label: feedbacks.partial, color: "#ffb4a9", icon: "history_edu" };
+  return { label: feedbacks.lost, color: "#bb0308", icon: "cancel" };
 };
 
 const glassPanel = {
@@ -52,6 +38,32 @@ const glassPanel = {
   WebkitBackdropFilter: "blur(24px)",
   border: "1px solid rgba(162, 209, 187, 0.1)",
 };
+
+/** Read-only 5-star display. Empty stars are clearly outlined. */
+function StarDisplay({ stars = 0, size = 16 }) {
+  return (
+    <div className="flex items-center gap-0.5">
+      {[1, 2, 3, 4, 5].map((s) => {
+        const filled = stars >= s;
+        const half   = !filled && stars >= s - 0.5;
+        return (
+          <span
+            key={s}
+            className="material-symbols-outlined"
+            style={{
+              fontSize: size,
+              color: filled || half ? "#e9c349" : "rgba(162,209,187,0.2)",
+              fontVariationSettings: filled ? "'FILL' 1" : "'FILL' 0",
+              lineHeight: 1,
+            }}
+          >
+            {half ? "star_half" : "star"}
+          </span>
+        );
+      })}
+    </div>
+  );
+}
 
 export default function RankPlay() {
   const { isLoaded } = useJsApiLoader({
@@ -74,10 +86,13 @@ export default function RankPlay() {
   const [result, setResult] = useState(null);
   const [finished, setFinished] = useState(false);
   const [loadingReply, setLoadingReply] = useState(false);
+  const [locationRating, setLocationRating] = useState({ stars: 0, total_ratings: 0, my_rating: null });
+  const [ratingSubmitting, setRatingSubmitting] = useState(false);
 
   const [countdown, setCountdown] = useState(3);
   const [isBlurred, setIsBlurred] = useState(true);
   const [timeLeft, setTimeLeft] = useState(180);
+  const [svError, setSvError] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
   const [rankChangeMsg, setRankChangeMsg] = useState(null);
   const [timesUp, setTimesUp] = useState(false);
@@ -90,6 +105,9 @@ export default function RankPlay() {
     claimDailyCheckin,
     addPoints,
   } = useContext(AuthContext);
+
+  const { lang } = useLang();
+  const txRP = t[lang].rankPlay;
 
   const MAX_DAILY_PLAYS = user?.max_play ?? 15;
   const isUnlimited = user?.max_play === -1;
@@ -108,6 +126,7 @@ export default function RankPlay() {
   const svContainerRef = useRef(null);
   const svPanoramaRef = useRef(null);
   const svLoadRecordedRef = useRef(false); // ensure sv-load is called exactly once per mount
+  const svPositionPendingRef = useRef(null); // debounce rapid setPosition calls
   const { width, height } = useWindowSize();
 
   const [sending, setSending] = useState(false);
@@ -129,7 +148,7 @@ export default function RankPlay() {
   // Initialize Street View panorama once — only after Maps API is loaded
   useEffect(() => {
     if (!isLoaded || !svContainerRef.current || svPanoramaRef.current) return;
-    svPanoramaRef.current = new window.google.maps.StreetViewPanorama(svContainerRef.current, {
+    const pano = new window.google.maps.StreetViewPanorama(svContainerRef.current, {
       disableDefaultUI: true,
       clickToGo: false,
       linksControl: false,
@@ -139,14 +158,28 @@ export default function RankPlay() {
       enableCloseButton: false,
       scrollwheel: true,
     });
+    pano.addListener("status_changed", () => {
+      if (pano.getStatus() === window.google.maps.StreetViewStatus.ZERO_RESULTS) {
+        setSvError(true);
+      }
+    });
+    pano.addListener("tiles_loaded", () => {
+      setSvError(false);
+    });
+    svPanoramaRef.current = pano;
   }, [isLoaded]);
 
-  // Update position each round — no remount, no extra billing
+  // Update position each round — debounced to avoid concurrent tile requests
   useEffect(() => {
     if (!svPanoramaRef.current || !current) return;
-    svPanoramaRef.current.setPosition({ lat: current.lat, lng: current.lng });
-    svPanoramaRef.current.setPov({ heading: Math.floor(Math.random() * 360), pitch: 0 });
-    svPanoramaRef.current.setZoom(1);
+    setSvError(false);
+    clearTimeout(svPositionPendingRef.current);
+    svPositionPendingRef.current = setTimeout(() => {
+      if (!svPanoramaRef.current) return;
+      svPanoramaRef.current.setPosition({ lat: current.lat, lng: current.lng });
+      svPanoramaRef.current.setPov({ heading: Math.floor(Math.random() * 360), pitch: 0 });
+      svPanoramaRef.current.setZoom(1);
+    }, 80);
   }, [current]);
 
   const applyLimitFromCount = (count) => {
@@ -425,6 +458,13 @@ export default function RankPlay() {
         correctName: current.name,
         correctAge: current.years_old,
       });
+
+      // Seed rating display from the data already on the location object
+      setLocationRating({
+        stars: current.stars ?? 0,
+        total_ratings: current.total_ratings ?? 0,
+        my_rating: current.my_rating ?? null,
+      });
       if (total === 10) {
         setShowConfetti(true);
         setTimeout(() => setShowConfetti(false), 7000);
@@ -454,6 +494,7 @@ export default function RankPlay() {
     setMessages([]);
     setChatCount(0);
     setRankChangeMsg(null);
+    setLocationRating({ stars: 0, total_ratings: 0, my_rating: null });
 
     const nextIndex = sessionIndex + 1;
 
@@ -489,7 +530,7 @@ export default function RankPlay() {
 
   const ptsEarned = result ? Math.round((result.total / 10) * 5000) : 0;
   const accuracyPct = result ? Math.round((result.total / 10) * 100) : 0;
-  const fb = result ? getFeedback(result.total) : null;
+  const fb = result ? getFeedback(result.total, txRP.feedbacks) : null;
 
   return (
       <div
@@ -548,10 +589,10 @@ export default function RankPlay() {
             </Link>
             <div className="hidden md:flex items-center gap-8">
               {[
-                { label: "Explore", to: "/", active: false },
-                { label: "Leaderboard", to: "/leaderboard", active: false },
-                { label: "Study", to: "/study", active: false },
-                { label: "Challenge", to: "/game/rank", active: true },
+                { label: txRP.navExplore, to: "/", active: false },
+                { label: txRP.navLeaderboard, to: "/leaderboard", active: false },
+                { label: txRP.navStudy, to: "/study", active: false },
+                { label: txRP.navChallenge, to: "/game/rank", active: true },
               ].map((l) => (
                 <Link
                   key={l.to}
@@ -636,7 +677,7 @@ export default function RankPlay() {
                   fontWeight: "700",
                 }}
               >
-                {isUnlimited ? "∞" : playsLeft} left
+                {isUnlimited ? "∞" : txRP.playsLeft(playsLeft)}
               </span>
             </div>
             {/* Session counter */}
@@ -694,6 +735,29 @@ export default function RankPlay() {
                 "linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, transparent 25%, transparent 55%, rgba(0,0,0,0.6) 100%)",
             }}
           />
+          {/* Street View unavailable fallback */}
+          {svError && !isBlurred && (
+            <div
+              className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none"
+              style={{ backgroundColor: "rgba(14,21,19,0.92)" }}
+            >
+              <span
+                className="material-symbols-outlined mb-3"
+                style={{ color: "rgba(162,209,187,0.4)", fontSize: "48px" }}
+              >
+                panorama_photosphere_off
+              </span>
+              <p
+                className="uppercase tracking-widest font-black"
+                style={{ color: "rgba(162,209,187,0.5)", fontSize: "11px" }}
+              >
+                {txRP.noImagery}
+              </p>
+              <p style={{ color: "rgba(192,200,195,0.35)", fontSize: "11px", marginTop: "4px" }}>
+                {txRP.useClues}
+              </p>
+            </div>
+          )}
         </div>
 
         {/* ── MAINTENANCE WALL ── */}
@@ -709,17 +773,17 @@ export default function RankPlay() {
               construction
             </span>
             <h2 className="font-black mb-2" style={{ color: "#e3e3d9", fontSize: "28px" }}>
-              Under Maintenance
+              {txRP.maintenanceTitle}
             </h2>
             <p style={{ color: "rgba(192,200,195,0.6)", fontSize: "14px", textAlign: "center", maxWidth: "320px" }}>
-              The Ranked Archive is temporarily closed for maintenance. Please check back later.
+              {txRP.maintenanceDesc}
             </p>
             <Link
               to="/"
               className="mt-8 px-8 py-3 font-black uppercase tracking-widest"
               style={{ backgroundColor: "#1e201a", color: "#a2d1bb", border: "1px solid rgba(162,209,187,0.2)", borderRadius: "4px", fontSize: "11px", textDecoration: "none" }}
             >
-              Back to Home
+              {txRP.backHome}
             </Link>
           </div>
         )}
@@ -744,24 +808,50 @@ export default function RankPlay() {
               className="font-black mb-2"
               style={{ color: "#ffb4a9", fontSize: "28px" }}
             >
-              Ranked Archive Sealed
+              {txRP.sealedTitle}
             </h2>
-            <p style={{ color: "rgba(192,200,195,0.6)", fontSize: "14px" }}>
-              Daily ranked limit of {MAX_DAILY_PLAYS} sessions reached. Come
-              back tomorrow.
+            <p style={{ color: "rgba(192,200,195,0.6)", fontSize: "14px", textAlign: "center", maxWidth: 320 }}>
+              {txRP.sealedDesc(MAX_DAILY_PLAYS)}
             </p>
+
+            {/* Subscription upsell */}
+            <div style={{
+              marginTop: 28, padding: "20px 28px", borderRadius: 14,
+              border: "1px solid rgba(162,209,187,0.2)",
+              background: "rgba(162,209,187,0.05)",
+              display: "flex", flexDirection: "column", alignItems: "center", gap: 10,
+              maxWidth: 320, width: "100%",
+            }}>
+              <span style={{ fontSize: 10, fontWeight: 900, letterSpacing: "0.16em", color: "#a2d1bb", textTransform: "uppercase" }}>
+                {txRP.upgradeTitle}
+              </span>
+              <p style={{ fontSize: 12, color: "rgba(192,200,195,0.55)", textAlign: "center", margin: 0, lineHeight: 1.6 }}>
+                {txRP.upgradeDesc}
+              </p>
+              <Link
+                to="/subscription"
+                style={{
+                  marginTop: 4, padding: "10px 24px", borderRadius: 8,
+                  background: "linear-gradient(135deg, #0f3d2e, #a2d1bb)",
+                  color: "#073829", fontWeight: 900, fontSize: 11,
+                  letterSpacing: "0.1em", textTransform: "uppercase",
+                  textDecoration: "none",
+                }}
+              >
+                {txRP.viewSubscription}
+              </Link>
+            </div>
+
             <Link
               to="/"
-              className="mt-8 px-8 py-3 font-black uppercase tracking-widest"
+              className="mt-5 font-black uppercase tracking-widest"
               style={{
-                backgroundColor: "#bb0308",
-                color: "#ffc8c0",
-                borderRadius: "4px",
+                color: "rgba(192,200,195,0.35)",
                 fontSize: "11px",
                 textDecoration: "none",
               }}
             >
-              Back to Home
+              ← {txRP.backHome}
             </Link>
           </div>
         )}
@@ -794,7 +884,7 @@ export default function RankPlay() {
                     className="uppercase tracking-widest mt-4"
                     style={{ color: "rgba(162,209,187,0.6)", fontSize: "12px" }}
                   >
-                    Prepare the Ranked Archive
+                    {txRP.preparingArchive}
                   </p>
                   <div className="mt-6 w-64 mx-auto">
                     <div className="flex justify-between mb-1">
@@ -804,7 +894,7 @@ export default function RankPlay() {
                           fontSize: "10px",
                         }}
                       >
-                        Session Progress
+                        {txRP.sessionProgress}
                       </span>
                       <span
                         style={{
@@ -856,10 +946,10 @@ export default function RankPlay() {
               className="font-black mb-2"
               style={{ color: "#e3e3d9", fontSize: "36px" }}
             >
-              Ranked Session Complete
+              {txRP.sessionComplete}
             </h2>
             <p style={{ color: "rgba(192,200,195,0.6)", fontSize: "14px" }}>
-              All heritage sites have been catalogued.
+              {txRP.allCatalogued}
             </p>
             <div className="flex gap-4 mt-8">
               <Link
@@ -873,7 +963,7 @@ export default function RankPlay() {
                   textDecoration: "none",
                 }}
               >
-                View Rank
+                {txRP.viewRank}
               </Link>
               <Link
                 to="/"
@@ -887,7 +977,7 @@ export default function RankPlay() {
                   textDecoration: "none",
                 }}
               >
-                Sanctuary
+                {txRP.sanctuary}
               </Link>
             </div>
           </div>
@@ -912,13 +1002,13 @@ export default function RankPlay() {
                 animation: "pulse 0.5s ease-in-out infinite alternate",
               }}
             >
-              TIME'S UP
+              {txRP.timesUp}
             </span>
             <p
               className="uppercase tracking-widest mt-3"
               style={{ color: "rgba(255,180,169,0.8)", fontSize: "13px" }}
             >
-              Submitting your answer…
+              {txRP.submitting}
             </p>
           </div>
         )}
@@ -940,13 +1030,13 @@ export default function RankPlay() {
               className="uppercase tracking-widest font-black mb-1"
               style={{ color: "#bb0308", fontSize: "9px" }}
             >
-              Ranked · Chamber {sessionIndex + 1}
+              {txRP.chamber(sessionIndex + 1)}
             </p>
             <h2
               className="font-black"
               style={{ color: "#ffffff", fontSize: "15px" }}
             >
-              {current?.region || "Unknown"} Heritage
+              {txRP.heritage(current?.region || txRP.noRatings)}
             </h2>
             <div className="flex gap-1 mt-2 flex-wrap">
               {Array(Math.min(10, sessionLocations.length))
@@ -968,6 +1058,14 @@ export default function RankPlay() {
                     />
                   );
                 })}
+            </div>
+
+            {/* Overall location rating */}
+            <div className="flex items-center gap-1.5 mt-3 pt-2" style={{ borderTop: "1px solid rgba(162,209,187,0.08)" }}>
+              <StarDisplay stars={current?.stars ?? 0} size={13} />
+              <span style={{ color: "rgba(192,200,195,0.5)", fontSize: "10px", fontWeight: 700 }}>
+                {current?.stars > 0 ? current.stars.toFixed(1) : txRP.noRatings}
+              </span>
             </div>
           </div>
         )}
@@ -1123,7 +1221,7 @@ export default function RankPlay() {
                     >
                       {result.correctName}
                       {result.correctAge
-                        ? ` · ${result.correctAge} yrs old`
+                        ? ` · ${result.correctAge} ${txRP.yrsOld}`
                         : ""}
                     </p>
                     {current?.description && (
@@ -1160,7 +1258,7 @@ export default function RankPlay() {
                         marginTop: "2px",
                       }}
                     >
-                      PTS EARNED
+                      {txRP.ptsEarned}
                     </span>
                     {/* Score breakdown */}
                     <div className="flex gap-3 mt-2 justify-end">
@@ -1171,7 +1269,7 @@ export default function RankPlay() {
                           fontWeight: "700",
                         }}
                       >
-                        Name {result.nameScore}/5
+                        {txRP.scoreName} {result.nameScore}/5
                       </span>
                       <span
                         style={{
@@ -1180,7 +1278,7 @@ export default function RankPlay() {
                           fontWeight: "700",
                         }}
                       >
-                        Age {result.ageScore}/5
+                        {txRP.scoreAge} {result.ageScore}/5
                       </span>
                     </div>
                   </div>
@@ -1207,14 +1305,81 @@ export default function RankPlay() {
                     className="uppercase tracking-widest"
                     style={{ color: "rgba(162,209,187,0.5)", fontSize: "10px" }}
                   >
-                    Similarity: {Math.round(result.similarity * 100)}%
+                    {txRP.similarity(Math.round(result.similarity * 100))}
                   </span>
                   <span
                     className="uppercase tracking-widest"
                     style={{ color: "rgba(162,209,187,0.5)", fontSize: "10px" }}
                   >
-                    Timeline: ±{result.ageDiff} Years
+                    {txRP.timeline(result.ageDiff)}
                   </span>
+                </div>
+
+                {/* Location rating */}
+                <div
+                  className="mt-4 px-4 py-3 rounded-xl flex flex-col gap-2"
+                  style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(162,209,187,0.08)" }}
+                >
+                  {/* Overall rating row */}
+                  <div className="flex items-center justify-between">
+                    <span style={{ color: "rgba(162,209,187,0.5)", fontSize: "10px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em" }}>
+                      {txRP.overallRating}
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <StarDisplay stars={locationRating.stars} size={15} />
+                      <span style={{ color: "rgba(192,200,195,0.5)", fontSize: "10px" }}>
+                        {locationRating.stars > 0 ? locationRating.stars.toFixed(1) : "0.0"} · {txRP.votes(locationRating.total_ratings)}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* User rating row */}
+                  <div className="flex items-center justify-between">
+                    <span style={{ color: "rgba(162,209,187,0.4)", fontSize: "10px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em" }}>
+                      {locationRating.my_rating ? txRP.yourRating : txRP.rateThis}
+                    </span>
+                    <div className="flex items-center gap-0.5">
+                      {[1, 2, 3, 4, 5].map((star) => {
+                        const filled = (locationRating.my_rating ?? 0) >= star;
+                        return (
+                          <button
+                            key={star}
+                            type="button"
+                            disabled={ratingSubmitting}
+                            onClick={async () => {
+                              if (!current || ratingSubmitting) return;
+                              setRatingSubmitting(true);
+                              try {
+                                const { data } = await axios.post(
+                                  `${import.meta.env.VITE_API_BASE_URL}/locations/rate/${current.id}`,
+                                  { rating: star },
+                                  { withCredentials: true },
+                                );
+                                setLocationRating(data);
+                              } catch {}
+                              finally { setRatingSubmitting(false); }
+                            }}
+                            style={{
+                              background: "none", border: "none", padding: "2px",
+                              cursor: ratingSubmitting ? "default" : "pointer",
+                              color: filled ? "#e9c349" : "rgba(162,209,187,0.2)",
+                              fontSize: "22px", lineHeight: 1,
+                              transition: "color 0.15s, transform 0.1s",
+                            }}
+                            onMouseEnter={(e) => { if (!ratingSubmitting) e.currentTarget.style.color = "#e9c349"; e.currentTarget.style.transform = "scale(1.15)"; }}
+                            onMouseLeave={(e) => { e.currentTarget.style.color = filled ? "#e9c349" : "rgba(162,209,187,0.2)"; e.currentTarget.style.transform = "scale(1)"; }}
+                          >
+                            <span
+                              className="material-symbols-outlined"
+                              style={{ fontSize: "inherit", fontVariationSettings: filled ? "'FILL' 1" : "'FILL' 0" }}
+                            >
+                              star
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
                 </div>
 
                 {/* Continue button */}
@@ -1229,7 +1394,7 @@ export default function RankPlay() {
                     cursor: "pointer",
                   }}
                 >
-                  Continue
+                  {txRP.continue}
                   <span
                     className="material-symbols-outlined"
                     style={{ fontSize: "16px" }}
@@ -1266,12 +1431,12 @@ export default function RankPlay() {
                           marginBottom: "4px",
                         }}
                       >
-                        Enter Heritage Identity
+                        {txRP.enterHeritage}
                       </label>
                       <input
                         value={heritage}
                         onChange={(e) => setHeritage(e.target.value)}
-                        placeholder="Location, Dynasty, or Era..."
+                        placeholder={txRP.heritagePlaceholder}
                         className="w-full outline-none"
                         style={{
                           background: "transparent",
@@ -1306,7 +1471,7 @@ export default function RankPlay() {
                           marginBottom: "4px",
                         }}
                       >
-                        Years Old (Est.)
+                        {txRP.yearsOldLabel}
                       </label>
                       <input
                         type="number"
@@ -1319,7 +1484,7 @@ export default function RankPlay() {
                           ["e", "E", "+", "-", "."].includes(e.key) &&
                           e.preventDefault()
                         }
-                        placeholder="e.g. 1802"
+                        placeholder={txRP.yearPlaceholder}
                         className="w-full outline-none"
                         style={{
                           background: "transparent",
@@ -1352,7 +1517,7 @@ export default function RankPlay() {
                         fontFamily: "'Be Vietnam Pro', sans-serif",
                       }}
                     >
-                      GUESS
+                      {txRP.guess}
                       <span
                         className="material-symbols-outlined"
                         style={{ fontSize: "15px" }}

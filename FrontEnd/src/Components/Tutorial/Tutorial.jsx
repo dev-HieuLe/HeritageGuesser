@@ -65,6 +65,70 @@ const steps = {
       desc: "Đạt 8 điểm trở lên để thăng hạng; 4 điểm trở xuống để xuống hạng. Leo từ Sắt qua Đồng, Bạc, Vàng và cao hơn để giành vị trí trên bảng Học Giả Đế Vương.",
     },
   ],
+  cn: [
+    {
+      icon: "travel_explore",
+      title: "揭开神秘遗产地",
+      desc: "每轮游戏将带你进入一处真实越南遗产地的街景全景。旋转缩放，仔细研究建筑、雕刻与周围环境。",
+    },
+    {
+      icon: "history_edu",
+      title: "猜出遗产名称",
+      desc: "输入你对遗址名称的最佳猜测。最多可获得5分——你的答案越接近真实名称，名称得分就越高。",
+    },
+    {
+      icon: "schedule",
+      title: "猜测遗产年龄",
+      desc: "以年为单位输入遗产的年龄。根据准确度最多可获得5分：误差在10年内得满分，误差在80年内得1分。",
+    },
+    {
+      icon: "smart_toy",
+      title: "向档案学者寻求提示",
+      desc: "卡住了？与AI档案学者头像聊天，每轮最多可获得10个提示。每个提示引导你更接近答案而不直接告知——请善用它们。",
+    },
+    {
+      icon: "bolt",
+      title: "在倒计时结束前确认",
+      desc: "每轮有120秒。点击确认以锁定猜测。你的总分（名称+年龄，最高10分）决定你的经验值和排名结果。",
+    },
+    {
+      icon: "military_tech",
+      title: "晋升排名",
+      desc: "得8分或以上即可晋级；4分或以下则会降级。从铁牌一路攀升至铜、银、金及更高段位，在帝王学者榜上占据一席之地。",
+    },
+  ],
+  fr: [
+    {
+      icon: "travel_explore",
+      title: "Un site patrimonial mystérieux est révélé",
+      desc: "Chaque manche vous plonge dans un panorama de rue d'un vrai site patrimonial vietnamien. Faites pivoter et zoomez pour étudier l'architecture, les sculptures et les alentours.",
+    },
+    {
+      icon: "history_edu",
+      title: "Devinez le nom du patrimoine",
+      desc: "Tapez votre meilleure estimation du nom du site. Vous gagnez jusqu'à 5 points — plus votre réponse correspond au vrai nom, plus votre score de nom est élevé.",
+    },
+    {
+      icon: "schedule",
+      title: "Devinez son âge",
+      desc: "Entrez l'âge du patrimoine en années. Vous gagnez jusqu'à 5 points selon la précision : dans les 10 ans = note maximale, dans les 80 ans = 1 point.",
+    },
+    {
+      icon: "smart_toy",
+      title: "Demandez des indices à l'Archiviste",
+      desc: "Bloqué ? Discutez avec l'avatar IA Archiviste pour obtenir jusqu'à 10 indices par manche. Chaque indice vous rapproche sans révéler la réponse — utilisez-les judicieusement.",
+    },
+    {
+      icon: "bolt",
+      title: "Confirmez avant la fin du minuteur",
+      desc: "Vous avez 120 secondes par manche. Appuyez sur Confirmer pour valider vos estimations. Votre score total (nom + âge, max 10) détermine votre XP et votre rang.",
+    },
+    {
+      icon: "military_tech",
+      title: "Grimpez dans les rangs",
+      desc: "Obtenez 8 ou plus pour monter en rang ; 4 ou moins pour descendre. Grimpez du Fer au Bronze, Argent, Or et au-delà pour mériter votre place au classement des Érudits Impériaux.",
+    },
+  ],
 };
 
 const modes = {
@@ -108,6 +172,46 @@ const modes = {
       color: "#ffb4a9",
     },
   ],
+  cn: [
+    {
+      icon: "explore",
+      name: "经典模式",
+      desc: "无排名压力的练习轮次。自由辨认遗址名称和年龄——是积累遗产知识的最佳方式。",
+      color: "#a2d1bb",
+    },
+    {
+      icon: "history_edu",
+      name: "排名赛（编年史）",
+      desc: "竞技模式。在压力下猜名称和年龄——得分≥8即可晋级，≤4则降级。排行榜上每分都至关重要。",
+      color: "#e9c349",
+    },
+    {
+      icon: "groups",
+      name: "每日任务",
+      desc: "每天一处共享遗产地。所有人看到相同地点——将你对名称和年龄的准确度与整个社区进行比较。",
+      color: "#ffb4a9",
+    },
+  ],
+  fr: [
+    {
+      icon: "explore",
+      name: "Classique",
+      desc: "Manches d'entraînement sans enjeu de rang. Identifiez librement le nom et l'âge du site — parfait pour développer votre connaissance du patrimoine.",
+      color: "#a2d1bb",
+    },
+    {
+      icon: "history_edu",
+      name: "Classé (Chroniques)",
+      desc: "Mode compétitif. Devinez nom et âge sous pression — score ≥ 8 pour monter, ≤ 4 pour descendre. Chaque point compte dans le classement.",
+      color: "#e9c349",
+    },
+    {
+      icon: "groups",
+      name: "Quête Quotidienne",
+      desc: "Un site patrimonial partagé par jour. Tout le monde voit le même endroit — comparez votre précision sur le nom et l'âge avec toute la communauté.",
+      color: "#ffb4a9",
+    },
+  ],
 };
 
 const tips = {
@@ -127,6 +231,22 @@ const tips = {
     "Nếu không chắc tên chính xác, hãy gõ cách phát âm gần nhất — hệ thống tính điểm dùng khớp tương đồng, nên câu trả lời gần đúng vẫn ghi điểm.",
     "Dùng chat Học Giả Lưu Trữ thật khôn ngoan: hỏi câu rộng trước ('Triều đại nào xây công trình này?') rồi mới thu hẹp dần ('Nó ở tỉnh nào?').",
   ],
+  cn: [
+    "先学习学院部分再开始游戏——记住遗产名称是你能获得的最大加分方式。",
+    "猜测年龄时，以朝代为参考：李-陈朝时期约700–900年，阮朝约150–200年，占婆王国约500–1500+年。",
+    "建筑雕刻可以透露时代——莲花纹饰通常出现在李朝或陈朝的佛教庙宇中。",
+    "法国殖民时期建筑（对称立面、拱形窗户、黄色灰泥）通常有100–130年历史。",
+    "如果不确定确切名称，输入最接近的音译——评分系统使用相似度匹配，因此部分匹配仍可得分。",
+    "善用档案学者聊天：先问宽泛问题（「这是哪个朝代建造的？」），再逐步缩小范围（「它在哪个省？」）。",
+  ],
+  fr: [
+    "Étudiez la section Académie avant de jouer — mémoriser les noms des sites est le meilleur moyen d'augmenter votre score.",
+    "Pour les estimations d'âge, pensez en dynasties : époque Ly–Tran = ~700–900 ans, dynastie Nguyen = ~150–200 ans, royaume Cham = 500–1 500+ ans.",
+    "Les sculptures architecturales trahissent l'époque — les motifs de lotus indiquent souvent des temples bouddhistes de la période Ly ou Tran.",
+    "Les bâtiments coloniaux français (façades symétriques, fenêtres cintrées, plâtre jaune) ont généralement 100–130 ans.",
+    "Si vous n'êtes pas sûr du nom exact, tapez l'orthographe phonétique la plus proche — le système de notation utilise la correspondance de similarité, les correspondances partielles rapportent donc des points.",
+    "Utilisez judicieusement le chat Archiviste : posez d'abord des questions larges ('Quelle dynastie a construit ceci ?') avant de préciser ('Dans quelle province est-il ?').",
+  ],
 };
 
 export default function Tutorial() {
@@ -135,10 +255,10 @@ export default function Tutorial() {
   const modeList = modes[lang];
   const tipList = tips[lang];
 
-  const heading = lang === "en" ? "How to Play" : "Cách Chơi";
-  const modesHeading = lang === "en" ? "Game Modes" : "Chế Độ Chơi";
-  const tipsHeading = lang === "en" ? "Archivist Tips" : "Mẹo Từ Học Giả";
-  const stepLabel = lang === "en" ? "Step" : "Bước";
+  const heading = lang === "cn" ? "游戏规则" : lang === "fr" ? "Comment Jouer" : lang === "en" ? "How to Play" : "Cách Chơi";
+  const modesHeading = lang === "cn" ? "游戏模式" : lang === "fr" ? "Modes de Jeu" : lang === "en" ? "Game Modes" : "Chế Độ Chơi";
+  const tipsHeading = lang === "cn" ? "学者秘籍" : lang === "fr" ? "Conseils de l'Archiviste" : lang === "en" ? "Archivist Tips" : "Mẹo Từ Học Giả";
+  const stepLabel = lang === "cn" ? "步骤" : lang === "fr" ? "Étape" : lang === "en" ? "Step" : "Bước";
 
   return (
     <div className="min-h-screen bg-[#0e1513] text-[#dde4e0] flex flex-col items-center px-4 sm:px-8 py-8 sm:py-10">
@@ -147,7 +267,7 @@ export default function Tutorial() {
         <div className="inline-flex items-center px-3 py-1 rounded-full bg-[rgba(15,61,46,0.3)] border border-[rgba(162,209,187,0.2)] mb-4">
           <span className="w-2 h-2 rounded-full bg-[#e9c349] mr-2 inline-block" />
           <span className="text-[10px] font-bold text-[#a2d1bb] uppercase tracking-[0.2em]">
-            {lang === "en" ? "The Archivist's Guide" : "Cẩm Nang Học Giả"}
+            {lang === "cn" ? "档案学者指南" : lang === "fr" ? "Le Guide de l'Archiviste" : lang === "en" ? "The Archivist's Guide" : "Cẩm Nang Học Giả"}
           </span>
         </div>
         <h1
@@ -158,7 +278,11 @@ export default function Tutorial() {
           <span className="text-[#e9c349] italic">Heritage Guessr</span>
         </h1>
         <p className="text-[15px] sm:text-[17px] text-[#c0c8c3] leading-relaxed max-w-[560px]">
-          {lang === "en"
+          {lang === "cn"
+            ? "一处遗产地被揭晓。你的任务：说出它的名字，猜测它的年龄。以下是掌握档案馆所需了解的一切。"
+            : lang === "fr"
+            ? "Un site patrimonial est révélé. Votre mission : le nommer et deviner son âge. Voici tout ce que vous devez savoir pour maîtriser l'archive."
+            : lang === "en"
             ? "A heritage site is revealed. Your task: name it and guess how old it is. Here's everything you need to know to master the archive."
             : "Một di sản được tiết lộ. Nhiệm vụ của bạn: đặt tên và đoán độ tuổi của nó. Đây là mọi thứ bạn cần biết để làm chủ kho lưu trữ."}
         </p>

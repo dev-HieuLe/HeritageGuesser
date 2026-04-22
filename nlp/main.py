@@ -1,10 +1,12 @@
 from fastapi import FastAPI
 from routers import heritage
+from routers import contribute_rag
 
 app = FastAPI(title="NLP Heritage Backend")
 
 # Register routes
 app.include_router(heritage.router)
+app.include_router(contribute_rag.router)
 
 @app.get("/")
 def root():

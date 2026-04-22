@@ -20,6 +20,7 @@ import AuthCallback from "./Components/AuthCallback";
 import PageWrapper from "./Components/Animations/PageWrapper";
 import Navbar from "./Components/Navbar";
 import AboutUs from "./Components/About/AboutUs";
+import Subscription from "./Components/Subscription/Subscription";
 
 import "leaflet/dist/leaflet.css";
 
@@ -98,7 +99,8 @@ export default function App() {
             <Route path="/contribute"  element={<PageWrapper><ContributeHeritage /></PageWrapper>} />
             <Route path="/shop"         element={<PageWrapper><Shop /></PageWrapper>} />
             <Route path="/vr-discovery" element={<PageWrapper><VRDiscovery /></PageWrapper>} />
-            <Route path="/settings"    element={<PageWrapper><Settings /></PageWrapper>} />
+            <Route path="/settings"      element={<PageWrapper><Settings /></PageWrapper>} />
+            <Route path="/subscription" element={<PageWrapper><Subscription /></PageWrapper>} />
           </Routes>
         </AnimatePresence>
       </div>

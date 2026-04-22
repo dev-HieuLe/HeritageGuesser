@@ -1,7 +1,9 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { lessons } from "./lessons";
 import { AuthContext } from "../../Context/authContext";
+import { useLang } from "../../Context/languageContext";
+import t from "../../translations";
 
 const FONT_SIZES = [13, 16, 19];
 
@@ -10,11 +12,25 @@ export default function LessonDetail() {
   const navigate = useNavigate();
   const lesson = lessons.find((l) => l.id === Number(id));
   const { user, addPoints } = useContext(AuthContext);
+  const { lang } = useLang();
+  const tx = t[lang].lessonDetail;
 
   const [fontIdx, setFontIdx] = useState(1);
   const [copied, setCopied] = useState(false);
   const [activeImg, setActiveImg] = useState(0);
   const [imgErrors, setImgErrors] = useState({});
+  const [timeLeft, setTimeLeft] = useState(180);
+
+  useEffect(() => {
+    setTimeLeft(180);
+    const interval = setInterval(() => {
+      setTimeLeft((t) => {
+        if (t <= 1) { clearInterval(interval); return 0; }
+        return t - 1;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [id]);
   // Permanent key — never expires (marks lesson as read forever)
   const doneKey = user ? `lesson_done_${lesson.id}_${user.id}` : null;
   // Daily key — for points eligibility (resets each day)
@@ -37,16 +53,20 @@ export default function LessonDetail() {
     return (
       <div style={{ minHeight: "60vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12, backgroundColor: "#12140e" }}>
         <span className="material-symbols-outlined" style={{ fontSize: 48, color: "rgba(162,209,187,0.18)" }}>search_off</span>
-        <p style={{ color: "rgba(192,200,195,0.3)", fontSize: 13 }}>Bài học không tồn tại.</p>
+        <p style={{ color: "rgba(192,200,195,0.3)", fontSize: 13 }}>{tx.notFound}</p>
         <button
           onClick={() => navigate("/study")}
           style={{ padding: "8px 18px", borderRadius: 8, border: "1px solid rgba(162,209,187,0.2)", backgroundColor: "rgba(162,209,187,0.06)", color: "#a2d1bb", fontSize: 12, fontWeight: 700, cursor: "pointer" }}
         >
-          ← Quay lại
+          ← {tx.back}
         </button>
       </div>
     );
   }
+
+  const lessonType = lang === "vi" ? lesson.typeVi : lang === "cn" ? lesson.typeCn : lang === "fr" ? (lesson.typeFr ?? lesson.typeEn) : lesson.typeEn;
+  const lessonDesc = lesson.desc[lang] ?? lesson.desc.en;
+  const lessonParagraphs = lesson.paragraphs[lang] ?? lesson.paragraphs.vi;
 
   const fs = FONT_SIZES[fontIdx];
   const visibleImages = lesson.images.filter((_, i) => !imgErrors[i]);
@@ -101,15 +121,15 @@ export default function LessonDetail() {
             style={{ display: "flex", alignItems: "center", gap: 5, background: "none", border: "none", cursor: "pointer", color: "rgba(192,200,195,0.45)", fontSize: 11, fontWeight: 900, padding: 0, marginBottom: 22, letterSpacing: "0.1em" }}
           >
             <span className="material-symbols-outlined" style={{ fontSize: 13 }}>arrow_back</span>
-            QUAY LẠI
+            {tx.backLabel}
           </button>
 
           {/* Meta */}
           <div style={{ borderTop: "1px solid rgba(65,73,68,0.35)", paddingTop: 20, display: "flex", flexDirection: "column", gap: 16 }}>
-            <MetaItem label="CHUYÊN MỤC" value={lesson.typeVi.toUpperCase()} valueStyle={{ color: lesson.typeColor, fontWeight: 900 }} />
-            <MetaItem label="VỊ TRÍ" value={lesson.location} />
-            <MetaItem label="GIAI ĐOẠN" value={lesson.era} />
-            <MetaItem label="NĂM" value={lesson.year} />
+            <MetaItem label={tx.categoryLabel} value={lessonType.toUpperCase()} valueStyle={{ color: lesson.typeColor, fontWeight: 900 }} />
+            <MetaItem label={tx.locationLabel} value={lesson.location} />
+            <MetaItem label={tx.eraLabel} value={lesson.era} />
+            <MetaItem label={tx.yearLabel} value={lesson.year} />
           </div>
 
           {/* Copy link */}
@@ -118,19 +138,19 @@ export default function LessonDetail() {
             style={{ display: "flex", alignItems: "center", gap: 5, background: "none", border: "none", cursor: "pointer", color: copied ? "#a2d1bb" : "rgba(162,209,187,0.5)", fontSize: 10, fontWeight: 900, padding: "16px 0 0", letterSpacing: "0.07em", marginTop: 16, width: "100%", borderTop: "1px solid rgba(65,73,68,0.35)" }}
           >
             <span className="material-symbols-outlined" style={{ fontSize: 14 }}>link</span>
-            {copied ? "ĐÃ SAO CHÉP!" : "SAO CHÉP LINK"}
+            {copied ? tx.copied : tx.copyLink}
           </button>
 
           {/* Prev / Next nav */}
           <div style={{ marginTop: 20, display: "flex", flexDirection: "column", gap: 7 }}>
             {lesson.id > 1 && (
               <button onClick={() => goTo(lesson.id - 1)} style={navSmallBtnStyle}>
-                <span className="material-symbols-outlined" style={{ fontSize: 12 }}>arrow_back</span> BÀI TRƯỚC
+                <span className="material-symbols-outlined" style={{ fontSize: 12 }}>arrow_back</span> {tx.prevLesson}
               </button>
             )}
             {lesson.id < lessons.length && (
               <button onClick={() => goTo(lesson.id + 1)} style={navSmallBtnStyle}>
-                BÀI TIẾP <span className="material-symbols-outlined" style={{ fontSize: 12 }}>arrow_forward</span>
+                {tx.nextLesson} <span className="material-symbols-outlined" style={{ fontSize: 12 }}>arrow_forward</span>
               </button>
             )}
           </div>
@@ -170,7 +190,7 @@ export default function LessonDetail() {
           {/* Title block */}
           <div style={{ marginBottom: 24 }}>
             <span style={{ fontSize: 8, fontWeight: 900, letterSpacing: "0.14em", backgroundColor: lesson.typeBg, color: lesson.typeColor, padding: "3px 10px", borderRadius: 4, textTransform: "uppercase", display: "inline-block", marginBottom: 12 }}>
-              {lesson.typeVi}
+              {lessonType}
             </span>
             <h1 style={{ fontSize: 26, fontWeight: 900, color: "#e3e3d9", lineHeight: 1.25, marginBottom: 8 }}>
               {lesson.name}
@@ -182,14 +202,14 @@ export default function LessonDetail() {
 
           {/* Lead / intro */}
           <p style={{ fontSize: fs + 1, lineHeight: 1.85, color: "#e3e3d9", fontWeight: 500, marginBottom: 20, textAlign: "justify", borderLeft: "3px solid rgba(162,209,187,0.35)", paddingLeft: 16 }}>
-            {lesson.desc}
+            {lessonDesc}
           </p>
 
           <div style={{ height: 1, backgroundColor: "rgba(65,73,68,0.35)", margin: "20px 0" }} />
 
           {/* Article paragraphs */}
           <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
-            {lesson.paragraphs.map((para, i) => (
+            {lessonParagraphs.map((para, i) => (
               <p key={i} style={{ fontSize: fs, lineHeight: 1.85, color: "rgba(192,200,195,0.85)", margin: 0, textAlign: "justify" }}>
                 {para}
               </p>
@@ -199,7 +219,7 @@ export default function LessonDetail() {
           {/* Sources */}
           <div style={{ marginTop: 40, padding: "18px 22px", borderRadius: 12, backgroundColor: "#1a1c16", border: "1px solid rgba(65,73,68,0.4)" }}>
             <p style={{ fontSize: 8, fontWeight: 900, letterSpacing: "0.14em", color: "rgba(162,209,187,0.4)", textTransform: "uppercase", marginBottom: 10 }}>
-              NGUỒN THAM KHẢO
+              {tx.sources}
             </p>
             <ul style={{ margin: 0, padding: "0 0 0 14px", display: "flex", flexDirection: "column", gap: 5 }}>
               {lesson.sources.map((s, i) => (
@@ -210,25 +230,34 @@ export default function LessonDetail() {
 
           {/* Finish Reading button */}
           {user && (
-            <div style={{ marginTop: 28, display: "flex", justifyContent: "center" }}>
+            <div style={{ marginTop: 28, display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
+              {!readDone && timeLeft > 0 && (
+                <p style={{ fontSize: 11, color: "rgba(192,200,195,0.4)", fontWeight: 700, letterSpacing: "0.06em", margin: 0 }}>
+                  {tx.readTimeLeft(Math.floor(timeLeft / 60), String(timeLeft % 60).padStart(2, "0"))}
+                </p>
+              )}
               <button
                 onClick={handleFinishReading}
-                disabled={readDone}
+                disabled={readDone || timeLeft > 0}
                 style={{
                   display: "flex", alignItems: "center", gap: 8,
                   padding: "12px 28px", borderRadius: 10,
-                  background: readDone ? "rgba(162,209,187,0.07)" : "linear-gradient(135deg, #0f3d2e, #a2d1bb)",
-                  border: readDone ? "1px solid rgba(162,209,187,0.2)" : "none",
-                  color: readDone ? "#a2d1bb" : "#073829",
+                  background: readDone
+                    ? "rgba(162,209,187,0.07)"
+                    : timeLeft > 0
+                    ? "rgba(162,209,187,0.07)"
+                    : "linear-gradient(135deg, #0f3d2e, #a2d1bb)",
+                  border: (readDone || timeLeft > 0) ? "1px solid rgba(162,209,187,0.2)" : "none",
+                  color: (readDone || timeLeft > 0) ? "#a2d1bb" : "#073829",
                   fontWeight: 800, fontSize: 12, letterSpacing: "0.08em",
-                  textTransform: "uppercase", cursor: readDone ? "default" : "pointer",
-                  opacity: readDone ? 0.7 : 1, transition: "all 0.2s",
+                  textTransform: "uppercase", cursor: (readDone || timeLeft > 0) ? "default" : "pointer",
+                  opacity: (readDone || timeLeft > 0) ? 0.5 : 1, transition: "all 0.2s",
                 }}
               >
                 <span className="material-symbols-outlined" style={{ fontSize: 16, fontVariationSettings: readDone ? "'FILL' 1" : "'FILL' 0" }}>
                   {readDone ? "check_circle" : "menu_book"}
                 </span>
-                {readDone ? "Đã hoàn thành (+5 pts)" : "Đánh dấu đã đọc · +5 pts"}
+                {readDone ? tx.completed : tx.markRead}
               </button>
             </div>
           )}

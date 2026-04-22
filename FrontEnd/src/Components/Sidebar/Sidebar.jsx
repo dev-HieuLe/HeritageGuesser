@@ -34,6 +34,7 @@ export default function Sidebar({ isOpen = false, onClose = () => {} }) {
     { to: "/shop", label: tx.sidebar.shop, icon: "storefront" },
     { to: "/vr-discovery", label: tx.sidebar.vrDiscovery, icon: "view_in_ar", badge: "Beta" },
     { to: "/tutorial", label: tx.sidebar.tutorial, icon: "help_center" },
+    { to: "/subscription", label: tx.sidebar.subscription, icon: "workspace_premium", badge: "Plus" },
   ];
 
   const rankIndex = user?.rank ? Math.min(user.rank - 1, rankNames.length - 1) : 0;
@@ -69,8 +70,14 @@ export default function Sidebar({ isOpen = false, onClose = () => {} }) {
               )}
             </div>
             <div className="min-w-0">
-              <div className="font-black text-[#e9c349] text-[14px] whitespace-nowrap overflow-hidden text-ellipsis">{displayName}</div>
+              <div className="font-black text-[#e9c349] text-[13px] whitespace-nowrap overflow-hidden text-ellipsis">{displayName}</div>
               <div className="text-[10px] text-[#c0c8c3] uppercase tracking-[0.15em] mt-0.5">{displaySub}</div>
+              {auth && user && (
+                <div className="flex items-center gap-1 mt-1">
+                  <span className="material-symbols-outlined" style={{ fontSize: "13px", color: "#e9c349", fontVariationSettings: "'FILL' 1" }}>stars</span>
+                  <span style={{ color: "#e9c349", fontWeight: 800, fontSize: "12px" }}>{(user.points ?? 0).toLocaleString()}</span>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -85,7 +92,7 @@ export default function Sidebar({ isOpen = false, onClose = () => {} }) {
                 to={item.to}
                 onClick={onClose}
                 style={{ transition: ease }}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-medium no-underline mb-1 border-l-4 ${
+                className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-[13px] font-medium no-underline mb-1 border-l-4 ${
                   isActive
                     ? "text-[#a2d1bb] bg-[#0f3d2e] border-[#e9c349]"
                     : "text-[#c0c8c3] bg-transparent border-transparent hover:bg-white/[0.05] hover:translate-x-1"
@@ -111,7 +118,7 @@ export default function Sidebar({ isOpen = false, onClose = () => {} }) {
           >
             <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "7px" }}>
               <span className="material-symbols-outlined" style={{ fontSize: "13px", fontVariationSettings: "'FILL' 1" }}>military_tech</span>
-              Rank Now
+              {tx.sidebar.rankNow}
               <span className="material-symbols-outlined" style={{ fontSize: "13px" }}>chevron_right</span>
             </span>
           </Link>

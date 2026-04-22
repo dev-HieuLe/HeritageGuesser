@@ -1,24 +1,42 @@
-import { useContext } from "react";
+import { useContext, useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { AuthContext } from "../Context/authContext";
 import { useLang } from "../Context/languageContext";
 import t from "../translations";
 
+const LANGS = [
+  { code: "en", label: "English", short: "EN" },
+  { code: "vi", label: "Tiếng Việt", short: "VI" },
+  { code: "cn", label: "中文", short: "CN" },
+  { code: "fr", label: "Français", short: "FR" },
+];
+
 export default function Navbar({ onMenuClick }) {
-  const { auth, logout, user } = useContext(AuthContext);
-  const { lang, toggleLang } = useLang();
+  const { auth, logout } = useContext(AuthContext);
+  const { lang, changeLang } = useLang();
+  const [langOpen, setLangOpen] = useState(false);
+  const langRef = useRef(null);
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (langRef.current && !langRef.current.contains(e.target)) setLangOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
   const tx = t[lang];
   const location = useLocation();
 
   const navLinks = [
     { label: tx.nav.home, to: "/" },
     { label: tx.nav.about, to: "/about" },
-    { label: tx.nav.atlas, to: "/atlas" },
+    { label: tx.nav.atlas, to: "/explore" },
     { label: tx.nav.leaderboard, to: "/leaderboard" },
     { label: tx.nav.study, to: "/study" },
     { label: tx.nav.contribute, to: "/contribute" },
     { label: tx.nav.shop, to: "/shop" },
     { label: tx.nav.tutorial, to: "/tutorial" },
+    { label: tx.nav.members, to: "/subscription" },
   ];
 
   return (
@@ -48,9 +66,9 @@ export default function Navbar({ onMenuClick }) {
         </button>
         <Link to="/" style={{ textDecoration: "none" }}>
           <span
+            className="text-[17px] sm:text-[22px]"
             style={{
               color: "#e9c349",
-              fontSize: "22px",
               fontWeight: "800",
               letterSpacing: "-0.04em",
               userSelect: "none",
@@ -62,7 +80,7 @@ export default function Navbar({ onMenuClick }) {
       </div>
 
       {/* Center: Nav links */}
-      <div className="absolute left-1/2 -translate-x-1/2 hidden md:flex items-center gap-7">
+      <div className="absolute left-1/2 -translate-x-1/2 hidden lg:flex items-center gap-5">
         {navLinks.map((l) => {
           const active = location.pathname === l.to;
           return (
@@ -74,7 +92,7 @@ export default function Navbar({ onMenuClick }) {
                   ? "text-[#e9c349] font-semibold border-[#e9c349]"
                   : "text-[#c0c8c3] font-normal border-transparent hover:text-[#e3e3de] hover:border-[rgba(162,209,187,0.3)]"
               }`}
-              style={{ fontSize: "15px", letterSpacing: "0.01em" }}
+              style={{ fontSize: "14px", letterSpacing: "0.01em" }}
             >
               {l.label}
               {l.badge && (
@@ -87,47 +105,34 @@ export default function Navbar({ onMenuClick }) {
 
       {/* Right: Points + Language + Auth */}
       <div className="flex items-center gap-2 sm:gap-3">
-        {auth && user && (
-          <Link
-            to="/settings"
-            className="no-underline hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-lg transition-colors duration-150 hover:bg-white/[0.06]"
-            style={{
-              background: "rgba(233,195,73,0.08)",
-              border: "1px solid rgba(233,195,73,0.2)",
-            }}
-            title="Your points"
+<div ref={langRef} style={{ position: "relative" }}>
+          <button
+            onClick={() => setLangOpen((o) => !o)}
+            className="bg-transparent border border-[rgba(162,209,187,0.2)] cursor-pointer text-[#a2d1bb] px-3 py-2 flex items-center gap-1.5 rounded-lg font-bold uppercase tracking-widest transition-colors duration-150 hover:bg-white/[0.06] hover:border-[rgba(162,209,187,0.4)]"
+            style={{ fontSize: "12px" }}
+            aria-label="Select language"
           >
-            <span
-              className="material-symbols-outlined"
-              style={{
-                color: "#e9c349",
-                fontSize: "16px",
-                fontVariationSettings: "'FILL' 1",
-              }}
-            >
-              stars
-            </span>
-            <span
-              style={{ color: "#e9c349", fontWeight: 800, fontSize: "13px" }}
-            >
-              {(user.points ?? 0).toLocaleString()}
-            </span>
-          </Link>
-        )}
-        <button
-          onClick={toggleLang}
-          className="bg-transparent border border-[rgba(162,209,187,0.2)] cursor-pointer text-[#a2d1bb] px-3 py-2 flex items-center gap-1.5 rounded-lg font-bold uppercase tracking-widest transition-colors duration-150 hover:bg-white/[0.06] hover:border-[rgba(162,209,187,0.4)]"
-          style={{ fontSize: "12px" }}
-          aria-label="Toggle language"
-        >
-          <span
-            className="material-symbols-outlined"
-            style={{ fontSize: "16px" }}
-          >
-            language
-          </span>
-          {lang === "en" ? "VI" : "EN"}
-        </button>
+            <span className="material-symbols-outlined hidden sm:inline" style={{ fontSize: "16px" }}>language</span>
+            {lang.toUpperCase()}
+            <span className="material-symbols-outlined" style={{ fontSize: "14px", transition: "transform 0.15s", transform: langOpen ? "rotate(180deg)" : "rotate(0deg)" }}>expand_more</span>
+          </button>
+          {langOpen && (
+            <div style={{ position: "absolute", top: "calc(100% + 6px)", right: 0, backgroundColor: "#191d17", border: "1px solid rgba(65,73,68,0.55)", borderRadius: "10px", overflow: "hidden", minWidth: "140px", boxShadow: "0 16px 40px rgba(0,0,0,0.5)", zIndex: 100 }}>
+              {LANGS.map((l) => (
+                <button
+                  key={l.code}
+                  onClick={() => { changeLang(l.code); setLangOpen(false); }}
+                  className="w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors duration-100 hover:bg-white/[0.06] bg-transparent border-none cursor-pointer"
+                  style={{ color: lang === l.code ? "#a2d1bb" : "rgba(192,200,195,0.7)", fontSize: "13px", fontWeight: lang === l.code ? 700 : 400 }}
+                >
+                  <span style={{ fontSize: "10px", fontWeight: 900, color: lang === l.code ? "#e9c349" : "rgba(162,209,187,0.35)", minWidth: "22px" }}>{l.short}</span>
+                  {l.label}
+                  {lang === l.code && <span className="material-symbols-outlined ml-auto" style={{ fontSize: "14px", color: "#a2d1bb" }}>check</span>}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
 
         {auth ? (
           <button

@@ -9,14 +9,21 @@ export function LanguageProvider({ children }) {
 
   const toggleLang = () => {
     setLang((prev) => {
-      const next = prev === "en" ? "vi" : "en";
+      const cycle = { en: "vi", vi: "cn", cn: "fr", fr: "en" };
+      const next = cycle[prev] ?? "en";
       localStorage.setItem("hg_lang", next);
       return next;
     });
   };
 
+  const changeLang = (code) => {
+    if (!["en", "vi", "cn", "fr"].includes(code)) return;
+    setLang(code);
+    localStorage.setItem("hg_lang", code);
+  };
+
   return (
-    <LanguageContext.Provider value={{ lang, toggleLang }}>
+    <LanguageContext.Provider value={{ lang, toggleLang, changeLang }}>
       {children}
     </LanguageContext.Provider>
   );

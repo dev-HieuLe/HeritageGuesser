@@ -1,10 +1,6 @@
 import db from "../Config/db.js";
-import OpenAI from "openai";
 
-const openai = new OpenAI({
-  baseURL: "https://api.deepinfra.com/v1/openai",
-  apiKey: process.env.DEEPINFRA_API_KEY,
-});
+const NLP_SERVICE_URL = process.env.NLP_SERVICE_URL || "http://localhost:8000";
 
 /**
  * Parse lat/lng from a Google Maps URL.
@@ -93,7 +89,7 @@ export const submitContribution = async (req, res) => {
       .json({ error: "Extracted coordinates are out of valid range." });
   }
 
-  // --- Gemini 2.5 Flash metadata generation ---
+  // --- RAG metadata generation via Python NLP service (Qwen on Deep Infra) ---
   let metadata = {
     description: userDescription?.trim() || "",
     era: null,
@@ -104,57 +100,48 @@ export const submitContribution = async (req, res) => {
   };
 
   try {
-    const descriptionHint = userDescription?.trim()
-      ? `User hint: "${userDescription.trim()}"`
-      : "No additional description provided.";
-
-    const prompt = `
-You are an expert on Vietnamese cultural heritage sites. A user has submitted a heritage location with the following details:
-- Name: "${name.trim()}"
-- Coordinates: latitude ${lat}, longitude ${lng}
-- ${descriptionHint}
-
-Please provide structured metadata about this location in valid JSON format ONLY (no markdown, no code fences, no extra text):
-{
-  "description": "A detailed 3 sentence description of the site's context, cultural, and historical significance",
-  "era": "The historical era or dynasty (e.g. 'Lý Dynasty', 'French Colonial', 'Modern Era', 'Prehistoric') or null if unknown",
-  "built_year": A four-digit integer year the site was built/founded, or null if unknown or if it's a natural site,
-  "region": "The Vietnamese region name (e.g. 'Hanoi', 'Ho Chi Minh City', 'Hue', 'Hoi An', 'Da Nang', 'Ninh Binh') or the closest city/province",
-  "aliases": "3 Comma-separated alternative names or nicknames for the site both vietnamese and english",
-  "difficulty": An integer from 1 to 3 (1=well-known tourist site, 2=moderately known, 3=obscure or specialised)
-}
-`.trim();
-
-    const completion = await openai.chat.completions.create({
-      messages: [{ role: "user", content: prompt }],
-      model: process.env.DEEPINFRA_GEMMA_MODEL || "google/gemma-4-26B-A4B-it",
+    const nlpRes = await fetch(`${NLP_SERVICE_URL}/heritage/rag-contribute`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: name.trim(),
+        lat,
+        lng,
+        userDescription: userDescription?.trim() || "",
+      }),
+      signal: AbortSignal.timeout(60_000), // 60 s — Qwen can be slow
     });
-    const raw = completion.choices[0].message.content.trim();
 
-    // Strip possible markdown fences
-    const cleaned = raw
-      .replace(/^```(?:json)?\s*/i, "")
-      .replace(/\s*```$/i, "")
-      .trim();
-    const parsed = JSON.parse(cleaned);
+    // 422 = Qwen determined this is NOT a heritage site → reject immediately
+    if (nlpRes.status === 422) {
+      const body = await nlpRes.json();
+      const reason = body?.detail?.reason || "This location does not appear to be a recognised heritage or historical site.";
+      return res.status(422).json({ error: reason });
+    }
 
-    metadata.description =
-      parsed.description?.trim() || userDescription?.trim() || "";
-    metadata.era = typeof parsed.era === "string" ? parsed.era.trim() : null;
-    metadata.built_year =
-      Number.isInteger(parsed.built_year) && parsed.built_year > 0
-        ? parsed.built_year
-        : null;
-    metadata.region =
-      typeof parsed.region === "string" ? parsed.region.trim() : null;
-    metadata.aliases =
-      typeof parsed.aliases === "string" ? parsed.aliases.trim() : null;
-    metadata.difficulty = [1, 2, 3].includes(parsed.difficulty)
-      ? parsed.difficulty
-      : 2;
+    if (!nlpRes.ok) {
+      const errText = await nlpRes.text();
+      throw new Error(`NLP service error ${nlpRes.status}: ${errText}`);
+    }
+
+    const parsed = await nlpRes.json();
+
+    metadata.description = parsed.description?.trim() || userDescription?.trim() || "";
+    metadata.era        = typeof parsed.era === "string" ? parsed.era.trim() : null;
+    metadata.built_year = Number.isInteger(parsed.built_year) && parsed.built_year > 0
+      ? parsed.built_year : null;
+    metadata.region     = typeof parsed.region === "string" ? parsed.region.trim() : null;
+    metadata.aliases    = typeof parsed.aliases === "string" ? parsed.aliases.trim() : null;
+    metadata.difficulty = [1, 2, 3].includes(parsed.difficulty) ? parsed.difficulty : 2;
+
+    // RAG source tracing — visible in Node.js terminal
+    console.log("[RAG TRACE]", JSON.stringify({
+      rag_context_used:    parsed.rag_context_used,
+      rag_sources:         parsed.rag_sources,
+      rag_similarity_note: parsed.rag_similarity_note,
+    }, null, 2));
   } catch (err) {
-    console.error("Gemini metadata generation failed:", err.message);
-    // Non-fatal: proceed with whatever we have; description may be empty
+    console.error("RAG metadata generation failed:", err.message);
     if (!metadata.description) {
       metadata.description = `${name.trim()} is a heritage site submitted for review.`;
     }
@@ -165,13 +152,14 @@ Please provide structured metadata about this location in valid JSON format ONLY
   try {
     const [result] = await db.execute(
       `INSERT INTO contribute_location
-         (name, description, lat, lng, user_id, built_year, aliases, region, era, difficulty, status)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')`,
+         (name, description, lat, lng, url, user_id, built_year, aliases, region, era, difficulty, status)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')`,
       [
         name.trim(),
         metadata.description,
         lat,
         lng,
+        trimmedUrl,
         userId,
         metadata.built_year,
         metadata.aliases,
@@ -203,7 +191,7 @@ export const getUserContributions = async (req, res) => {
 
   try {
     const [rows] = await db.execute(
-      `SELECT id, name, description, lat, lng, built_year, aliases, region, era, difficulty, status, created_at
+      `SELECT id, name, description, lat, lng, built_year, aliases, region, era, difficulty, status, stars, created_at
        FROM contribute_location
        WHERE user_id = ?
        ORDER BY created_at DESC`,
@@ -216,5 +204,110 @@ export const getUserContributions = async (req, res) => {
     return res
       .status(500)
       .json({ error: "Failed to fetch your contributions." });
+  }
+};
+
+/**
+ * GET /api/contribute/all
+ * Fetch all contributed locations (public) with live average rating and current user's rating.
+ * Works even if location_ratings table does not exist yet.
+ */
+export const getAllLocations = async (req, res) => {
+  const userId = req.user?.id ?? null;
+
+  // Step 1: always fetch all rows from contribute_location + contributor info
+  let rows;
+  try {
+    [rows] = await db.execute(
+      `SELECT cl.id, cl.name, cl.description, cl.region, cl.era,
+              cl.built_year, cl.difficulty, cl.status, cl.created_at,
+              cl.lat, cl.lng, cl.url,
+              u.name AS contributor_name, u.avatar_url AS contributor_avatar
+       FROM contribute_location cl
+       LEFT JOIN users u ON u.id = cl.user_id
+       ORDER BY cl.created_at DESC`,
+    );
+  } catch (err) {
+    console.error("getAllLocations base query error:", err.message);
+    return res.status(500).json({ error: "Failed to fetch locations." });
+  }
+
+  if (rows.length === 0) return res.json([]);
+
+  // Step 2: try to enrich with ratings (graceful – skipped if table missing)
+  let avgMap = {};
+  let myMap = {};
+  try {
+    const ids = rows.map((r) => r.id);
+    const placeholders = ids.map(() => "?").join(",");
+
+    const [avgRows] = await db.execute(
+      `SELECT location_id, ROUND(AVG(rating), 2) AS stars
+       FROM location_ratings
+       WHERE source = 'contribute' AND location_id IN (${placeholders})
+       GROUP BY location_id`,
+      ids,
+    );
+    avgRows.forEach((r) => { avgMap[r.location_id] = parseFloat(r.stars); });
+
+    if (userId) {
+      const [myRows] = await db.execute(
+        `SELECT location_id, rating
+         FROM location_ratings
+         WHERE source = 'contribute' AND location_id IN (${placeholders}) AND user_id = ?`,
+        [...ids, userId],
+      );
+      myRows.forEach((r) => { myMap[r.location_id] = parseFloat(r.rating); });
+    }
+  } catch {
+    // location_ratings table doesn't exist yet — ratings will show as 0
+  }
+
+  const result = rows.map((r) => ({
+    ...r,
+    stars: avgMap[r.id] ?? 0,
+    my_rating: myMap[r.id] ?? null,
+  }));
+
+  return res.json(result);
+};
+
+/**
+ * POST /api/contribute/rate/:id
+ * Submit or update a star rating (0–5) for a contributed location.
+ */
+export const rateLocation = async (req, res) => {
+  const userId = req.user.id;
+  const locationId = parseInt(req.params.id, 10);
+  const rating = parseFloat(req.body.rating);
+
+  if (!locationId || isNaN(locationId)) {
+    return res.status(400).json({ error: "Invalid location ID." });
+  }
+  if (isNaN(rating) || rating < 0 || rating > 5) {
+    return res.status(400).json({ error: "Rating must be between 0 and 5." });
+  }
+
+  try {
+    // Upsert the individual rating
+    await db.execute(
+      `INSERT INTO location_ratings (location_id, user_id, rating, source)
+       VALUES (?, ?, ?, 'contribute')
+       ON DUPLICATE KEY UPDATE rating = VALUES(rating)`,
+      [locationId, userId, rating],
+    );
+
+    const [[{ avg_stars }]] = await db.execute(
+      `SELECT ROUND(AVG(rating), 2) AS avg_stars
+       FROM location_ratings WHERE source = 'contribute' AND location_id = ?`,
+      [locationId],
+    );
+
+    const newStars = parseFloat((avg_stars || 0).toFixed(2));
+
+    return res.json({ stars: newStars, my_rating: rating });
+  } catch (err) {
+    console.error("rateLocation error:", err.message);
+    return res.status(500).json({ error: "Failed to save rating." });
   }
 };

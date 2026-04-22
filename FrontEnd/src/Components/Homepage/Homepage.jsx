@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { FaYoutube, FaFacebook, FaGithub } from "react-icons/fa";
 import FoundersSection from "./FoundersSection";
+import Navbar from "../Navbar";
 
 const CHANNEL_ICONS = {
   youtube: FaYoutube,
@@ -89,6 +90,7 @@ export default function Homepage() {
     { to: "/shop", label: tx.sidebar.shop, icon: "storefront" },
     { to: "/vr-discovery", label: tx.sidebar.vrDiscovery, icon: "view_in_ar", badge: "Beta" },
     { to: "/tutorial", label: tx.sidebar.tutorial, icon: "help_center" },
+    { to: "/subscription", label: tx.sidebar.subscription, icon: "workspace_premium", badge: "Plus" },
   ];
 
   useEffect(() => {
@@ -152,126 +154,7 @@ export default function Homepage() {
         onDone={() => { sessionStorage.setItem("loadingDone", "true"); setLoadingDone(true); }}
       />
       {/* ══ TOP NAV ══ */}
-      <nav
-        className="fixed top-0 left-0 right-0 z-50 flex justify-between items-center px-5 sm:px-10 py-4 sm:py-5"
-        style={{
-          background: "rgba(14,21,19,0.60)",
-          backdropFilter: "blur(32px)",
-          WebkitBackdropFilter: "blur(32px)",
-          boxShadow:
-            "0 8px 40px rgba(0,0,0,0.35), inset 0 -1px 0 rgba(162,209,187,0.08)",
-        }}
-      >
-        <div className="flex items-center gap-4">
-          {/* Hamburger */}
-          <button
-            onClick={() => setSidebarOpen((v) => !v)}
-            className="bg-transparent border-none cursor-pointer text-[#a2d1bb] p-[6px] flex items-center rounded-lg transition-colors duration-150 hover:bg-white/[0.08]"
-            aria-label="Toggle sidebar"
-          >
-            <span
-              className="material-symbols-outlined"
-              style={{ fontSize: "26px" }}
-            >
-              menu
-            </span>
-          </button>
-
-          {/* Logo */}
-          <span
-            className="select-none"
-            style={{
-              color: "#e9c349",
-              fontSize: "22px",
-              fontWeight: "800",
-              letterSpacing: "-0.04em",
-            }}
-          >
-            Heritage Guessr
-          </span>
-        </div>
-
-        {/* Nav links — centered, desktop only */}
-        <div className="absolute left-1/2 -translate-x-1/2 hidden md:flex items-center gap-7">
-          {[
-            { label: tx.nav.home,        to: "/",             active: true  },
-            { label: tx.nav.about,       to: "/about",        active: false },
-            { label: tx.nav.atlas,       to: "/atlas",        active: false },
-            { label: tx.nav.leaderboard, to: "/leaderboard",  active: false },
-            { label: tx.nav.study,       to: "/study",        active: false },
-            { label: tx.nav.contribute,  to: "/contribute",   active: false },
-            { label: tx.nav.shop,        to: "/shop",         active: false },
-            { label: tx.nav.tutorial,    to: "/tutorial",     active: false },
-          ].map((l) => (
-            <Link
-              key={l.to}
-              to={l.to}
-              style={{ fontSize: "15px", letterSpacing: "0.01em" }}
-              className={`no-underline pb-1 tracking-wide transition-all duration-150 border-b-2 ${
-                l.active
-                  ? "text-[#e9c349] font-semibold border-[#e9c349]"
-                  : "text-[#c0c8c3] font-normal border-transparent hover:text-[#e3e3de] hover:border-[rgba(162,209,187,0.3)]"
-              }`}
-            >
-              {l.label}
-            </Link>
-          ))}
-        </div>
-
-        <div className="flex items-center gap-2 sm:gap-3">
-          {/* Points badge */}
-          {auth && user && (
-            <Link
-              to="/settings"
-              className="no-underline hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-lg transition-colors duration-150 hover:bg-white/[0.06]"
-              style={{ background: "rgba(233,195,73,0.08)", border: "1px solid rgba(233,195,73,0.2)" }}
-              title="Your points"
-            >
-              <span
-                className="material-symbols-outlined"
-                style={{ color: "#e9c349", fontSize: "16px", fontVariationSettings: "'FILL' 1" }}
-              >
-                stars
-              </span>
-              <span style={{ color: "#e9c349", fontWeight: 800, fontSize: "13px" }}>
-                {(user.points ?? 0).toLocaleString()}
-              </span>
-            </Link>
-          )}
-
-          {/* Language toggle */}
-          <button
-            onClick={toggleLang}
-            className="bg-transparent border border-[rgba(162,209,187,0.2)] cursor-pointer text-[#a2d1bb] px-3 py-2 flex items-center gap-1.5 rounded-lg font-bold uppercase tracking-widest transition-colors duration-150 hover:bg-white/[0.06] hover:border-[rgba(162,209,187,0.4)]"
-            style={{ fontSize: "12px" }}
-            aria-label="Toggle language"
-          >
-            <span className="material-symbols-outlined" style={{ fontSize: "16px" }}>language</span>
-            {lang === "en" ? "VI" : "EN"}
-          </button>
-
-          {/* Auth button */}
-          {auth ? (
-            <button
-              onClick={logout}
-              className="bg-transparent border border-[rgba(162,209,187,0.2)] cursor-pointer text-[#a2d1bb] px-4 py-2 flex items-center gap-2 rounded-lg font-semibold transition-colors duration-150 hover:bg-white/[0.06] hover:border-[rgba(162,209,187,0.4)]"
-              style={{ fontSize: "13px" }}
-            >
-              <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>logout</span>
-              <span className="hidden sm:inline">{tx.nav.logout}</span>
-            </button>
-          ) : (
-            <Link
-              to="/login"
-              className="border border-[rgba(233,195,73,0.35)] text-[#e9c349] px-4 py-2 flex items-center gap-2 rounded-lg font-semibold no-underline transition-colors duration-150 hover:bg-[rgba(233,195,73,0.08)] hover:border-[rgba(233,195,73,0.7)]"
-              style={{ fontSize: "13px" }}
-            >
-              <span className="material-symbols-outlined text-[16px] sm:text-[18px]">login</span>
-              <span className="hidden sm:inline">{tx.nav.signIn}</span>
-            </Link>
-          )}
-        </div>
-      </nav>
+      <Navbar onMenuClick={() => setSidebarOpen((v) => !v)} />
 
       {/* ══ SIDEBAR ══ */}
       {/* Mobile backdrop */}
@@ -309,12 +192,18 @@ export default function Homepage() {
               )}
             </div>
             <div className="min-w-0">
-              <div className="font-black text-[#e9c349] text-[14px] whitespace-nowrap overflow-hidden text-ellipsis">
+              <div className="font-black text-[#e9c349] text-[13px] whitespace-nowrap overflow-hidden text-ellipsis">
                 {displayName}
               </div>
               <div className="text-[10px] text-[#c0c8c3] uppercase tracking-[0.15em]">
                 {displaySub}
               </div>
+              {auth && user && (
+                <div className="flex items-center gap-1 mt-1">
+                  <span className="material-symbols-outlined" style={{ fontSize: "13px", color: "#e9c349", fontVariationSettings: "'FILL' 1" }}>stars</span>
+                  <span style={{ color: "#e9c349", fontWeight: 800, fontSize: "12px" }}>{(user.points ?? 0).toLocaleString()}</span>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -329,7 +218,7 @@ export default function Homepage() {
                 to={item.to}
                 onClick={() => setSidebarOpen(false)}
                 style={{ transition: ease }}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-medium no-underline mb-1 border-l-4 ${
+                className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-[13px] font-medium no-underline mb-1 border-l-4 ${
                   isActive
                     ? "text-[#a2d1bb] bg-[#0f3d2e] border-[#e9c349]"
                     : "text-[#c0c8c3] bg-transparent border-transparent hover:bg-white/[0.05] hover:translate-x-1"

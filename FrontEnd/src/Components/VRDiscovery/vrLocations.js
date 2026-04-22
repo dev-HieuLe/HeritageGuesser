@@ -223,4 +223,18 @@ export const vrLocations = [
     lat: 13.8857883,
     lng: 109.2922453,
   },
+  {
+    id: "fpt-university-hoa-lac",
+    name: "Đại học FPT Hòa Lạc",
+    nameEn: "FPT University Hoa Lac",
+    type: "Educational Landmark",
+    typeVi: "Công trình giáo dục",
+    typeColor: "#e9c349",
+    typeBg: "rgba(233,195,73,0.1)",
+    location: "Láng Hòa Lạc, Hà Nội",
+    desc: "Đại học FPT Hòa Lạc nằm trong Khu Công nghệ cao Hòa Lạc, Hà Nội, nổi bật với không gian campus rộng mở, kiến trúc hiện đại và tinh thần công nghệ trẻ trung. Khuôn viên trường gắn với môi trường học tập sáng tạo, thực hành và khởi nghiệp, nơi sinh viên học tập, làm dự án, sinh hoạt câu lạc bộ và kết nối cộng đồng.",
+    image: "https://dvt.tvu.edu.vn/uploads/news/2021_02/fpt-uni.jpg",
+    lat: 21.0124167,
+    lng: 105.5252892,
+  },
 ];

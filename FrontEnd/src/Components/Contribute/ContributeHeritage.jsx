@@ -400,6 +400,198 @@ function AnchorModal({ onClose, onSuccess }) {
 }
 
 /* ─────────────────────────────────────────────────────────
+   Star rating widget
+───────────────────────────────────────────────────────── */
+function StarRating({ value, onChange, readonly = false, size = "text-xl" }) {
+  const [hovered, setHovered] = useState(null);
+  const display = hovered ?? value ?? 0;
+
+  return (
+    <div className="flex items-center gap-0.5">
+      {[1, 2, 3, 4, 5].map((star) => {
+        const filled = display >= star;
+        const half = !filled && display >= star - 0.5;
+        return (
+          <button
+            key={star}
+            type="button"
+            disabled={readonly}
+            className={`${size} leading-none transition-transform ${readonly ? "cursor-default" : "hover:scale-110"}`}
+            style={{ color: filled || half ? "#e9c349" : "#2f3634", background: "none", border: "none", padding: 0 }}
+            onMouseEnter={() => !readonly && setHovered(star)}
+            onMouseLeave={() => !readonly && setHovered(null)}
+            onClick={() => !readonly && onChange && onChange(star)}
+          >
+            <span
+              className="material-symbols-outlined"
+              style={{ fontVariationSettings: filled ? "'FILL' 1" : half ? "'FILL' 0" : "'FILL' 0", fontSize: "inherit" }}
+            >
+              {half ? "star_half" : "star"}
+            </span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────
+   Community location card with rating
+───────────────────────────────────────────────────────── */
+const MAPS_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+
+function CommunityCard({ item, auth, onRated }) {
+  const [submitting, setSubmitting] = useState(false);
+  const [myRating, setMyRating] = useState(item.my_rating ?? null);
+  const [avgStars, setAvgStars] = useState(item.stars ?? 0);
+  const [imgError, setImgError] = useState(false);
+
+  const streetViewThumb =
+    item.lat && item.lng && MAPS_KEY && !imgError
+      ? `https://maps.googleapis.com/maps/api/streetview?size=600x280&location=${item.lat},${item.lng}&fov=90&key=${MAPS_KEY}`
+      : null;
+
+  const handleRate = async (star) => {
+    if (!auth) return;
+    setSubmitting(true);
+    try {
+      const { data } = await axios.post(
+        `${API}/contribute/rate/${item.id}`,
+        { rating: star },
+        { withCredentials: true },
+      );
+      setMyRating(data.my_rating);
+      setAvgStars(data.stars);
+      onRated?.();
+    } catch {
+      // silently fail
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const initials = (item.contributor_name || "?")
+    .split(" ")
+    .map((w) => w[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+
+  return (
+    <div
+      className="rounded-2xl overflow-hidden flex flex-col"
+      style={{
+        background: "rgba(26,33,31,0.7)",
+        backdropFilter: "blur(20px)",
+        border: "1px solid rgba(65,73,68,0.15)",
+      }}
+    >
+      {/* Street View thumbnail */}
+      <div className="relative w-full h-40 bg-[#09100e] flex items-center justify-center overflow-hidden">
+        {streetViewThumb ? (
+          <img
+            src={streetViewThumb}
+            alt={item.name}
+            className="w-full h-full object-cover"
+            onError={() => setImgError(true)}
+          />
+        ) : (
+          <span className="material-symbols-outlined text-4xl text-[#414944]">
+            panorama
+          </span>
+        )}
+        {/* Status badge overlay */}
+        <div className="absolute top-2 right-2">
+          <StatusBadge status={item.status} />
+        </div>
+        {/* Open in Maps button */}
+        {item.url && (
+          <a
+            href={item.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="absolute bottom-2 right-2 flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold text-[#073829] hover:scale-105 transition-transform"
+            style={{ background: "rgba(162,209,187,0.9)" }}
+          >
+            <span className="material-symbols-outlined text-[13px]">open_in_new</span>
+            Open in Maps
+          </a>
+        )}
+      </div>
+
+      {/* Card body */}
+      <div className="p-4 flex flex-col gap-2 flex-1">
+        {/* Name */}
+        <h4 className="text-sm font-headline font-bold text-[#dde4e0] leading-tight">
+          {item.name}
+        </h4>
+
+        {/* Region */}
+        {item.region && (
+          <p className="text-xs text-[#c0c8c3] flex items-center gap-1">
+            <span className="material-symbols-outlined text-[13px]">location_on</span>
+            {item.region}, Vietnam
+          </p>
+        )}
+
+        {/* Description */}
+        {item.description && (
+          <p className="text-xs text-[#c0c8c3] leading-relaxed line-clamp-2">
+            {item.description}
+          </p>
+        )}
+
+        {/* Contributor */}
+        <div className="flex items-center gap-2 pt-1">
+          {item.contributor_avatar ? (
+            <img
+              src={item.contributor_avatar}
+              alt={item.contributor_name}
+              className="w-5 h-5 rounded-full object-cover"
+            />
+          ) : (
+            <div
+              className="w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-bold text-[#073829]"
+              style={{ background: "linear-gradient(135deg,#0f3d2e,#a2d1bb)" }}
+            >
+              {initials}
+            </div>
+          )}
+          <span className="text-[11px] text-[#c0c8c3]/70">
+            by <span className="text-[#a2d1bb] font-medium">{item.contributor_name || "Unknown"}</span>
+          </span>
+        </div>
+
+        {/* Rating row */}
+        <div className="flex items-center justify-between pt-2 mt-auto border-t border-[#414944]/20">
+          <div className="flex items-center gap-1.5">
+            <StarRating value={avgStars} readonly size="text-sm" />
+            <span className="text-xs text-[#c0c8c3]">
+              {avgStars > 0 ? avgStars.toFixed(1) : "—"}
+            </span>
+          </div>
+
+          {auth ? (
+            <div className="flex items-center gap-1">
+              <span className="text-[10px] text-[#c0c8c3]/50">
+                {myRating ? "Rated:" : "Rate:"}
+              </span>
+              <StarRating
+                value={myRating ?? 0}
+                onChange={submitting ? undefined : handleRate}
+                size="text-sm"
+              />
+            </div>
+          ) : (
+            <span className="text-[10px] text-[#c0c8c3]/40 italic">Log in to rate</span>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────
    Main Page
 ───────────────────────────────────────────────────────── */
 export default function ContributeHeritage() {
@@ -411,6 +603,9 @@ export default function ContributeHeritage() {
   const [contributions, setContributions] = useState([]);
   const [loadingContribs, setLoadingContribs] = useState(true);
   const [tutorialPlaying, setTutorialPlaying] = useState(false);
+  const [allLocations, setAllLocations] = useState([]);
+  const [loadingAll, setLoadingAll] = useState(true);
+  const [communitySearch, setCommunitySearch] = useState("");
 
   const tutorialEmbedUrl =
     "https://www.youtube.com/embed/o0pVcJJC31A?si=8QN7blbT3itKOvL2&autoplay=1&rel=0";
@@ -433,8 +628,23 @@ export default function ContributeHeritage() {
     }
   };
 
+  const fetchAllLocations = async () => {
+    setLoadingAll(true);
+    try {
+      const { data } = await axios.get(`${API}/contribute/all`, {
+        withCredentials: true,
+      });
+      setAllLocations(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error("fetchAllLocations failed:", err.response?.status, err.response?.data || err.message);
+    } finally {
+      setLoadingAll(false);
+    }
+  };
+
   useEffect(() => {
     fetchContributions();
+    fetchAllLocations();
   }, [auth]);
 
   const showToast = (message, type = "success") => {
@@ -455,6 +665,14 @@ export default function ContributeHeritage() {
     pending: contributions.filter((c) => c.status === "pending").length,
     rejected: contributions.filter((c) => c.status === "rejected").length,
   };
+
+  const filteredLocations = communitySearch.trim()
+    ? allLocations.filter(
+        (l) =>
+          l.name.toLowerCase().includes(communitySearch.toLowerCase()) ||
+          (l.region ?? "").toLowerCase().includes(communitySearch.toLowerCase()),
+      )
+    : allLocations;
 
   return (
     <div
@@ -850,6 +1068,86 @@ export default function ContributeHeritage() {
             )}
           </div>
         </div>
+
+        {/* ── Community Contributed Locations ── */}
+        <section className="space-y-6 pb-16">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <h3 className="text-2xl font-headline font-bold text-[#dde4e0] flex items-center gap-3">
+              <span
+                className="material-symbols-outlined text-[#e9c349]"
+                style={{ fontVariationSettings: "'FILL' 1" }}
+              >
+                public
+              </span>
+              Community Contributed Locations
+            </h3>
+            <div className="relative">
+              <input
+                type="text"
+                value={communitySearch}
+                onChange={(e) => setCommunitySearch(e.target.value)}
+                placeholder="Search locations…"
+                className="rounded-xl px-4 py-2 pl-10 text-sm text-[#e3e3de] placeholder:text-[#c0c8c3]/40 outline-none focus:ring-1 focus:ring-[#e9c349] w-full sm:w-64"
+                style={{ background: "rgba(26,33,31,0.7)", border: "1px solid rgba(65,73,68,0.2)" }}
+              />
+              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#c0c8c3]/50 text-[18px]">
+                search
+              </span>
+            </div>
+          </div>
+
+          {loadingAll ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div
+                  key={i}
+                  className="h-36 rounded-2xl animate-pulse"
+                  style={{ background: "rgba(26,33,31,0.5)" }}
+                />
+              ))}
+            </div>
+          ) : allLocations.length === 0 ? (
+            <div
+              className="rounded-2xl p-10 text-center"
+              style={{
+                background: "rgba(26,33,31,0.7)",
+                backdropFilter: "blur(20px)",
+                border: "1px solid rgba(65,73,68,0.15)",
+              }}
+            >
+              <span className="material-symbols-outlined text-4xl text-[#414944] mb-3 block">
+                location_off
+              </span>
+              <p className="text-sm text-[#c0c8c3]">
+                No locations contributed yet. Be the first!
+              </p>
+            </div>
+          ) : filteredLocations.length === 0 ? (
+            <p className="text-sm text-[#c0c8c3] text-center py-8">
+              No results for "{communitySearch}".
+            </p>
+          ) : (
+            <motion.div
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+              initial="hidden"
+              animate="visible"
+              variants={{ visible: { transition: { staggerChildren: 0.04 } } }}
+            >
+              {filteredLocations.map((item) => (
+                <motion.div
+                  key={item.id}
+                  variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }}
+                >
+                  <CommunityCard
+                    item={item}
+                    auth={auth}
+                    onRated={fetchAllLocations}
+                  />
+                </motion.div>
+              ))}
+            </motion.div>
+          )}
+        </section>
       </div>
 
       <style>{`

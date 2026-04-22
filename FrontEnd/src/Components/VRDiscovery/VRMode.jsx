@@ -19,6 +19,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useJsApiLoader } from "@react-google-maps/api";
+import { useLang } from "../../Context/languageContext";
+import t from "../../translations";
 
 const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 const LS_KEY = "vr_calib_v2";
@@ -207,6 +209,8 @@ function CalibRow({ label, display, hint, children }) {
 
 /** Full calibration panel rendered as an overlay inside the VR container */
 function CalibrationPanel({ draft, setDraft, onSave, onReset, onClose }) {
+  const { lang } = useLang();
+  const tx = t[lang].vrMode;
   const autoVW = computeEyeVW(draft);
   const set = (key) => (v) => setDraft((d) => ({ ...d, [key]: v }));
 
@@ -258,7 +262,7 @@ function CalibrationPanel({ draft, setDraft, onSave, onReset, onClose }) {
                 letterSpacing: "-0.01em",
               }}
             >
-              VR Calibration
+              {tx.calibTitle}
             </h2>
             <p
               style={{
@@ -269,7 +273,7 @@ function CalibrationPanel({ draft, setDraft, onSave, onReset, onClose }) {
                 textTransform: "uppercase",
               }}
             >
-              Adjust to match your cardboard headset
+              {tx.calibSubtitle}
             </p>
           </div>
           <button
@@ -290,13 +294,9 @@ function CalibrationPanel({ draft, setDraft, onSave, onReset, onClose }) {
 
         {/* ── 1. Eye Window Width ── */}
         <CalibRow
-          label="Eye Window Width"
+          label={tx.eyeWindowWidth}
           display={`${(autoVW ?? draft.eyeWidthVW).toFixed(1)} vw`}
-          hint={
-            autoVW
-              ? `Auto-computed from screen size · manual override disabled`
-              : `Manual · set phone screen width below to auto-compute`
-          }
+          hint={autoVW ? tx.eyeWindowAuto : tx.eyeWindowManual}
         >
           <Stepper
             value={draft.eyeWidthVW}
@@ -310,9 +310,9 @@ function CalibrationPanel({ draft, setDraft, onSave, onReset, onClose }) {
 
         {/* ── 2. Vertical Offset ── */}
         <CalibRow
-          label="Vertical Offset"
+          label={tx.verticalOffset}
           display={`${draft.verticalOffsetPX >= 0 ? "+" : ""}${draft.verticalOffsetPX} px`}
-          hint="Shifts the image down (+) or up (−) inside the headset"
+          hint={tx.verticalOffsetHint}
         >
           <Stepper
             value={draft.verticalOffsetPX}
@@ -325,9 +325,9 @@ function CalibrationPanel({ draft, setDraft, onSave, onReset, onClose }) {
 
         {/* ── 3. Zoom ── */}
         <CalibRow
-          label="Street View Zoom"
+          label={tx.streetViewZoom}
           display={draft.zoom.toFixed(1)}
-          hint="0 = 180° FOV (very wide)  ·  1 = standard  ·  3 = max telephoto"
+          hint={tx.streetViewZoomHint}
         >
           <Stepper
             value={draft.zoom}
@@ -357,14 +357,14 @@ function CalibrationPanel({ draft, setDraft, onSave, onReset, onClose }) {
             margin: "0 0 18px",
           }}
         >
-          Precision — Cardboard optics
+          {tx.precision}
         </p>
 
         {/* ── 4. Inter-lens Distance ── */}
         <CalibRow
-          label="Inter-lens Distance"
+          label={tx.interLens}
           display={`${draft.lensDistanceMM.toFixed(1)} mm`}
-          hint="Google Cardboard v2 standard: 63.9 mm"
+          hint={tx.interLensHint}
         >
           <Stepper
             value={draft.lensDistanceMM}
@@ -378,11 +378,9 @@ function CalibrationPanel({ draft, setDraft, onSave, onReset, onClose }) {
 
         {/* ── 5. Screen Width ── */}
         <CalibRow
-          label="Phone Screen Width"
-          display={
-            draft.screenWidthMM > 0 ? `${draft.screenWidthMM} mm` : "Unknown"
-          }
-          hint={`Measure the horizontal screen width in landscape (long side).  Set to 0 to use manual eye width.`}
+          label={tx.phoneScreenWidth}
+          display={draft.screenWidthMM > 0 ? `${draft.screenWidthMM} mm` : tx.unknown}
+          hint={tx.phoneScreenHint}
         >
           <Stepper
             value={draft.screenWidthMM}
@@ -406,7 +404,7 @@ function CalibrationPanel({ draft, setDraft, onSave, onReset, onClose }) {
             }}
           >
             <p style={{ fontSize: 11, color: "#a2d1bb", margin: 0 }}>
-              Computed eye window: <strong>{autoVW} vw</strong>
+              {tx.computedEye} <strong>{autoVW} vw</strong>
             </p>
             <p
               style={{
@@ -440,7 +438,7 @@ function CalibrationPanel({ draft, setDraft, onSave, onReset, onClose }) {
             fontFamily: "'Be Vietnam Pro', sans-serif",
           }}
         >
-          Save &amp; Apply
+          {tx.saveApply}
         </button>
         <button
           onClick={onReset}
@@ -459,7 +457,7 @@ function CalibrationPanel({ draft, setDraft, onSave, onReset, onClose }) {
             fontFamily: "'Be Vietnam Pro', sans-serif",
           }}
         >
-          Reset to Defaults
+          {tx.resetDefaults}
         </button>
       </div>
     </div>
@@ -468,6 +466,8 @@ function CalibrationPanel({ draft, setDraft, onSave, onReset, onClose }) {
 
 // ─── Main component ───────────────────────────────────────────────────────────
 export default function VRMode({ location, permissionGranted, onExit }) {
+  const { lang } = useLang();
+  const tx = t[lang].vrMode;
   const containerRef = useRef(null);
   // These refs are the CONTAINERS — the actual pano divs are inside them
   const leftContRef = useRef(null);
@@ -728,10 +728,10 @@ export default function VRMode({ location, permissionGranted, onExit }) {
             letterSpacing: "0.02em",
           }}
         >
-          Rotate to landscape
+          {tx.rotateLandscape}
         </p>
         <p style={{ fontSize: 12, color: "rgba(162,209,187,0.5)", margin: 0 }}>
-          VR requires horizontal orientation
+          {tx.vrRequiresH}
         </p>
       </div>
 
@@ -780,7 +780,7 @@ export default function VRMode({ location, permissionGranted, onExit }) {
                 textTransform: "uppercase",
               }}
             >
-              Loading panorama…
+              {tx.loadingPano}
             </p>
           </div>
         )}
@@ -823,7 +823,7 @@ export default function VRMode({ location, permissionGranted, onExit }) {
             width: "50%",
             height: "100%",
             position: "relative",
-            overflow: "hidden",
+            overflow: "visible",
             flexShrink: 0,
             backgroundColor: "#000",
             clipPath: "url(#vr-eye-clip)",
