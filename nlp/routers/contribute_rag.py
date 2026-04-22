@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """
 RAG-assisted metadata generation + heritage validation for contributions.
 Uses Qwen/Qwen3.6-35B-A3B via Deep Infra with ChromaDB knowledge retrieval.
