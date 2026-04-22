@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 """
 RAG-assisted metadata generation + heritage validation for contributions.
 Uses Qwen/Qwen3.6-35B-A3B via Deep Infra with ChromaDB knowledge retrieval.
@@ -18,6 +16,7 @@ import os
 import json
 import re
 import logging
+from typing import List, Optional
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
@@ -51,15 +50,15 @@ class ContributeRequest(BaseModel):
 class ContributeMetadata(BaseModel):
     # Core metadata
     description: str
-    era: str | None
-    built_year: int | None
+    era: Optional[str]
+    built_year: Optional[int]
     region: str
-    aliases: str | None
+    aliases: Optional[str]
     difficulty: int
 
     # Source tracing — tells caller WHERE the info came from
     rag_context_used: bool          # True if KB returned relevant docs
-    rag_sources: list[str]          # Names of KB docs retrieved (may be empty)
+    rag_sources: List[str]          # Names of KB docs retrieved (may be empty)
     rag_similarity_note: str        # Human-readable note on context quality
 
 
@@ -84,7 +83,7 @@ def _build_prompt(
     lng: float,
     description_hint: str,
     context: str,
-    context_names: list[str],
+    context_names: List[str],
 ) -> str:
     if context:
         context_block = (

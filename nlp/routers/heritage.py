@@ -1,4 +1,4 @@
-from __future__ import annotations
+from typing import List, Optional
 
 from fastapi import APIRouter
 from pydantic import BaseModel
@@ -40,7 +40,7 @@ def maybe_translate(text: str) -> str:
 class CheckRequest(BaseModel):
     answer: str
     expected: str
-    aliases: list[str] | None = None  # optional
+    aliases: Optional[List[str]] = None  # optional
 
 # === 5. Endpoint ===
 @router.post("/check")

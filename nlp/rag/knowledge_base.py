@@ -1,11 +1,11 @@
-from __future__ import annotations
-
 """
 ChromaDB-backed knowledge base for Vietnamese heritage RAG.
 Auto-seeds from seed_data.py on first run.
 """
 
 import os
+from typing import List, Tuple
+
 import chromadb
 from sentence_transformers import SentenceTransformer
 from .seed_data import SEED_DOCUMENTS
@@ -33,12 +33,12 @@ class HeritageKnowledgeBase:
 
     # ── Public API ────────────────────────────────────────────────────────────
 
-    def search(self, query: str, n_results: int = 3) -> list[str]:
+    def search(self, query: str, n_results: int = 3) -> List[str]:
         """Return up to n_results relevant document strings for query."""
         chunks, _ = self.search_with_names(query, n_results)
         return chunks
 
-    def search_with_names(self, query: str, n_results: int = 3) -> tuple[list[str], list[str]]:
+    def search_with_names(self, query: str, n_results: int = 3) -> Tuple[List[str], List[str]]:
         """Return (documents, names) for the top n_results matches."""
         count = self._col.count()
         if count == 0:
@@ -55,7 +55,7 @@ class HeritageKnowledgeBase:
         names = [m.get("name", "unknown") for m in metas]
         return docs, names
 
-    def all_names(self) -> list[str]:
+    def all_names(self) -> List[str]:
         """Return all document names in the knowledge base."""
         result = self._col.get(include=["metadatas"])
         return [m.get("name", "?") for m in result["metadatas"]]
