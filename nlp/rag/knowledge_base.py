@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """
 ChromaDB-backed knowledge base for Vietnamese heritage RAG.
 Auto-seeds from seed_data.py on first run.
