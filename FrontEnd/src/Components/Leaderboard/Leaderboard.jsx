@@ -1,8 +1,10 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, useRef } from "react";
 import axios from "axios";
 import { AuthContext } from "../../Context/authContext";
 import { useLang } from "../../Context/languageContext";
 import t from "../../translations";
+
+const INITIAL_VISIBLE = 20;
 
 const rankNames = [
   "Iron",
@@ -20,9 +22,12 @@ const rankNames = [
 export default function Leaderboard() {
   const [players, setPlayers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showAll, setShowAll] = useState(false);
+  const [scrollDir, setScrollDir] = useState("down"); // "down" → button scrolls to bottom, "up" → to top
   const { user } = useContext(AuthContext);
   const { lang } = useLang();
   const tx = t[lang];
+  const listEndRef = useRef(null);
 
   useEffect(() => {
     axios
@@ -37,6 +42,33 @@ export default function Leaderboard() {
       .catch((err) => console.error("Leaderboard fetch failed:", err))
       .finally(() => setLoading(false));
   }, []);
+
+  // Flip the scroll button between "go down" and "go up" based on scroll position
+  useEffect(() => {
+    const onScroll = () => {
+      const halfway = (document.documentElement.scrollHeight - window.innerHeight) / 2;
+      setScrollDir(window.scrollY > halfway ? "up" : "down");
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [showAll, players.length]);
+
+  const handleShowMore = () => {
+    setShowAll(true);
+    // Scroll the user just past the fold so the new entries are visible
+    requestAnimationFrame(() => {
+      listEndRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  };
+
+  const handleScrollToggle = () => {
+    if (scrollDir === "down") {
+      window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "smooth" });
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
 
   if (loading) {
     return (
@@ -262,7 +294,7 @@ export default function Leaderboard() {
           </div>
 
           {/* All players list */}
-          {players.map((p, index) => {
+          {(showAll ? players : players.slice(0, INITIAL_VISIBLE)).map((p, index) => {
             const rank = index + 1;
             const isUser = user && p.id === user.id;
             const rankIndex = Math.min((p.rank || 1) - 1, rankNames.length - 1);
@@ -391,7 +423,70 @@ export default function Leaderboard() {
           })}
         </div>
 
-        {/* Footer button */}
+        {/* Sentinel for "Show More" smooth-scroll target */}
+        <div ref={listEndRef} />
+
+        {/* Show more / show less */}
+        {players.length > INITIAL_VISIBLE && (
+          <div className="mt-6 flex justify-center">
+            {!showAll ? (
+              <button
+                type="button"
+                onClick={handleShowMore}
+                className="flex items-center gap-2 px-6 py-3 rounded-full transition-colors"
+                style={{
+                  border: "1px solid rgba(162,209,187,0.3)",
+                  backgroundColor: "#1a1c16",
+                  color: "#a2d1bb",
+                  fontSize: "11px",
+                  fontWeight: "700",
+                  letterSpacing: "0.15em",
+                  textTransform: "uppercase",
+                  cursor: "pointer",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = "#1e201a";
+                  e.currentTarget.style.borderColor = "rgba(162,209,187,0.5)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "#1a1c16";
+                  e.currentTarget.style.borderColor = "rgba(162,209,187,0.3)";
+                }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: "16px" }}>
+                  expand_more
+                </span>
+                {tx.leaderboard.showMore(players.length - INITIAL_VISIBLE)}
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  setShowAll(false);
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }}
+                className="flex items-center gap-2 px-6 py-3 rounded-full transition-colors"
+                style={{
+                  border: "1px solid rgba(255,180,169,0.3)",
+                  backgroundColor: "#1a1c16",
+                  color: "#ffb4a9",
+                  fontSize: "11px",
+                  fontWeight: "700",
+                  letterSpacing: "0.15em",
+                  textTransform: "uppercase",
+                  cursor: "pointer",
+                }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: "16px" }}>
+                  expand_less
+                </span>
+                {tx.leaderboard.showLess}
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* Footer summary */}
         {players.length === 0 && (
           <div
             className="text-center py-20"
@@ -426,6 +521,32 @@ export default function Leaderboard() {
           </div>
         )}
       </section>
+
+      {/* ── Floating scroll-to-bottom / scroll-to-top button ── */}
+      {players.length > INITIAL_VISIBLE && (
+        <button
+          type="button"
+          onClick={handleScrollToggle}
+          className="fixed z-40 flex items-center justify-center rounded-full shadow-lg transition-transform active:scale-95"
+          style={{
+            bottom: "24px",
+            right: "24px",
+            width: "48px",
+            height: "48px",
+            backgroundColor: "#1e201a",
+            border: "1px solid rgba(233,195,73,0.4)",
+            color: "#e9c349",
+            cursor: "pointer",
+            boxShadow: "0 8px 24px rgba(0,0,0,0.5)",
+          }}
+          aria-label={scrollDir === "down" ? tx.leaderboard.scrollToBottom : tx.leaderboard.scrollToTop}
+          title={scrollDir === "down" ? tx.leaderboard.scrollToBottom : tx.leaderboard.scrollToTop}
+        >
+          <span className="material-symbols-outlined" style={{ fontSize: "24px" }}>
+            {scrollDir === "down" ? "keyboard_double_arrow_down" : "keyboard_double_arrow_up"}
+          </span>
+        </button>
+      )}
 
       {/* Decorative corner element */}
       <div

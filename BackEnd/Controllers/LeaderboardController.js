@@ -6,10 +6,8 @@ export const getLeaderboard = async (req, res) => {
     const [rows] = await db.execute(
       `SELECT id, name, level, \`rank\`, rank_progress, avatar_url
        FROM users
-       ORDER BY \`rank\` DESC, rank_progress DESC, level DESC
-       LIMIT 20`
+       ORDER BY \`rank\` DESC, rank_progress DESC, level DESC`
     );
-    console.log("Leaderboard sample:", rows.slice(0, 3).map(r => ({ name: r.name, avatar_url: r.avatar_url })));
     res.json(rows);
   } catch (err) {
     console.error(err);

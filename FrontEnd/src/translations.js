@@ -245,6 +245,10 @@ const t = {
       level: "Level",
       tier: "Tier",
       curatorsInArchive: (count) => `${count} Curators in the Archive`,
+      showMore: (n) => `Show ${n} More`,
+      showLess: "Show Less",
+      scrollToBottom: "Jump to bottom",
+      scrollToTop: "Back to top",
     },
 
     // Contribute
@@ -1169,6 +1173,10 @@ const t = {
       level: "Cấp độ",
       tier: "Hạng",
       curatorsInArchive: (count) => `${count} nhà sử học đang chơi`,
+      showMore: (n) => `Xem thêm ${n}`,
+      showLess: "Thu gọn",
+      scrollToBottom: "Xuống cuối danh sách",
+      scrollToTop: "Lên đầu trang",
     },
 
     // Contribute
@@ -1724,6 +1732,10 @@ const t = {
       level: "等级",
       tier: "段位",
       curatorsInArchive: (count) => `档案馆中共 ${count} 位策展人`,
+      showMore: (n) => `再显示 ${n} 位`,
+      showLess: "收起",
+      scrollToBottom: "跳到底部",
+      scrollToTop: "回到顶部",
     },
 
     // Contribute
@@ -2430,6 +2442,10 @@ const t = {
       level: "Niveau",
       tier: "Palier",
       curatorsInArchive: (count) => `${count} curateurs dans l'Archive`,
+      showMore: (n) => `Afficher ${n} de plus`,
+      showLess: "Réduire",
+      scrollToBottom: "Aller en bas",
+      scrollToTop: "Retour en haut",
     },
 
     // Contribute
