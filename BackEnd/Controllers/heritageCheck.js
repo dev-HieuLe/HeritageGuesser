@@ -23,14 +23,19 @@ export const checkAnswer = async (req, res) => {
 
     const expected = rows[0].name;
     const aliases = rows[0].aliases ? rows[0].aliases.split(",") : []; // optional
+    const region = rows[0].region || null;
+    const description = rows[0].description || null;
 
     const response = await axios.post(
-      `${process.env.API_BASE_URL}/heritage/check`,
+      `${process.env.API_BASE_URL}/heritage/rate-name`,
       {
         answer,
         expected,
         aliases,
+        region,
+        description,
       },
+      { timeout: 60_000 }, // Qwen can take a while
     );
 
     res.json({

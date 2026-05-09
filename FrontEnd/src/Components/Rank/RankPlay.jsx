@@ -96,6 +96,10 @@ export default function RankPlay() {
   const [showConfetti, setShowConfetti] = useState(false);
   const [rankChangeMsg, setRankChangeMsg] = useState(null);
   const [timesUp, setTimesUp] = useState(false);
+  const [isRatingName, setIsRatingName] = useState(false);
+  const [showHowTo, setShowHowTo] = useState(false);
+  const [showHint, setShowHint] = useState(false);
+  const hintShownRef = useRef(false);
 
   const {
     user,
@@ -299,6 +303,12 @@ export default function RankPlay() {
       if (counter <= 0) {
         clearInterval(countdownRef.current);
         setIsBlurred(false);
+        // First-round-of-session hint: dismisses on its own after a few seconds
+        if (!hintShownRef.current) {
+          hintShownRef.current = true;
+          setShowHint(true);
+          setTimeout(() => setShowHint(false), 9000);
+        }
       }
     }, 1000);
   };
@@ -353,6 +363,7 @@ export default function RankPlay() {
   const handleSubmit = async () => {
     if (!current) return;
     clearInterval(timerRef.current);
+    setIsRatingName(true);
     try {
       const token = isMobile ? null : executeRecaptcha ? await executeRecaptcha("guess") : null;
       const checkResp = await axios.post(
@@ -395,7 +406,7 @@ export default function RankPlay() {
         if (claimDailyCheckin()) addPoints(10, "Daily Check-in");
 
         try {
-          const endpoint = total >= 8 ? "win" : total <= 4 ? "lose" : null;
+          const endpoint = total >= 7 ? "win" : total < 3 ? "lose" : null;
           if (endpoint) {
             const r = await axios.post(
               `${import.meta.env.VITE_API_BASE_URL}/player/update-rank`,
@@ -412,9 +423,9 @@ export default function RankPlay() {
             );
 
             if ((user.rank || 1) < newRank)
-              setRankChangeMsg(`Rank Up → ${rankNames[newRank - 1]}`);
+              setRankChangeMsg({ type: "up", rankName: rankNames[newRank - 1] });
             else if ((user.rank || 1) > newRank)
-              setRankChangeMsg(`Rank Down → ${rankNames[newRank - 1]}`);
+              setRankChangeMsg({ type: "down", rankName: rankNames[newRank - 1] });
             else setRankChangeMsg(null);
 
             // Confirm rank/level from server; points already handled optimistically
@@ -484,6 +495,8 @@ export default function RankPlay() {
         correctName: current.name,
         correctAge: current.years_old,
       });
+    } finally {
+      setIsRatingName(false);
     }
   };
 
@@ -1167,35 +1180,31 @@ export default function RankPlay() {
                   <div
                     className="flex items-center gap-2 px-4 py-2 rounded-lg mb-4"
                     style={{
-                      backgroundColor: rankChangeMsg.includes("Up")
+                      backgroundColor: rankChangeMsg.type === "up"
                         ? "rgba(162,209,187,0.1)"
                         : "rgba(187,3,8,0.1)",
-                      border: `1px solid ${rankChangeMsg.includes("Up") ? "rgba(162,209,187,0.3)" : "rgba(187,3,8,0.3)"}`,
+                      border: `1px solid ${rankChangeMsg.type === "up" ? "rgba(162,209,187,0.3)" : "rgba(187,3,8,0.3)"}`,
                     }}
                   >
                     <span
                       className="material-symbols-outlined"
                       style={{
-                        color: rankChangeMsg.includes("Up")
-                          ? "#a2d1bb"
-                          : "#ffb4a9",
+                        color: rankChangeMsg.type === "up" ? "#a2d1bb" : "#ffb4a9",
                         fontSize: "16px",
                       }}
                     >
-                      {rankChangeMsg.includes("Up")
-                        ? "arrow_upward"
-                        : "arrow_downward"}
+                      {rankChangeMsg.type === "up" ? "arrow_upward" : "arrow_downward"}
                     </span>
                     <span
                       className="font-black uppercase tracking-wider"
                       style={{
-                        color: rankChangeMsg.includes("Up")
-                          ? "#a2d1bb"
-                          : "#ffb4a9",
+                        color: rankChangeMsg.type === "up" ? "#a2d1bb" : "#ffb4a9",
                         fontSize: "11px",
                       }}
                     >
-                      {rankChangeMsg}
+                      {rankChangeMsg.type === "up"
+                        ? txRP.rankUp(rankChangeMsg.rankName)
+                        : txRP.rankDown(rankChangeMsg.rankName)}
                     </span>
                   </div>
                 )}
@@ -1405,6 +1414,32 @@ export default function RankPlay() {
               </div>
             )}
 
+            {/* HOW-TO-PLAY BUTTON (above input row) */}
+            {!result && (
+              <div className="w-full flex justify-center" style={{ maxWidth: "800px" }}>
+                <button
+                  type="button"
+                  onClick={() => setShowHowTo(true)}
+                  className="flex items-center gap-2 px-4 py-2 rounded-full transition-colors"
+                  style={{
+                    ...glassPanel,
+                    border: "1px solid rgba(233,195,73,0.25)",
+                    color: "#e9c349",
+                    fontSize: "11px",
+                    fontWeight: 800,
+                    letterSpacing: "0.08em",
+                    textTransform: "uppercase",
+                    cursor: "pointer",
+                  }}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: "16px" }}>
+                    help
+                  </span>
+                  {txRP.howToPlay}
+                </button>
+              </div>
+            )}
+
             {/* INPUT ROW */}
             {!result && (
               <div
@@ -1531,6 +1566,209 @@ export default function RankPlay() {
             )}
           </section>
         )}
+
+        {/* ── HINT BANNER (first round of session) ── */}
+        {showHint && !isBlurred && !result && canPlay && (
+          <div
+            className="fixed z-40 px-4"
+            style={{
+              top: "84px",
+              left: "50%",
+              transform: "translateX(-50%)",
+              maxWidth: "560px",
+              width: "calc(100% - 24px)",
+              animation: "rankplay-hint-in 0.4s ease",
+            }}
+          >
+            <div
+              className="rounded-xl px-4 py-3 flex items-start gap-3"
+              style={{
+                ...glassPanel,
+                border: "1px solid rgba(233,195,73,0.3)",
+                boxShadow: "0 12px 36px rgba(0,0,0,0.4)",
+              }}
+            >
+              <span
+                className="material-symbols-outlined"
+                style={{ color: "#e9c349", fontSize: "20px", marginTop: "1px", fontVariationSettings: "'FILL' 1" }}
+              >
+                lightbulb
+              </span>
+              <p
+                style={{
+                  color: "rgba(227,227,222,0.95)",
+                  fontSize: "12px",
+                  lineHeight: 1.55,
+                  margin: 0,
+                  flex: 1,
+                  fontFamily: "'Be Vietnam Pro', sans-serif",
+                }}
+              >
+                {txRP.hintMessage}
+              </p>
+              <button
+                type="button"
+                onClick={() => setShowHint(false)}
+                className="bg-transparent border-none cursor-pointer flex-shrink-0"
+                style={{ color: "rgba(192,200,195,0.5)", padding: 0 }}
+                aria-label="Dismiss hint"
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: "16px" }}>
+                  close
+                </span>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ── RATING-NAME WAITING OVERLAY (Qwen call) ── */}
+        {isRatingName && !result && (
+          <div
+            className="fixed inset-0 z-[55] flex flex-col items-center justify-center pointer-events-auto"
+            style={{ backgroundColor: "rgba(12,14,10,0.78)", backdropFilter: "blur(6px)" }}
+          >
+            <div
+              className="flex flex-col items-center gap-4 px-8 py-7 rounded-2xl"
+              style={{
+                ...glassPanel,
+                border: "1px solid rgba(233,195,73,0.2)",
+                maxWidth: "320px",
+              }}
+            >
+              <div className="flex gap-2">
+                {[0, 1, 2].map((i) => (
+                  <span
+                    key={i}
+                    style={{
+                      width: "10px",
+                      height: "10px",
+                      borderRadius: "50%",
+                      backgroundColor: "#e9c349",
+                      animation: `rankplay-bounce 1.2s ease-in-out ${i * 0.15}s infinite`,
+                    }}
+                  />
+                ))}
+              </div>
+              <p
+                className="uppercase tracking-widest font-black text-center"
+                style={{ color: "#e9c349", fontSize: "12px" }}
+              >
+                {txRP.ratingTitle}
+              </p>
+              <p
+                style={{
+                  color: "rgba(192,200,195,0.65)",
+                  fontSize: "11px",
+                  textAlign: "center",
+                  lineHeight: 1.5,
+                  margin: 0,
+                }}
+              >
+                {txRP.ratingSubtitle}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* ── HOW-TO-PLAY MODAL ── */}
+        {showHowTo && (
+          <div
+            className="fixed inset-0 z-[70] flex items-center justify-center px-4"
+            style={{ backgroundColor: "rgba(8,10,8,0.78)", backdropFilter: "blur(6px)" }}
+            onClick={() => setShowHowTo(false)}
+          >
+            <div
+              onClick={(e) => e.stopPropagation()}
+              className="rounded-2xl p-6 sm:p-7"
+              style={{
+                ...glassPanel,
+                border: "1px solid rgba(162,209,187,0.2)",
+                maxWidth: "480px",
+                width: "100%",
+                maxHeight: "85vh",
+                overflowY: "auto",
+              }}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <span
+                    className="material-symbols-outlined"
+                    style={{ color: "#e9c349", fontSize: "22px", fontVariationSettings: "'FILL' 1" }}
+                  >
+                    help
+                  </span>
+                  <h3
+                    className="font-black uppercase tracking-wider"
+                    style={{ color: "#e9c349", fontSize: "14px" }}
+                  >
+                    {txRP.howToPlayTitle}
+                  </h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowHowTo(false)}
+                  className="bg-transparent border-none cursor-pointer"
+                  style={{ color: "rgba(192,200,195,0.6)", padding: "4px" }}
+                  aria-label="Close"
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: "20px" }}>
+                    close
+                  </span>
+                </button>
+              </div>
+              <ul style={{ margin: 0, padding: 0, listStyle: "none" }}>
+                {txRP.howToPlaySteps.map((step, i) => (
+                  <li
+                    key={i}
+                    className="flex gap-3 mb-3"
+                    style={{ color: "rgba(227,227,222,0.92)", fontSize: "13px", lineHeight: 1.6 }}
+                  >
+                    <span
+                      className="flex items-center justify-center font-black flex-shrink-0"
+                      style={{
+                        width: "22px",
+                        height: "22px",
+                        borderRadius: "50%",
+                        backgroundColor: "rgba(233,195,73,0.15)",
+                        color: "#e9c349",
+                        fontSize: "11px",
+                      }}
+                    >
+                      {i + 1}
+                    </span>
+                    <span style={{ flex: 1 }}>{step}</span>
+                  </li>
+                ))}
+              </ul>
+              <button
+                type="button"
+                onClick={() => setShowHowTo(false)}
+                className="mt-4 w-full py-2.5 rounded-xl font-black uppercase tracking-widest transition-all active:scale-[0.98]"
+                style={{
+                  background: "linear-gradient(135deg, #0f3d2e 0%, #a2d1bb 100%)",
+                  color: "#073829",
+                  border: "none",
+                  fontSize: "11px",
+                  cursor: "pointer",
+                }}
+              >
+                {txRP.gotIt}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Local keyframes for the rating dots and hint slide-in */}
+        <style>{`
+          @keyframes rankplay-bounce {
+            0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+            40% { transform: scale(1); opacity: 1; }
+          }
+          @keyframes rankplay-hint-in {
+            from { opacity: 0; transform: translate(-50%, -8px); }
+            to   { opacity: 1; transform: translate(-50%, 0); }
+          }
+        `}</style>
 
         {/* Floating particles */}
         <div className="fixed inset-0 pointer-events-none z-10">

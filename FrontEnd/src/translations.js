@@ -683,6 +683,21 @@ const t = {
         partial: "Partial Archive",
         lost: "Record Lost",
       },
+      howToPlay: "How to Play",
+      howToPlayTitle: "How to Play Ranked",
+      howToPlaySteps: [
+        "Look around the Street View and gather visual clues — architecture, signs, surroundings.",
+        "In the input box, type the heritage site's name. Even a partial answer counts: the city, the temple type, or the figure it honours all earn partial points.",
+        "Estimate how old the site is (in years) — the closer to the real age, the higher your Age score.",
+        "Score 7 or more out of 10 to rank up; score under 3 and you'll lose progress. Chat with The Archivist for live hints.",
+      ],
+      gotIt: "Got It",
+      hintMessage:
+        "Tip: even partial answers earn points! Naming the city, the temple type, or the historical figure the site honours all give partial credit. The more specific your guess, the more points you score.",
+      ratingTitle: "Analysing",
+      ratingSubtitle: "Grading how close your answer is to the real site.",
+      rankUp: (name) => `Rank Up → ${name}`,
+      rankDown: (name) => `Rank Down → ${name}`,
     },
 
     // Lesson Detail
@@ -1411,6 +1426,21 @@ const t = {
         partial: "Nửa Vời",
         lost: "Thất Bại",
       },
+      howToPlay: "Cách Chơi",
+      howToPlayTitle: "Hướng Dẫn Chơi Xếp Hạng",
+      howToPlaySteps: [
+        "Quan sát Street View và thu thập manh mối — kiến trúc, biển hiệu, cảnh vật xung quanh.",
+        "Nhập tên di sản vào ô. Đáp án chỉ một phần vẫn được điểm: tên thành phố, loại đền chùa, hay nhân vật được thờ đều được tính điểm phần.",
+        "Ước tính tuổi của di tích (năm) — càng sát thực tế, điểm Tuổi càng cao.",
+        "Đạt 7 điểm trở lên trên thang 10 để lên rank; dưới 3 sẽ tụt rank. Trò chuyện với The Archivist để xin gợi ý.",
+      ],
+      gotIt: "Đã Hiểu",
+      hintMessage:
+        "Mẹo: trả lời gần đúng vẫn có điểm! Nêu được thành phố, loại đền chùa, hay nhân vật mà di tích tôn vinh đều được điểm phần. Câu trả lời càng cụ thể, điểm càng cao.",
+      ratingTitle: "Đang Phân Tích",
+      ratingSubtitle: "Đang chấm xem câu trả lời của bạn sát di tích thật đến mức nào.",
+      rankUp: (name) => `Lên Rank → ${name}`,
+      rankDown: (name) => `Tụt Rank → ${name}`,
     },
 
     // Lesson Detail
@@ -2100,6 +2130,21 @@ const t = {
         partial: "部分归档",
         lost: "记录丢失",
       },
+      howToPlay: "玩法说明",
+      howToPlayTitle: "排名赛玩法",
+      howToPlaySteps: [
+        "环顾街景，收集线索——建筑、标识和周围环境。",
+        "在输入框中填写遗产名称。只答出一部分也算分：城市名、寺庙类型、或被供奉的人物都能获得部分分数。",
+        "估算遗址的年代（年）——越接近真实年龄，年代分越高。",
+        "10 分中得 7 分及以上即可升级；低于 3 分会掉级。可与档案管理员对话获取实时提示。",
+      ],
+      gotIt: "明白了",
+      hintMessage:
+        "提示：答出一部分也得分！写出城市、寺庙类型、或遗址纪念的人物都能获得部分分。答得越具体，得分越高。",
+      ratingTitle: "正在分析",
+      ratingSubtitle: "正在评估您的答案与真实遗址的接近程度。",
+      rankUp: (name) => `升级 → ${name}`,
+      rankDown: (name) => `降级 → ${name}`,
     },
 
     // Lesson Detail
@@ -2814,6 +2859,21 @@ const t = {
         partial: "Archive Partielle",
         lost: "Dossier Perdu",
       },
+      howToPlay: "Comment Jouer",
+      howToPlayTitle: "Comment Jouer en Classé",
+      howToPlaySteps: [
+        "Observez le Street View et collectez des indices — architecture, panneaux, environnement.",
+        "Tapez le nom du site patrimonial. Une réponse partielle compte aussi : la ville, le type de temple ou la figure honorée donnent des points partiels.",
+        "Estimez l'âge du site (en années) — plus vous êtes proche de l'âge réel, plus votre score d'Âge est élevé.",
+        "Marquez 7 points ou plus sur 10 pour monter de rang ; en dessous de 3, vous perdez du progrès. Discutez avec L'Archiviste pour des indices en direct.",
+      ],
+      gotIt: "Compris",
+      hintMessage:
+        "Astuce : même les réponses partielles rapportent des points ! Nommer la ville, le type de temple ou le personnage historique honoré donne du crédit partiel. Plus votre réponse est précise, plus vous gagnez de points.",
+      ratingTitle: "Analyse en Cours",
+      ratingSubtitle: "Évaluation de la proximité de votre réponse avec le site réel.",
+      rankUp: (name) => `Montée de Rang → ${name}`,
+      rankDown: (name) => `Descente de Rang → ${name}`,
     },
 
     // Lesson Detail
