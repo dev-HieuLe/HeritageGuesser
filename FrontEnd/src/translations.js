@@ -2928,6 +2928,739 @@ const t = {
     // Loading
     loading: "Chargement…",
   },
+
+  ko: {
+    // Nav
+    nav: {
+      home: "홈",
+      about: "소개",
+      rank: "랭크 플레이",
+      explore: "아틀라스",
+      leaderboard: "글로벌 순위",
+      study: "아카데미",
+      atlas: "아틀라스",
+      tutorial: "튜토리얼",
+      contribute: "기여하기",
+      shop: "상점",
+      vrDiscovery: "VR 탐험",
+      challenge: "챌린지",
+      members: "멤버십",
+      logout: "로그아웃",
+      signIn: "로그인",
+      settings: "설정",
+    },
+
+    // Sidebar
+    sidebar: {
+      sanctuary: "성소",
+      about: "소개",
+      PlayRank: "랭크 플레이",
+      globalRanks: "글로벌 순위",
+      atlas: "아틀라스",
+      academy: "아카데미",
+      tutorial: "튜토리얼",
+      contribute: "기여하기",
+      shop: "상점",
+      vrDiscovery: "VR 탐험",
+      feedback: "피드백",
+      feedbackPlaceholder:
+        "의견을 공유하거나 버그를 신고하거나 기능을 제안해 주세요… (최대 100자)",
+      feedbackSend: "피드백 보내기",
+      feedbackSending: "전송 중…",
+      feedbackSent: "전송 완료! 감사합니다.",
+      feedbackContact: "빠른 답변을 원하시면 다음으로 연락해 주세요",
+      feedbackOr: "또는",
+      settings: "설정",
+      subscription: "구독 / 요금제",
+      rankNow: "지금 플레이",
+      imperialScholar: "황실 학자",
+      rankLabel: (rankName) => `등급 · ${rankName} 학자`,
+    },
+
+    // Hero
+    hero: {
+      badge: "VR 체험 지원",
+      headline1: "숨겨진",
+      headline2: "베트남을",
+      headline3: "발견하세요.",
+      body: "유산의 신비로운 기록 보관소로 들어서세요. 하롱의 안개부터 후에의 황궁 문까지, 수천 년의 역사 속에서 당신의 문화적 직관을 시험해 보세요.",
+      startGuessing: "추측 시작",
+      viewMap: "지도 보기",
+      tutorial: "플레이 방법 배우기",
+    },
+
+    // Bento
+    bento: {
+      liveNow: "실시간",
+      archivistsExploring: "기록 보관자가 탐험 중",
+      todaysQuest: "오늘의 퀘스트",
+      endsIn: "종료까지",
+      questTitle: "미선 성지",
+      questDesc:
+        "고대 힌두교 사원 단지에 숨겨진 문양을 찾아내세요.",
+      xpReward: "+500 XP 보상",
+      imperialScholars: "황실 학자들",
+      fullRankings: "전체 순위",
+    },
+
+    // Atlas
+    atlas: {
+      eyebrow: "정체성의 아틀라스",
+      headline1: "모든 좌표가 들려주는",
+      headline2: "천 년의",
+      headline3: "이야기",
+      headline4: "한 편.",
+      features: [
+        {
+          title: "검증된 구전 역사",
+          desc: "국립 기록 보관소의 AI 큐레이션 메타데이터가 모든 장소의 역사적 정확성과 문화적 의의를 보장합니다.",
+        },
+        {
+          title: "초정밀 로컬 탐험",
+          desc: "큰 지도가 놓치는 숨겨진 골목과 고대 사당을 발견하세요. 베트남을 사람의 시선으로 경험해 보세요.",
+        },
+        {
+          title: "인터랙티브 유산 노드",
+          desc: "클릭하면 동선 문양, 전통 음악 녹음, 그리고 지역 유물의 3D 스캔이 펼쳐집니다.",
+        },
+      ],
+    },
+
+    // CTA
+    cta: {
+      headline: "문화의 수호자가 되세요.",
+      body: "기술로 베트남 유산을 보존하는 수천 명의 탐험가와 함께하세요. 기록 보관소가 당신을 기다립니다.",
+      createProfile: "프로필 만들기",
+      questLogin: "일일 퀘스트 로그인",
+    },
+
+    // Contact
+    contact: {
+      eyebrow: "기록 보관소에 합류하세요",
+      headline: "여러분의 이야기를",
+      headlineAccent: "듣고 싶습니다.",
+      body: "질문, 버그 제보, 또는 유산에 관해 이야기 나누고 싶으신가요? 언제든 연락 주세요 — 저희가 경청하겠습니다.",
+      channels: [
+        {
+          icon: "mail",
+          label: "이메일",
+          value: "heritageguesser@gmail.com",
+          href: "mailto:heritageguesser@gmail.com",
+          cta: "메시지 보내기",
+        },
+        {
+          icon: "youtube",
+          label: "유튜브",
+          value: "youtube.com/@HeritageGuessr",
+          href: "https://www.youtube.com/@HeritageGuessr",
+          cta: "영상 보기",
+        },
+        {
+          icon: "facebook",
+          label: "페이스북",
+          value: "facebook.com/HeritageGuessr",
+          href: "https://www.facebook.com/profile.php?id=61568386015819",
+          cta: "팔로우하기",
+        },
+        {
+          icon: "github",
+          label: "깃허브",
+          value: "github.com/dev-HieuLe/HeritageGuessr",
+          href: "https://github.com/dev-HieuLe/HeritageGuesser/blob/main/README.md",
+          cta: "코드 보기",
+        },
+      ],
+    },
+
+    // Footer
+    footer: {
+      copyright: "© 2026 Heritage Guessr. 모든 권리 보유.",
+      links: [
+        { label: "연대기", to: "/rank" },
+        { label: "글로벌 순위", to: "/leaderboard" },
+        { label: "아틀라스", to: "/explore" },
+        { label: "아카데미", to: "/study" },
+      ],
+    },
+
+    // Login
+    login: {
+      subtitle: "기록 보관소 입장",
+      emailLabel: "이메일",
+      passwordLabel: "비밀번호",
+      rememberMe: "로그인 상태 유지",
+      forgotPassword: "비밀번호를 잊으셨나요?",
+      submit: "기록 보관소 입장",
+      orDivider: "또는 다음으로 계속",
+      googleSignIn: "Google로 계속하기",
+      divider: "기록 보관소가 처음이신가요?",
+      createAccount: "큐레이터 계정 만들기",
+      backHome: "홈으로 돌아가기",
+      emailRequired: "이메일은 필수입니다",
+      passwordRequired: "비밀번호는 필수입니다",
+      invalidCredentials: "이메일 또는 비밀번호가 잘못되었습니다",
+      somethingWrong: "문제가 발생했습니다. 다시 시도해 주세요.",
+    },
+
+    // Register
+    register: {
+      subtitle: "기록 보관소에 합류",
+      fields: {
+        name: { label: "큐레이터 이름", placeholder: "당신의 보관자 별칭" },
+        email: { label: "이메일", placeholder: "curator@archive.vn" },
+        password: { label: "비밀번호", placeholder: "••••••••" },
+        confirmPassword: { label: "비밀번호 확인", placeholder: "••••••••" },
+      },
+      submit: "큐레이터로 가입",
+      orDivider: "또는 다음으로 가입",
+      googleSignUp: "Google로 계속하기",
+      divider: "이미 가입하셨나요?",
+      loginLink: "기록 보관소 입장",
+      backHome: "홈으로 돌아가기",
+      errors: {
+        nameRequired: "이름은 필수입니다",
+        nameTooShort: "이름은 최소 2자 이상이어야 합니다",
+        nameTooLong: "이름은 50자 미만이어야 합니다",
+        emailRequired: "이메일은 필수입니다",
+        emailInvalid: "유효하지 않은 이메일 주소입니다",
+        passwordRequired: "비밀번호는 필수입니다",
+        passwordTooShort: "비밀번호는 최소 8자 이상이어야 합니다",
+        confirmRequired: "비밀번호를 확인해 주세요",
+        confirmMismatch: "비밀번호가 일치하지 않습니다",
+        nameInvalidChars: "이름에는 최소 한 개의 글자나 숫자가 포함되어야 합니다",
+        emailInUse: "이미 등록된 이메일입니다. 로그인을 시도해 보세요.",
+        usernameTaken: "이미 사용 중인 사용자명입니다. 다른 이름을 선택해 주세요.",
+        registrationError: "가입 중 오류가 발생했습니다. 다시 시도해 주세요.",
+        invalidData: "가입 정보가 유효하지 않습니다. 입력 내용을 확인해 주세요.",
+        passwordTooLong: "비밀번호는 128자 미만이어야 합니다",
+        somethingWrong: "문제가 발생했습니다. 다시 시도해 주세요.",
+        serverError: "서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.",
+      },
+    },
+
+    // Ranking
+    ranking: {
+      progressToNextRank: "다음 등급까지의 진행도",
+      rankTier: "등급 단계",
+      level: "레벨",
+      stars: "별",
+      rankLadder: "등급 사다리",
+      chronicles: "연대기",
+      yourRank: "당신의 등급",
+      rankNow: "지금 플레이",
+      loading: "등급 데이터 불러오는 중...",
+      maintenance: "점검 중",
+      maintenanceDesc: "랭크 기록 보관소가 일시적으로 점검 중입니다. 나중에 다시 확인해 주세요.",
+      backHome: "홈으로 돌아가기",
+      starsOf: (s) => `${s} / 5 별`,
+      rankLabel: (rank, name) => `등급 ${rank} — ${name}`,
+      rankNames: [
+        "아이언",
+        "브론즈",
+        "실버",
+        "골드",
+        "플래티넘",
+        "에메랄드",
+        "다이아몬드",
+        "마스터",
+        "그랜드마스터",
+        "챌린저",
+      ],
+    },
+
+    // Leaderboard
+    leaderboard: {
+      rank: "등급",
+      curator: "큐레이터",
+      level: "레벨",
+      tier: "단계",
+      curatorsInArchive: (count) => `기록 보관소의 큐레이터 ${count}명`,
+      showMore: (n) => `${n}명 더 보기`,
+      showLess: "접기",
+      scrollToBottom: "맨 아래로",
+      scrollToTop: "맨 위로",
+    },
+
+    // Contribute
+    contribute: {
+      legacyHeading: ["유산", "보존"],
+      heroDesc:
+        "여러분의 기여가 우리의 집단 기억을 엮어냅니다. 성소를 활용해 새로운 발견을 기록하고 기록 보관소의 지능을 다듬어 주세요.",
+      registerNewHeritage: "새 유산지 등록",
+      totalSubmitted: "총 제출",
+      approved: "승인됨",
+      pending: "대기 중",
+      declined: "반려됨",
+      yourContributions: "당신의 기여",
+      noContributions:
+        "아직 기여가 없습니다. 유산지를 처음으로 등록해 보세요!",
+      submitFirstSite: "첫 번째 유산지 제출하기",
+      theArtOfArchiving: "기록의 예술",
+      cards: [
+        {
+          icon: "location_on",
+          title: "정확한 위치",
+          desc: "Google Maps를 열고 유산지의 정확한 위치로 이동한 뒤, 브라우저 주소창의 전체 URL을 복사해 주세요.",
+        },
+        {
+          icon: "auto_awesome",
+          title: "AI 메타데이터",
+          desc: "AI가 URL에서 좌표를 추출하고 문화적 설명, 시대, 난이도를 자동으로 생성합니다.",
+        },
+        {
+          icon: "description",
+          title: "의미적 디테일",
+          desc: "선택적으로 설명을 추가해 AI에 맥락을 제공하고 생성된 내용의 품질을 높이세요.",
+        },
+        {
+          icon: "pending_actions",
+          title: "검토 과정",
+          desc: "모든 제출물은 큐레이터의 검토를 거칩니다. 승인된 유산지는 Heritage Guessr의 게임 세계에 추가됩니다.",
+        },
+      ],
+      howToGetUrl: "유효한 Google Maps URL을 얻는 방법",
+      steps: [
+        "google.com/maps에서 유산지의 이름으로 검색하세요.",
+        "위치 핀을 클릭해 상세 정보 패널을 여세요.",
+        "노란색 사람 아이콘을 지도 위로 끌어 스트리트뷰로 전환하세요.",
+        "브라우저에서 전체 URL을 복사하세요 — \"@위도,경도\" 좌표가 포함되어야 합니다.",
+        "복사한 URL을 \"Google 스트리트뷰 URL\" 입력란에 붙여넣고 제출하세요.",
+      ],
+    },
+
+    // FAQ
+    faq: [
+      {
+        q: "Heritage Guessr란 무엇인가요?",
+        a: "Heritage Guessr는 베트남 유산에 관한 지식 게임입니다. 매 라운드마다 실제 유산지의 360° 스트리트뷰 파노라마 속으로 들어가게 됩니다 — 임무는 그곳의 이름을 알아맞히고 연대를 추정하는 것입니다. 지도 핀은 없습니다 — 지리가 아니라 문화 지식의 시험이니까요.",
+      },
+      {
+        q: "각 라운드는 어떻게 진행되나요?",
+        a: "베트남 유산지의 실제 360° 스트리트뷰에 몰입하게 됩니다. 건축, 조각, 주변 환경을 살펴본 뒤 유산지의 이름과 연대(년 단위) 추정치를 입력하세요. 120초 타이머가 끝나기 전에 확정하세요.",
+      },
+      {
+        q: "점수는 어떻게 계산되나요?",
+        a: "각 라운드는 10점 만점으로 채점됩니다 — 이름 점수 최대 5점(유사도 매칭 — 부분 정답도 인정), 연대 점수 최대 5점(오차 10년 이내 = 만점, 80년 이내 = 1점). 총 8점 이상이면 승리, 4점 이하이면 패배입니다.",
+      },
+      {
+        q: "등급 시스템은 어떻게 작동하나요?",
+        a: "아이언부터 챌린저까지 10단계의 등급이 있습니다. 충분히 승리해 5개의 별로 진행 바를 채우면 승급합니다. 너무 많이 패배하면 강등됩니다. 등급과 진행도는 글로벌 순위에서 다른 플레이어들과 함께 표시됩니다.",
+      },
+      {
+        q: "포인트는 어떻게 얻나요?",
+        a: "랭크 매치를 완료하면 +5점, 하루의 첫 플레이(일일 로그인) 시 +10점, 스터디 글을 읽으면 +5점, 유산 기여를 제출하면 +10점을 얻습니다. 포인트는 프로필과 네비게이션 바에서 확인할 수 있습니다.",
+      },
+      {
+        q: "기록 보관자(Archivist)란 무엇인가요?",
+        a: "기록 보관자는 매 라운드에서 사용할 수 있는 AI 동반자입니다. 라운드당 최대 10개의 질문으로 힌트를 받을 수 있으며 — 정답을 직접 알려주지는 않고 안내해 줍니다. '어느 왕조가 지었나요?' 같은 넓은 질문부터 시작해 좁혀 가세요.",
+      },
+      {
+        q: "스터디(아카데미) 섹션은 무엇인가요?",
+        a: "스터디 섹션에는 실제 베트남 유산지에 관한 깊이 있는 글이 담겨 있습니다 — 그 역사, 건축, 문화적 의의를 다룹니다. 글을 읽으면 게임 속 유산지를 알아보는 능력이 향상됩니다. 완독한 글마다 +5점이 주어집니다.",
+      },
+      {
+        q: "새로운 유산지를 기여할 수 있나요?",
+        a: "네. 기여 페이지에서 Google Maps 스트리트뷰 URL을 붙여넣고 유산지 이름을 입력하세요. 시스템이 AI를 통해 자동으로 지역, 시대, 설명을 생성합니다. 승인된 제출물은 게임의 장소 풀에 포함되며 +10점을 얻게 됩니다.",
+      },
+    ],
+
+    // Shop
+    shop: {
+      eyebrow: "유산 기록 보관소 상점",
+      title: "기프트 상점",
+      subtitle:
+        "열심히 모은 포인트를 특별한 유산 기념품으로 교환하세요.",
+      points: "포인트",
+      redeem: "교환하기",
+      notEnough: "포인트 부족",
+      items: {
+        keyboard: "기계식 키보드",
+        keyboardDesc:
+          "프리미엄 풀사이즈 기계식 키보드 — 기록 보관자의 무기.",
+        mouse: "게이밍 마우스",
+        mouseDesc:
+          "헌신적인 학자를 위해 설계된 고정밀 게이밍 마우스.",
+        tshirt: "헤리티지 티셔츠 (클래식)",
+        tshirtDesc:
+          "Heritage Guessr 엠블럼이 새겨진 프리미엄 면 티셔츠.",
+        tshirt2: "헤리티지 티셔츠 (얼터너티브)",
+        tshirt2Desc:
+          "공식 Heritage Guessr 티셔츠의 다른 색상 버전.",
+        starbucks: "스타벅스 기프트 카드",
+        starbucksDesc:
+          "다음 유산 탐험 세션에 활력을 더해 줄 스타벅스 기프트 카드.",
+        keychain: "헤리티지 키체인",
+        keychainDesc:
+          "수공예 키체인 — 당신의 보관자 정신을 담은 작은 증표.",
+      },
+      modal: {
+        notEnoughTitle: "포인트 부족",
+        notEnoughBody:
+          "이 상품은 {need} 포인트가 필요합니다. 현재 {have} 포인트를 보유하고 있습니다. 이 보상을 교환하려면 {diff} 포인트가 더 필요합니다.",
+        confirmTitle: "교환 방법",
+        contactIntro:
+          "아래 채널 중 하나로 연락해 포인트를 이 상품과 교환하세요.",
+        phone: "전화",
+        note: "이 페이지의 스크린샷을 찍어 게임 내 사용자명과 함께 전송해 주세요.",
+        close: "닫기",
+      },
+    },
+
+    // About Us
+    aboutUs: {
+      badge: "Heritage Guessr",
+      heroLine1: "보존을 위해",
+      heroLine2: "만들었습니다.",
+      heroLine3: "영감을 주기 위해",
+      heroLine4: "설계했습니다.",
+      heroDesc:
+        "Heritage Guessr는 베트남 유산지의 실제 Google 스트리트뷰 파노라마 속으로 여러분을 안내합니다. AI 가이드 사반나(Savannah)와 함께 탐험하고, 유산지의 이름과 연대를 맞히며, 글로벌 순위에 도전하세요 — 베트남의 문화 보물을 배우면서요.",
+      pills: {
+        streetView: "스트리트뷰",
+        aiGuide: "AI 가이드",
+        nlpScoring: "NLP 채점",
+        studyMode: "스터디 모드",
+        xpShop: "XP 상점",
+        vrDiscovery: "VR 탐험",
+      },
+
+      statsLabels: [
+        "도달한 학생 수",
+        "유산지 수",
+        "AI 모델",
+        "파일럿 학교",
+      ],
+
+      missionLabel: "우리의 사명",
+      missionVi: "Lan tỏa, kết nối và gìn giữ.",
+      missionEn: "전파하고, 연결하고, 보존하다.",
+      whyBuilt: "왜 만들었나요",
+      missionHeadline1: "베트남에는",
+      missionHeadline2: "40,000여 곳이 넘는 유산지가 있습니다.",
+      missionHeadline3: "그러나 대부분은 주목받지 못합니다.",
+      missionBody1:
+        "Heritage Guessr는 하노이 Delta Global School에서 시작된 기술 이니셔티브로, 베트남 문화유산을 접근 가능하고, 매력적이며, 잊을 수 없게 만드는 것을 목표로 합니다 — 학생들로부터 시작해 바깥으로 뻗어 나갑니다.",
+      missionBody2:
+        "우리는 Google 스트리트뷰, 생성형 AI, 다국어 NLP를 결합해 수동적 탐색을 능동적 학습으로 전환하면서 — 전 세계 플레이어와 비교한 여러분의 진행 상황을 추적합니다.",
+      badgeDGS: "DGS 하노이",
+      badge600: "학생 600명+",
+      badgeUNESCO: "유네스코 유산",
+      badgeAI: "AI 기반",
+
+      underTheHood: "그 이면에는",
+      techHeadline1: "여덟 가지 기술로",
+      techHeadline2: "구동됩니다",
+      techDesc:
+        "실시간 3D 스트리트뷰부터 다국어 신경망까지 — 모든 레이어는 경험을 위해 선별되었습니다.",
+      techDescs: [
+        "HMR을 갖춘 초고속 프런트엔드",
+        "몰입형 360° 유산 탐험",
+        "AI 가이드와 유산지 맞춤화",
+        "자연스러운 이중 언어 음성 합성",
+        "다국어 응답 채점",
+        "3D 애니메이션 AI 동반자 사반나",
+        "Express 5 REST API + 관계형 데이터베이스",
+        "부드러운 애니메이션, 유틸리티 우선 UI",
+      ],
+
+      ourJourney: "우리의 여정",
+      howItStarted: "어떻게",
+      howItStartedAccent: "시작되었나",
+      journeyDesc:
+        "교실의 아이디어에서 수백 명의 학생에게 봉사하는 풀스택 플랫폼으로 — 이것이 Heritage Guessr의 이야기입니다.",
+      quote:
+        '"우리는 자문해 보았습니다 — 베트남의 과거를 다시 발견하는 일이 게임을 하는 것처럼 느껴진다면 어떨까? 그 질문이 Heritage Guessr가 되었습니다."',
+      quoteRole: "혁신 리더",
+      timeline: [
+        {
+          year: "2025년 초 · 시작",
+          title: "B410 교실에서 탄생",
+          desc: "아이디어는 DGS의 캡스톤 프로젝트로 형태를 갖추었습니다 — 교육과 AI를 결합해 베트남의 문화 정체성을 보존하기 위해. 국가 유산을 탐험하기 위한 VR 인터랙션을 포함한 게임의 초기 컨셉이 등장했습니다.",
+        },
+        {
+          year: "2025년 여름 · 1장",
+          title: "베타 0.1 형태를 갖추다",
+          desc: "첫 베타가 구축되어 AI와 NLP를 통합한 플랫폼의 기반이 마련되었습니다. 초기 테스트는 소규모 교실 그룹에서 10~20명의 플레이어에 도달했으며, 역사와 지리 교사로부터 첫 피드백을 받았습니다.",
+        },
+        {
+          year: "2025년 말 · 파일럿 출시",
+          title: "학교 & 실제 피드백",
+          desc: "기능 개선 후 프로젝트는 DGS Adventure(The Dewey School)와 Luong Van Can 고등학교에서 시범 운영되었습니다. 300명 이상의 학생과 10명의 교사가 참여해 귀중한 의견을 제공했습니다.",
+        },
+        {
+          year: "2026년 3월 · 베타 1.0",
+          title: "대대적인 업그레이드",
+          desc: "플랫폼은 UI, AI 프로토콜, 기능 시스템, 데이터 처리 파이프라인에 걸쳐 대대적인 리팩토링을 거쳤습니다 — 교사들의 실제 피드백을 반영해 — 더 넓은 커뮤니티에 다가갈 준비를 마쳤습니다.",
+        },
+        {
+          year: "현재 · 열린 플랫폼",
+          title: "커뮤니티 기여",
+          desc: "Heritage Guessr는 사용자에게 다가가기 위한 배포를 마무리하고 있습니다. 우리는 창립자뿐만 아니라 커뮤니티 자체에도 기여의 문을 열어 그 움직임을 가속화하고 있습니다.",
+        },
+        {
+          year: "미래 · 지평선",
+          title: "한계는 없습니다",
+          desc: "Heritage Guessr는 늘어나는 플레이어의 요구에 부응하고 베트남의 풍부한 문화 풍경을 더 많이 보존하기 위해 기술 인프라를 계속 확장할 계획입니다.",
+        },
+      ],
+
+      meetAIGuide: "AI 가이드를 만나보세요",
+      savannahTitle1: "사반나 — 당신의",
+      savannahTitle2: "유산 전문가",
+      savannahDesc:
+        "DeepInfra를 통한 Gemma 4 26B로 구동되는 사반나는 정답을 절대 직접 알려주지 않으면서 맥락에 맞는 힌트를 제공합니다. 자연스러운 언어로 말하며, Gemini TTS(Despina 음성)로 답변을 읽어 주고, 실시간으로 눈을 깜빡이고 움직이는 3D VRM 아바타로 살아 움직입니다.",
+      online: "온라인",
+      pillGemma: "Gemma 4 · 26B 챗",
+      pillTTS: "Gemini TTS",
+      pill3D: "3D VRM 아바타",
+      pillLang: "KO + EN",
+
+      hieuQuote1: "저는 모든",
+      hieuQuoteAccent: "코드 한 줄을",
+      hieuQuote2: "단 하나의 목표로 작성했습니다: 베트남의 유산을",
+      hieuQuoteAccent2: "잊을 수 없게 만드는 것.",
+      hieuRole: "리드 개발자 · 디자이너 · 저자",
+
+      craftedBy: "제작",
+      foundingTeam: "창립 팀",
+      teamDesc:
+        "하노이 Delta Global School의 세 학생 — 단 하나의 사명으로 뭉쳤습니다.",
+      memberRoles: [
+        "혁신 리더",
+        "리드 개발자 · 디자이너 · 저자",
+        "크리에이티브 콘텐츠 전문가",
+      ],
+      dgsTitle: "Delta Global School",
+      dgsLocation: "베트남 하노이",
+      dgsDesc:
+        "Heritage Guessr는 기술을 통해 베트남 문화유산을 보존하고 알리기 위한 이니셔티브의 일환으로 DGS에서 구상되고 구축되었습니다.",
+      theTeamLabel: "팀",
+      meetFounders: "창립자를 만나보세요",
+      meetFoundersDesc:
+        "홈페이지에서 Heritage Guessr 뒤의 전체 팀을 만나보세요.",
+      viewFounders: "창립자 보기",
+
+      openSource: "오픈 소스 · 교육용",
+      bottomTitle: "베트남 문화유산을 위한 ❤️로 제작되었습니다",
+      copyright:
+        "Copyright © 2025 Le Trung Hieu 및 Heritage Guessr 팀. 모든 권리 보유.",
+      followUs: "팔로우하기",
+      contributeASite: "유산지 기여하기",
+    },
+
+    // Founders
+    founders: {
+      eyebrow: "플랫폼 뒤의 사람들",
+      headline: "우리의",
+      headlineAccent: "창립자",
+      subtitle:
+        "베트남의 영혼을 보존하고 기리는 헌신적인 팀 — 한 번에 한 기념물씩.",
+      founderBadge: "창립자",
+      viewProfile: "프로필 보기 →",
+      connect: "연결하기",
+      members: [
+        {
+          name: "Đặng Thái Hoà",
+          role: "혁신 리더",
+          bio: "Heritage Guessr의 전략적 비전을 빚어내며, 디자인 씽킹과 크리에이티브 디렉션을 적용해 베트남 유산이 온라인에서 탐험되는 방식을 재정의하는 의미 있는 경험을 만들어 갑니다.",
+        },
+        {
+          name: "Lê Trung Hiếu",
+          role: "풀스택 엔지니어링 리드 & 디자이너",
+          bio: "풀스택 엔지니어링과 백엔드 아키텍처부터 정교한 프런트엔드 디자인까지 Heritage Guessr의 엔드 투 엔드 개발을 이끌며, 베트남 유산을 몰입형 디지털 경험으로 변환하는 견고하고 확장 가능한 플랫폼을 만들어 갑니다.",
+        },
+        {
+          name: "Nguyễn Thái Sơn",
+          role: "크리에이티브 콘텐츠 전문가",
+          bio: "플랫폼의 구석구석에 문화의 영혼을 불어넣습니다 — 베트남 유산을 잊을 수 없게 만드는 이야기, 이미지, 경험을 빚어냅니다.",
+        },
+      ],
+    },
+
+    // Progress Analysis
+    progressAnalysis: {
+      badge: "AI 인사이트",
+      title: "진행 분석",
+      subtitle: "AI가 게임 기록을 분석해 맞춤형 인사이트를 제공합니다 — 집중할 지역, 부족한 시대, 향상해야 할 역량.",
+      readyLabel: "분석 준비됨",
+      readySub: "전체 게임 기록을 기반으로",
+      loginLabel: "분석을 위해 로그인하세요",
+      loginSub: "개인 분석을 보려면 로그인이 필요합니다",
+      analyzeBtn: "지금 분석하기",
+      notLoggedIn: "로그인되지 않음",
+      loadingLabel: "AI가 데이터를 분석 중…",
+      needMoreData: "더 많은 데이터 필요",
+      needMoreDataSub: "AI가 진행 상황을 분석할 수 있도록 최소 3번의 랭크 매치를 플레이해 주세요.",
+      back: "뒤로",
+      errorMsg: "연결할 수 없습니다. 다시 시도해 주세요.",
+      retry: "다시 시도",
+      totalGames: "전체 게임 수",
+      avgScore: "평균 점수",
+      nameRecog: "이름 인식",
+      ageGuess: "연대 추정",
+      recent: "최근",
+      summaryLabel: "전반 요약",
+      strengths: "강점",
+      weaknesses: "개선할 점",
+      regionDist: "지역 분포",
+      eraDist: "시대 분포",
+      suggestions: "맞춤 제안",
+      reanalyze: "다시 분석",
+    },
+
+    // Wrong Locations
+    wrongLocations: {
+      badge: "자주 틀리는 유산지",
+      title: "어려워하는 유산지",
+      subtitle: "여러 번 잘못 답한 유산지입니다. AI 버튼을 눌러 구체적인 연습 조언을 받아 보세요.",
+      loadLabel: "어려운 유산지 보기",
+      loadSub: "게임 기록 기반 — 점수 < 5",
+      loginLabel: "보려면 로그인하세요",
+      loginSub: "개인 결과를 보려면 로그인이 필요합니다",
+      loadBtn: "지금 보기",
+      notLoggedIn: "로그인되지 않음",
+      empty: "어려운 유산지가 없습니다!",
+      emptySub: "아직 5점 미만을 받은 적이 없습니다. 계속 플레이하며 진행 상황을 확인해 보세요.",
+      errorMsg: "데이터를 불러올 수 없습니다. 다시 시도해 주세요.",
+      retry: "다시 시도",
+      back: "뒤로",
+      refresh: "새로고침",
+      wrongCount: (n) => `✗ ${n}회 틀림`,
+      aiBtn: "어떻게 연습하나요?",
+      aiLoading: "AI가 분석 중…",
+      nameLabel: "이름",
+      yearLabel: "연도",
+    },
+
+    // VR Mode
+    vrMode: {
+      calibTitle: "VR 보정",
+      calibSubtitle: "카드보드 헤드셋에 맞게 조정하세요",
+      eyeWindowWidth: "시야 창 너비",
+      eyeWindowAuto: "화면 크기로부터 자동 계산됨 · 수동 재설정 비활성화",
+      eyeWindowManual: "수동 · 아래에 휴대폰 화면 너비를 입력하면 자동 계산됩니다",
+      verticalOffset: "수직 오프셋",
+      verticalOffsetHint: "헤드셋에서 이미지를 아래(+) 또는 위(−)로 이동합니다",
+      streetViewZoom: "스트리트뷰 줌",
+      streetViewZoomHint: "0 = 180° 시야각(매우 넓음)  ·  1 = 표준  ·  3 = 최대 망원",
+      precision: "정밀도 — 카드보드 광학",
+      interLens: "렌즈 간 거리",
+      interLensHint: "Google Cardboard v2 표준: 63.9mm",
+      phoneScreenWidth: "휴대폰 화면 너비",
+      phoneScreenHint: "가로 모드에서 화면의 수평 너비(긴 쪽)를 측정하세요. 수동 시야 창 너비를 사용하려면 0으로 설정하세요.",
+      computedEye: "계산된 시야 창:",
+      saveApply: "저장 & 적용",
+      resetDefaults: "기본값으로 재설정",
+      rotateLandscape: "가로 모드로 전환하세요",
+      vrRequiresH: "VR은 가로 방향이 필요합니다",
+      loadingPano: "파노라마 불러오는 중…",
+      unknown: "알 수 없음",
+    },
+
+    // Rank Play
+    rankPlay: {
+      chamber: (n) => `랭크 · ${n}번 방`,
+      heritage: (region) => `${region} 유산`,
+      preparingArchive: "랭크 기록 보관소 준비 중",
+      sessionProgress: "세션 진행도",
+      sealedTitle: "랭크 기록 보관소 봉인됨",
+      sealedDesc: (n) => `일일 ${n} 세션 한도에 도달했습니다. 내일 다시 오시거나 — 무제한 플레이를 위해 업그레이드하세요.`,
+      upgradeTitle: "더 누리기 위해 업그레이드",
+      upgradeDesc: "무제한 랭크 세션, 고급 스터디 콘텐츠, 독점 배지 — 월 65,000₫부터 시작합니다.",
+      viewSubscription: "구독 보기",
+      backHome: "홈으로 돌아가기",
+      maintenanceTitle: "점검 중",
+      maintenanceDesc: "랭크 기록 보관소가 일시적으로 점검 중입니다. 나중에 다시 확인해 주세요.",
+      noImagery: "이미지 없음",
+      useClues: "단서를 활용해 최선의 추측을 해 보세요",
+      enterHeritage: "유산 정체성 입력",
+      heritagePlaceholder: "장소, 왕조 또는 시대...",
+      yearsOldLabel: "추정 연대 (년)",
+      yearPlaceholder: "예: 1802",
+      guess: "추측",
+      timesUp: "시간 종료",
+      submitting: "응답 제출 중…",
+      continue: "계속",
+      ptsEarned: "획득 점수",
+      similarity: (n) => `유사도: ${n}%`,
+      timeline: (n) => `연대 오차: ±${n}년`,
+      overallRating: "전체 평점",
+      yourRating: "당신의 평점",
+      rateThis: "평가하기",
+      votes: (n) => `${n} 표`,
+      sessionComplete: "랭크 세션 완료",
+      allCatalogued: "모든 유산지가 기록되었습니다.",
+      viewRank: "등급 보기",
+      sanctuary: "성소",
+      noRatings: "평가 없음",
+      yrsOld: "년 전",
+      playsLeft: (n) => `${n} 회 남음`,
+      scoreName: "이름",
+      scoreAge: "연대",
+      navExplore: "탐험",
+      navLeaderboard: "순위",
+      navStudy: "스터디",
+      navChallenge: "챌린지",
+      feedbacks: {
+        perfect: "완벽한 기록",
+        exceptional: "탁월한 기록",
+        onTrack: "올바른 방향",
+        partial: "부분적인 기록",
+        lost: "기록 분실",
+      },
+      howToPlay: "플레이 방법",
+      howToPlayTitle: "랭크 플레이 방법",
+      howToPlaySteps: [
+        "스트리트뷰를 관찰하고 단서를 모으세요 — 건축, 표지판, 주변 환경.",
+        "유산지의 이름을 입력하세요. 부분 정답도 인정됩니다: 도시 이름, 사원 유형, 기리는 인물도 부분 점수를 받습니다.",
+        "유산지의 연대(년 단위)를 추정하세요 — 실제 연대에 가까울수록 연대 점수가 높아집니다.",
+        "10점 만점에 7점 이상을 받으면 승급하고, 3점 이하이면 진행도가 줄어듭니다. 실시간 힌트는 기록 보관자와 대화해 보세요.",
+      ],
+      gotIt: "확인",
+      hintMessage:
+        "팁: 부분 정답도 점수를 줍니다! 도시 이름, 사원 유형, 기리는 역사 인물 모두 부분 점수를 받습니다. 답이 정확할수록 더 많은 점수를 얻습니다.",
+      ratingTitle: "분석 중",
+      ratingSubtitle: "당신의 답이 실제 유산지에 얼마나 가까운지 평가합니다.",
+      rankUp: (name) => `승급 → ${name}`,
+      rankDown: (name) => `강등 → ${name}`,
+    },
+
+    // Lesson Detail
+    lessonDetail: {
+      notFound: "강의를 찾을 수 없습니다.",
+      back: "뒤로",
+      backLabel: "뒤로",
+      categoryLabel: "카테고리",
+      locationLabel: "위치",
+      eraLabel: "시대",
+      yearLabel: "연도",
+      copied: "복사됨!",
+      copyLink: "링크 복사",
+      prevLesson: "이전",
+      nextLesson: "다음",
+      sources: "참고 자료",
+      readTimeLeft: (m, s) => `완료까지 ${m}:${s} 더 읽어 주세요`,
+      markRead: "읽음 표시 · +5점",
+      completed: "완료 (+5점)",
+    },
+
+    // Study Page
+    studyPage: {
+      catAll: "전체",
+      catNatural: "자연",
+      catHistorical: "역사",
+      catScenic: "명승",
+      searchPlaceholder: "글, 유산지 검색...",
+      noResults: "일치하는 강의를 찾을 수 없습니다.",
+      readBadge: "읽음",
+      viewBtn: "보기 >",
+      newest: "최신",
+      readNow: "지금 읽기",
+    },
+
+    // Loading
+    loading: "불러오는 중…",
+  },
 };
 
 export default t;

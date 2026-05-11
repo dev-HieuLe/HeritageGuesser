@@ -56,7 +56,7 @@ const Signup = () => {
 
     if (!isMobile) {
       const recaptchaToken = recaptchaRef.current?.getValue();
-      if (!recaptchaToken) newErrors.recaptcha = lang === "en" ? "Please tick the reCAPTCHA box." : "Vui lòng xác nhận reCAPTCHA.";
+      if (!recaptchaToken) newErrors.recaptcha = lang === "en" ? "Please tick the reCAPTCHA box." : lang === "cn" ? "请勾选 reCAPTCHA 验证框。" : lang === "fr" ? "Veuillez cocher la case reCAPTCHA." : lang === "ko" ? "reCAPTCHA 박스를 체크해 주세요." : "Vui lòng xác nhận reCAPTCHA.";
     }
 
     if (Object.keys(newErrors).length > 0) { setErrors(newErrors); return; }
@@ -89,7 +89,7 @@ const Signup = () => {
           else setErrors((prev) => ({ ...prev, general: tx.errors.invalidData }));
         } else if (err.response?.status === 403) {
           recaptchaRef.current?.reset();
-          setErrors((prev) => ({ ...prev, recaptcha: lang === "en" ? "reCAPTCHA verification failed. Please try again." : "Xác minh reCAPTCHA thất bại. Vui lòng thử lại." }));
+          setErrors((prev) => ({ ...prev, recaptcha: lang === "en" ? "reCAPTCHA verification failed. Please try again." : lang === "cn" ? "reCAPTCHA 验证失败。请重试。" : lang === "fr" ? "Échec de la vérification reCAPTCHA. Veuillez réessayer." : lang === "ko" ? "reCAPTCHA 인증에 실패했습니다. 다시 시도해 주세요." : "Xác minh reCAPTCHA thất bại. Vui lòng thử lại." }));
         } else if (err.response?.status === 500) {
           setErrors((prev) => ({ ...prev, general: tx.errors.serverError }));
         } else {
@@ -269,7 +269,7 @@ const Signup = () => {
 
           {/* Footer link */}
           <p className="mt-5 text-center text-[13px]" style={{ color: "rgba(192,200,195,0.4)" }}>
-            {lang === "en" ? "Already have an account?" : "Đã có tài khoản?"}{" "}
+            {lang === "en" ? "Already have an account?" : lang === "cn" ? "已有账号？" : lang === "fr" ? "Vous avez déjà un compte ?" : lang === "ko" ? "이미 계정이 있으신가요?" : "Đã có tài khoản?"}{" "}
             <Link to="/login" style={{ color: "#a2d1bb", textDecoration: "none", fontWeight: "600" }}
               className="transition-opacity hover:opacity-80"
             >

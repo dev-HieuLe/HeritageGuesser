@@ -8,6 +8,7 @@ export const lessons = [
     typeEn: "Natural Heritage",
     typeCn: "自然遗产",
     typeFr: "Patrimoine Naturel",
+    typeKo: "자연 유산",
     typeColor: "#a2d1bb",
     typeBg: "rgba(162,209,187,0.12)",
     year: "2001",
@@ -22,6 +23,7 @@ export const lessons = [
       vi: "Một trong những không gian tự nhiên có giá trị khoa học lớn nhất Việt Nam, với hệ karst cổ, mạng lưới hang động đồ sộ, sông ngầm và đa dạng sinh học đặc hữu độc đáo.",
       cn: "越南科学价值最高的自然空间之一，拥有古老的喀斯特地貌、庞大的洞穴网络、地下河流和独特的地方性生物多样性。",
       fr: "L'un des espaces naturels du Vietnam à la plus grande valeur scientifique, avec d'anciens systèmes karstiques, de vastes réseaux de grottes, des rivières souterraines et une biodiversité endémique unique.",
+      ko: "베트남에서 가장 과학적 가치가 높은 자연 공간 중 하나로, 고대 카르스트 지형, 방대한 동굴망, 지하 하천, 그리고 독특한 고유 생물 다양성을 품고 있습니다.",
     },
     paragraphs: {
       vi: [
@@ -48,6 +50,12 @@ export const lessons = [
         "丰芽-盖邦的突出价值不仅在于自然美景。它让读者能够通过石灰岩结构看到地球形成的历史，通过地下河流感受水的力量，并见证越南如何从「风景名胜供游览」的思维转变为「遗产需保护」的理念。",
         "介绍这一地点时，有价值的一点是不要只列举著名的洞穴名称，而应强调丰芽-盖邦的本质是一个「系统」。正是这个系统创造了遗产的格局：洞穴与森林相连，森林与流域相连，而流域又决定着整个喀斯特地区的生命。",
       ],
+      ko: [
+        "퐁냐 께방은 베트남에서 과학적·상징적으로 가장 의미 있는 자연 공간 중 하나입니다. 이곳이 특별한 까닭은 사람이 세운 건축물이 아니라, 그 자체가 거대한 자연의 기록 보관소라는 점입니다 — 고대 카르스트 지형, 방대한 동굴망, 지하 하천, 석회암 산림, 그리고 고유 생물 다양성이 보기 드물게 하나로 어우러져 있습니다.",
+        "데이터 입력이나 소개를 위해 한 해를 짧게 적어야 한다면 2001년이 가장 적절한 선택입니다. 이때 퐁냐 께방이 공식적으로 국립공원이 되었기 때문입니다. 그러나 더 깊이 서술할 때는 보호구역 단계였던 1986년, 그리고 유네스코 등재와 유산 가치가 확장된 2003년·2015년이라는 이정표도 함께 짚어야 합니다.",
+        "퐁냐 께방의 빼어난 가치는 단지 풍경의 아름다움에 그치지 않습니다. 석회암 구조를 통해 지구가 형성된 역사를 보여 주고, 지하 하천을 통해 물의 힘을 느끼게 하며, 베트남이 '관광지로서의 경승지'라는 사고에서 '보존해야 할 유산'이라는 관점으로 어떻게 옮겨 갔는지를 보여 줍니다.",
+        "이 유산지를 소개할 때 가치 있는 한 가지는 유명한 동굴 이름 몇 개를 나열하는 데 그치지 않고, 퐁냐 께방의 본질이 하나의 '시스템'임을 강조하는 것입니다. 바로 그 시스템이 유산의 격을 만들어 냅니다 — 동굴은 숲과 연결되고, 숲은 유역과 연결되며, 유역은 카르스트 지역 전체의 생명을 좌우합니다.",
+      ],
     },
     images: [
       "https://vj-prod-website-cms.s3.ap-southeast-1.amazonaws.com/x3-1716260705273.jpg",
@@ -69,6 +77,7 @@ export const lessons = [
     typeEn: "Natural Heritage",
     typeCn: "自然遗产",
     typeFr: "Patrimoine Naturel",
+    typeKo: "자연 유산",
     typeColor: "#a2d1bb",
     typeBg: "rgba(162,209,187,0.12)",
     year: "1990",
@@ -83,6 +92,7 @@ export const lessons = [
       vi: "Một trong những hang động lớn nhất thế giới theo thể tích, với các khoang khổng lồ, giếng trời tự nhiên, khí hậu vi mô và cả cánh rừng mọc ngay bên trong hang.",
       cn: "世界上体积最大的洞穴之一，拥有巨大的洞室、天然采光孔、小气候，以及在洞穴内部生长的森林。",
       fr: "L'une des grottes les plus grandes du monde par volume, avec des salles colossales, des puits de lumière naturels, un micro-climat et une forêt poussant à l'intérieur même de la grotte.",
+      ko: "부피 기준 세계에서 가장 큰 동굴 중 하나로, 거대한 동공, 천연 채광창, 자체적인 미기후, 그리고 동굴 내부에서 자라는 숲까지 품고 있습니다.",
     },
     paragraphs: {
       vi: [
@@ -109,6 +119,12 @@ export const lessons = [
         "更重要的是，山水洞开启了一场关于保护的实质性讨论：一个遗产地越是出名，就越需要谨慎的管理模式、有限的准入和高标准的开发规范。",
         "在介绍山水洞时，需要强调它是探索与保护之间平衡的典范。山水洞的持久价值不仅在于「最大」或「最美」，更在于它迫使公众提出正确的问题：面对一件自然杰作，我们是将其作为大众旅游商品加以开发，还是将其视为不可再生的遗产加以对待？",
       ],
+      ko: [
+        "선도옹 동굴은 베트남 유산 지도에서 매우 특별한 사례입니다. 단순히 유명하기 때문이 아니라, 세계가 열대 동굴을 상상하는 방식 자체를 바꾸어 놓았기 때문입니다. 선도옹의 가장 놀라운 점은 그 비범한 규모입니다 — 부피 기준으로 세계 최대급 동굴 중 하나로, 거대한 동공, 자연광이 쏟아져 들어오는 함몰지, 미기후, 그리고 동굴 내부에서 자라는 숲의 일부까지 품고 있습니다.",
+        "선도옹의 특별한 가치는 '규모감'에 있습니다. 많은 유산지는 인간의 역사로 인상을 남기지만, 선도옹은 지질학적 시간 앞에서 인간의 미미함을 통해 깊은 울림을 줍니다. 거대한 종유석, 빛이 떨어지는 입구, 그리고 동굴의 지형을 빚어내는 지하수를 마주할 때, 이곳이 지구의 나이를 이야기하기에 더없이 어울리는 장소임을 깨닫게 됩니다.",
+        "더 중요한 것은 선도옹이 보존에 관한 실질적인 논의를 열어 주었다는 점입니다. 유산지가 유명해질수록 신중한 관리 모델, 제한된 접근, 그리고 높은 활용 기준이 더욱 필요해집니다.",
+        "선도옹을 소개할 때는 그것이 탐험과 보존의 균형을 보여 주는 훌륭한 사례임을 강조해야 합니다. 선도옹의 지속적인 가치는 '가장 크다'거나 '가장 아름답다'에 그치지 않고, 대중에게 올바른 질문을 던지게 한다는 데 있습니다 — 자연의 걸작 앞에서 우리는 그것을 대규모 관광 상품으로 소비할 것인가, 아니면 되돌릴 수 없는 유산으로 대할 것인가?",
+      ],
     },
     images: [
       "https://suckhoedoisong.qltns.mediacdn.vn/324455921873985536/2022/10/5/hang-son-doong-quang-binh-hang-dong-lon-nhat-the-gioi-hinh4-848x530-16649303939522043678324.jpg",
@@ -129,6 +145,7 @@ export const lessons = [
     typeEn: "Historical Site",
     typeCn: "历史遗址",
     typeFr: "Site Historique",
+    typeKo: "역사 유적지",
     typeColor: "#e9c349",
     typeBg: "rgba(233,195,73,0.12)",
     year: "1070",
@@ -143,6 +160,7 @@ export const lessons = [
       vi: "Trường đại học quốc gia đầu tiên và đền thờ Nho giáo của Việt Nam, biểu tượng của tinh thần hiếu học và nền quản trị dựa trên tri thức, đạo lý và khoa cử.",
       cn: "越南第一所国立大学和儒家庙宇，是学术追求和以知识、伦理及科举考试为基础的治国理念的象征。",
       fr: "Première université nationale et temple confucéen du Vietnam, symbole de la quête du savoir et d'une gouvernance fondée sur la connaissance, l'éthique et les examens civils.",
+      ko: "베트남 최초의 국립 대학이자 유교 사당으로, 학문에 대한 추구와 지식·윤리·과거 시험에 기반한 통치 정신을 상징합니다.",
     },
     paragraphs: {
       vi: [
@@ -169,6 +187,12 @@ export const lessons = [
         "文庙-国子监是向学生解释越南历史上「教育」的绝佳场所——它不仅仅是家庭或村落的私事，而曾经是一个大规模的国家政治文化项目。",
         "每逢考试季节，每次表彰学生的场合，这一地点都被援引为真正学问的象征。这表明它不仅仅是一处历史遗迹，而是一个仍在运作的「记忆机构」。",
       ],
+      ko: [
+        "반미에우-꾸옥뜨잠(문묘·국자감)은 베트남에서 매우 드물게도 문화 기념물, 교육 기관, 그리고 학문 정신의 국가적 상징으로 동시에 읽을 수 있는 장소 중 하나입니다. 이곳의 가장 큰 가치는 표면적인 고풍스러움이 아니라, 지식과 윤리, 그리고 과거 시험을 정치 생활의 중심에 두었던 통치 모델의 기억을 간직하고 있다는 점에 있습니다.",
+        "이곳을 이야기할 때 사람들은 곧바로 진사 비석을 떠올리지만, 그 뒤에 있는 논리야말로 더욱 강조되어야 합니다. 비석들은 단순히 급제자의 이름을 기록한 것이 아니라, 성공의 기준을 공개적으로 드러내고 지적 노동을 기리며 후세의 학습 동기를 공적 기억으로 빚어내려 했던 사회의 의지를 담고 있습니다.",
+        "반미에우-꾸옥뜨잠은 베트남 역사 속 '교육'이 단순히 가족이나 마을의 일이 아니라 한때 국가가 추진한 대규모 정치·문화 프로젝트였음을 학생들에게 설명하기에 더없이 좋은 장소입니다.",
+        "시험철마다, 학생들을 격려하는 자리마다 이곳은 참된 배움의 상징으로 호명됩니다. 이는 이곳이 단순한 역사 유적이 아니라 여전히 살아 있는 '기억의 제도'임을 보여 줍니다.",
+      ],
     },
     images: [
       "https://upload.wikimedia.org/wikipedia/commons/3/39/Hanoi_Temple_of_Literature_%28cropped%29.jpg",
@@ -190,6 +214,7 @@ export const lessons = [
     typeEn: "Historical Site",
     typeCn: "历史遗址",
     typeFr: "Site Historique",
+    typeKo: "역사 유적지",
     typeColor: "#e9c349",
     typeBg: "rgba(233,195,73,0.12)",
     year: "Thế kỷ X",
@@ -204,6 +229,7 @@ export const lessons = [
       vi: "Địa chỉ tổ tiên thiêng liêng của các Vua Hùng, nơi huyền sử và bản sắc dân tộc gặp nhau qua hành hương, nghi lễ và ký ức cộng đồng về huyền thoại lập quốc Việt Nam.",
       cn: "雄王的神圣祖先圣地，传说与民族认同在此通过朝圣、仪式和关于越南建国神话的集体记忆交汇。",
       fr: "Le site ancestral sacré des Rois Hùng, où légende et identité nationale se rejoignent à travers le pèlerinage, le rituel et la mémoire collective du mythe fondateur du Vietnam.",
+      ko: "베트남 건국 신화에 등장하는 흥 왕들의 신성한 조상 사당으로, 순례와 의례, 그리고 베트남 시조 신화에 대한 공동의 기억을 통해 전설과 민족 정체성이 만나는 장소입니다.",
     },
     paragraphs: {
       vi: [
@@ -230,6 +256,12 @@ export const lessons = [
         "雄王祭祀不仅仅是一个节日；它是社区用仪式语言重申「我们从何而来」这一问题的机制。在书写雄王庙时，应强调其价值更多在于记忆的文化政治深度，而非任何单一的建筑构件。",
         "一个重要的细节是区分「雄王庙遗址」与「雄王信仰崇拜」。遗址是物质空间；信仰是超越这一地点广泛延伸的精神生活。因此，雄王庙不仅仅是一个「参观」的地方，而是越南记忆地图上的中心地址。",
       ],
+      ko: [
+        "흥 왕 사당(Đền Hùng)은 역사적 가치와 상징적 가치를 떼어놓고 말할 수 없는 장소입니다. 건립 연도가 명확히 기록된 다른 기념물과 달리, 이곳은 여러 시대에 걸쳐 켜켜이 쌓아 올린 복합 유적이며, 베트남 공동체는 이곳을 '근본'에 대한 관념이 모이는 곳으로 끊임없이 새로이 해석해 왔습니다.",
+        "흥 왕 사당이 특별한 지위를 얻는 까닭은 그것이 푸토 성만의 것이 아니라는 점에 있습니다. 베트남인의 의식 속에서 이곳은 신화와 국가, 그리고 공적 의례를 잇는 공간입니다. 건국 전설을 순례와 교육, 사회적 합의의 공간으로 전환해 내는 능력이야말로 흥 왕 사당의 두드러진 특징입니다.",
+        "흥 왕 추모일은 단지 하나의 축제가 아닙니다. '우리는 어디에서 왔는가'라는 질문을 공동체가 의례의 언어로 다시 묻는 장치입니다. 흥 왕 사당에 관해 글을 쓸 때는 그 가치가 개별 건축 요소보다 기억의 문화·정치적 깊이에 더 많이 자리한다는 점을 강조해야 합니다.",
+        "꼭 짚어야 할 점은 '흥 왕 사당 유적'과 '흥 왕 신앙'을 구분하는 것입니다. 유적은 물리적 공간이지만, 신앙은 이 장소를 훌쩍 넘어 펼쳐지는 정신적 삶입니다. 그러므로 흥 왕 사당은 단순히 '관람하는' 곳이 아니라, 베트남 기억 지도의 중심 주소입니다.",
+      ],
     },
     images: [
       "https://visitvinhphuc.com/DataFiles/2025/09/Places/20250916-070331-YNziSnpb.jpg",
@@ -249,6 +281,7 @@ export const lessons = [
     typeEn: "Historical Site",
     typeCn: "历史遗址",
     typeFr: "Site Historique",
+    typeKo: "역사 유적지",
     typeColor: "#e9c349",
     typeBg: "rgba(233,195,73,0.12)",
     year: "1896",
@@ -263,6 +296,7 @@ export const lessons = [
       vi: "Nhà tù thời thực dân trở thành biểu tượng của sự đàn áp thực dân Pháp và tinh thần cách mạng bất khuất, nơi các tù nhân chính trị giữ vững lý tưởng dưới áp bức khốc liệt.",
       cn: "一座殖民时期的监狱，成为法国殖民镇压和革命韧性的象征，政治犯们在极端压迫下仍坚守理想。",
       fr: "Une prison de l'ère coloniale devenue symbole à la fois de la répression coloniale française et de la résilience révolutionnaire, où des prisonniers politiques ont maintenu leurs idéaux sous une oppression extrême.",
+      ko: "프랑스 식민 통치의 억압과 혁명적 회복력을 동시에 상징하는 식민지 시대의 감옥으로, 정치범들이 극심한 탄압 속에서도 자신의 이상을 지켜 낸 장소입니다.",
     },
     paragraphs: {
       vi: [
@@ -289,6 +323,12 @@ export const lessons = [
         "火炉监狱不仅唤起痛苦，也引发一个重要问题：人们如何在为摧毁他们而设计的体制中仍然保持尊严和理想？",
         "另一层含义也需要明确指出：火炉监狱承载着多层次的国际记忆。在越战期间，这里还与美国飞行员战俘的故事相关联。如今，火炉监狱也是一个相当成功的例子，展示了如何通过博物馆学和历史叙事向公众呈现一处沉重的遗址。",
       ],
+      ko: [
+        "호아로(Hỏa Lò) 감옥은 권력의 건축이 그것을 만들어 낸 체제 자체에 대한 역사적 증거로 어떻게 뒤바뀔 수 있는지를 매우 또렷이 보여 주는 유적입니다. 호아로의 특별한 가치는 단 하나의 이야기에 머무르지 않는다는 점에 있습니다 — 이곳은 식민 폭력의 상징이었지만, 훗날 같은 공간이 옥중에서의 굳센 의지와 혁명 조직의 기억을 간직하는 장소가 되었습니다.",
+        "호아로를 소개할 때 '음울함'에 머무르지 않는 것이 중요합니다. 이 유적은 베트남 근현대사에서 감옥이 단순한 구금 공간이 아니라 정치적 공간이기도 했음을 보여 주기 때문입니다. 가혹한 통제 아래에서도 많은 혁명가들은 학습하고, 토론하고, 조직하며 신념을 지켜 냈습니다.",
+        "호아로는 고통만을 떠올리게 하는 것이 아니라 중요한 질문도 던집니다 — 자신을 무너뜨리도록 설계된 구조 안에서, 사람은 어떻게 존엄과 이상을 지켜 낼 수 있었는가?",
+        "또 한 가지 분명히 짚어야 할 의미의 층위가 있습니다. 호아로는 여러 겹의 국제적 기억을 품고 있습니다. 베트남 전쟁 시기에는 미국 조종사 포로들의 이야기와도 얽혀 있습니다. 오늘날 호아로는 무거운 유적이 박물관학과 역사 서사를 통해 어떻게 대중에게 다가갈 수 있는지를 보여 주는 비교적 성공적인 사례이기도 합니다.",
+      ],
     },
     images: [
       "https://cdn.xanhsm.com/2024/12/94657b87-di-tich-nha-tu-hoa-lo-8.jpg",
@@ -308,6 +348,7 @@ export const lessons = [
     typeEn: "Historical Site",
     typeCn: "历史遗址",
     typeFr: "Site Historique",
+    typeKo: "역사 유적지",
     typeColor: "#e9c349",
     typeBg: "rgba(233,195,73,0.12)",
     year: "1941",
@@ -322,6 +363,7 @@ export const lessons = [
       vi: "Địa điểm biên giới miền núi nơi Hồ Chí Minh trở về Việt Nam sau nhiều năm hoạt động ở nước ngoài và xây dựng căn cứ cách mạng định hình sự nghiệp giải phóng dân tộc.",
       cn: "山区边境遗址，胡志明在此结束多年海外活动后回到越南，建立了塑造民族解放事业的革命根据地。",
       fr: "Le site frontalier montagneux où Hồ Chí Minh est revenu au Vietnam après des années à l'étranger et a établi la base révolutionnaire qui façonnerait la libération nationale.",
+      ko: "호찌민이 오랜 해외 활동 끝에 베트남으로 돌아와 민족 해방의 길을 다듬은 혁명 기지를 세운, 산악 국경 지대의 장소입니다.",
     },
     paragraphs: {
       vi: [
@@ -348,6 +390,12 @@ export const lessons = [
         "北坡的突出价值在于其凝练性。许多遗址需要广阔的面积来讲述宏大的故事；北坡证明了相反的情况：一个小地方同样可以包含一个非常重要的历史转折点。",
         "北坡还具有象征力量，因为它与简朴、纪律严明的生活方式以及专注于宏大目标的精神相关联。正是极其简朴的物质条件与极其宏大的政治愿景之间的对比，赋予了这一地点强烈的感召力。",
       ],
+      ko: [
+        "박보(Pác Bó)는 물리적 규모는 그리 크지 않지만 역사적 무게는 매우 큰 유적입니다. 바로 이곳에서 호 아저씨(당시의 응우옌 아이 꾸옥)는 오랜 해외 활동 끝에 조국으로 돌아왔고, 이 자리를 혁명 기지로 삼았습니다.",
+        "박보를 특별하게 만드는 것은 단순한 '귀국'이라는 사건이 아니라, 비교적 작은 산악 국경의 공간에서 국가적 차원의 전략적 결정이 시작되었다는 사실입니다. 꼭보 동굴, 레닌 시내, 마르크스 산, 그리고 지도자가 일하고 생활했던 공간들은 역사적 전환점을 기록하는 물질적 표지입니다.",
+        "박보의 두드러진 가치는 그 응축된 성격에 있습니다. 많은 유적은 큰 이야기를 담아내기 위해 넓은 공간을 필요로 하지만, 박보는 그 반대를 입증합니다 — 작은 장소도 거대한 전환점을 품을 수 있다는 사실 말입니다.",
+        "박보는 또한 검소하고 엄정한 생활 방식, 그리고 큰 목표에 집중하는 정신과 연결되어 상징적 힘을 지닙니다. 매우 소박한 물질적 조건과 매우 원대한 정치적 비전 사이의 간극이 바로 이 장소에 강한 울림을 부여합니다.",
+      ],
     },
     images: [
       "https://hochiminh.vn/upload/3000001/20251024/7c64a198726ed5bbf571a1746ac7b91fden-tho-bac-ho.jpg",
@@ -368,6 +416,7 @@ export const lessons = [
     typeEn: "Historical Site",
     typeCn: "历史遗址",
     typeFr: "Site Historique",
+    typeKo: "역사 유적지",
     typeColor: "#e9c349",
     typeBg: "rgba(233,195,73,0.12)",
     year: "1945",
@@ -382,6 +431,7 @@ export const lessons = [
       vi: "Thủ đô cách mạng nơi Tổng khởi nghĩa Tháng Tám được tổ chức — nơi một lực lượng giải phóng chuyển hóa thành chính quyền chính trị quốc gia trước thềm độc lập.",
       cn: "革命首都，八月革命在此组织策划——一支解放力量在独立前夕转变为国家政治权力机构。",
       fr: "La capitale révolutionnaire où la Révolution d'Août a été organisée — où une force de libération s'est transformée en autorité politique nationale à la veille de l'indépendance.",
+      ko: "8월 혁명이 조직되었던 혁명의 수도 — 독립을 앞두고 해방 세력이 국가의 정치적 권위로 전환되었던 장소입니다.",
     },
     paragraphs: {
       vi: [
@@ -408,6 +458,12 @@ export const lessons = [
         "新潮的妙处在于它使历史变得有形可感。「总起义」、「革命政权」或「根据地」等宏大概念在教科书中很容易被抽象化，但在新潮，学习者可以在具体的空间中想象它们。",
         "新潮同时拥有两个称号：「解放区首都」和「抗战首都」。这两种称谓表明，这个地方不仅在八月革命时刻具有重要意义，而且在此后的政治军事生活中继续发挥作用。",
       ],
+      ko: [
+        "떤짜오(Tân Trào)는 혁명의 준비와 새로운 국가의 탄생이 만나는 바로 그 전환점에 자리한 까닭에 특별한 의미를 지닌 장소입니다. 떤짜오의 가치가 단순한 '붉은 지번'을 넘어서는 것은, 한 사건만이 아니라 혁명 세력이 국가의 정치적 권위로 전환되는 전 과정을 이곳이 새겨 두었기 때문입니다.",
+        "떤짜오 정자, 나느어 막사, 떤짜오 보리수 등 이곳의 유적들은 각각 따로 떼어 이야기해서는 안 됩니다. 이들은 혁명이 실제로 어떻게 운영되었는지를 보여 주는 기억의 그물망입니다 — 회의 장소, 은신처, 명령을 내린 곳, 그리고 세력을 결집한 곳이 한데 어우러집니다.",
+        "떤짜오의 빼어남은 역사를 손에 잡히게 만든다는 점에 있습니다. '총봉기', '혁명 정부', '기지' 같은 거창한 개념은 교과서에서 쉽게 추상화되지만, 떤짜오에서는 학습자가 구체적인 공간 속에서 그것들을 그려 볼 수 있습니다.",
+        "떤짜오는 '해방 구역의 수도'와 '항전의 수도'라는 두 가지 이름을 동시에 지닙니다. 두 칭호는 이곳이 8월 혁명의 순간만이 아니라 그 이후의 정치·군사적 삶에서도 계속 역할을 해 왔음을 보여 줍니다.",
+      ],
     },
     images: [
       "https://scontent.iocvnpt.com/resources/portal//Images/TQG/ttcntt.tqg/Dia%20Diem/Khu%20di%20tich%20Tan%20Trao/khu_di_tich_tan_trao/dai_dien_2_637019188746869704.jpg",
@@ -428,6 +484,7 @@ export const lessons = [
     typeEn: "Historical Site",
     typeCn: "历史遗址",
     typeFr: "Site Historique",
+    typeKo: "역사 유적지",
     typeColor: "#e9c349",
     typeBg: "rgba(233,195,73,0.12)",
     year: "1809",
@@ -442,6 +499,7 @@ export const lessons = [
       vi: "Thành cổ thời Nguyễn trở thành địa điểm của trận chiến huyền thoại 81 ngày đêm năm 1972, kết hợp kiến trúc quân sự phong kiến với sự hy sinh thời chiến và thông điệp hòa bình.",
       cn: "阮朝古城堡，成为1972年传奇性81天战役的战场，将封建军事建筑与现代战争牺牲和和平信息交织在一起。",
       fr: "Une citadelle de l'ère Nguyễn devenue le théâtre de la légendaire bataille de 81 jours de 1972, superposant l'architecture militaire féodale au sacrifice guerrier moderne et à un message de paix.",
+      ko: "응우옌 왕조 시대의 성채로, 1972년의 전설적인 81일 전투의 무대가 되어 봉건 시대의 군사 건축 위에 현대 전쟁의 희생과 평화의 메시지를 겹쳐 놓은 장소입니다.",
     },
     paragraphs: {
       vi: [
@@ -468,6 +526,12 @@ export const lessons = [
         "正是一处古老遗址被卷入现代战争这一事实，使这里成为历史如何在现有物质层面上继续书写的典型案例。",
         "在当下，广治古城堡也是战争记忆被转化为和平信息的地方。它不仅仅是一个「红色地址」，也是一个道德空间：它迫使来访者面对关于牺牲、失去和维护和平责任的问题。",
       ],
+      ko: [
+        "꽝찌 옛 성채(Thành cổ Quảng Trị)는 기억의 구조가 매우 독특한 장소입니다. 같은 공간이 적어도 두 겹의 큰 의미를 지니고 있기 때문입니다. 이곳이 국가의 기억 속에 새겨진 까닭은 응우옌 왕조 시대의 군사·행정적 역할만이 아니라, 1972년의 81일간의 낮과 밤에 걸친 전투에도 있습니다.",
+        "꽝찌 옛 성채의 특별한 가치는 같은 공간이 시대마다 어떻게 기능을 달리해 왔는지를 직접 느끼게 해 준다는 점입니다. 처음에는 봉건 국가의 권력 구조와 방어 체계의 한 축이었지만, 훗날 현대 전쟁의 한복판에서 그 공간은 격렬함과 희생, 그리고 영토를 지키려는 의지의 상징이 되었습니다.",
+        "오래된 유적이 현대 전쟁 속으로 끌려 들어갔다는 그 사실이야말로 이곳을 역사가 기존의 물질 위에 어떻게 계속 새 글을 새겨 나가는지 보여 주는 대표 사례로 만들어 줍니다.",
+        "오늘날 꽝찌 옛 성채는 전쟁의 기억이 평화의 메시지로 전환되는 장소이기도 합니다. 이곳은 단순한 '붉은 지번'이 아니라 윤리적 공간입니다 — 방문자에게 희생과 상실, 그리고 평화를 지킬 책임에 관한 질문을 정면으로 마주하게 하기 때문입니다.",
+      ],
     },
     images: [
       "https://cms.junglebosstours.com/assets/9dba0c19-b575-4fc7-b973-439dc1a6114f?format=webp",
@@ -489,6 +553,7 @@ export const lessons = [
     typeEn: "Historical Site",
     typeCn: "历史遗址",
     typeFr: "Site Historique",
+    typeKo: "역사 유적지",
     typeColor: "#e9c349",
     typeBg: "rgba(233,195,73,0.12)",
     year: "1433",
@@ -503,6 +568,7 @@ export const lessons = [
       vi: "Cố hương nghi lễ của triều Lê — không gian đền điện, lăng tẩm và trục kiến trúc biến cuộc khởi nghĩa Lam Sơn thành chính thống vương triều qua kiến trúc và nghi lễ.",
       cn: "黎朝的礼仪故乡——殿宇、陵墓和皇家轴线的景观，通过建筑和仪式将蓝山起义转化为王朝合法性。",
       fr: "La patrie cérémonielle de la dynastie Lê — un paysage de temples, de mausolées et d'axes royaux qui a transformé le soulèvement de Lam Sơn en légitimité dynastique à travers l'architecture et le rituel.",
+      ko: "레 왕조의 의례적 본향 — 사당과 능, 그리고 왕실의 축선이 어우러진 경관으로, 람선(Lam Sơn) 봉기를 건축과 의례를 통해 왕조의 정통성으로 빚어낸 장소입니다.",
     },
     paragraphs: {
       vi: [
@@ -529,6 +595,12 @@ export const lessons = [
         "蓝京是历史被「建筑化」的地方：一场军事胜利和一个新王朝被转化为石头、木材、道路和礼仪空间。历史上的权力不仅通过文件或军事力量来体现，也通过创造官方景观来表达。",
         "蓝京也是讲述蓝山起义与早期黎朝国家之间延续性故事的最佳场所之一。许多人知道黎利是民族解放英雄，但蓝京揭示了同样重要的下一步：从起义到建立王朝秩序。",
       ],
+      ko: [
+        "람낑(Lam Kinh)은 초기 레 왕조를 단순한 정치적 왕조가 아니라 왕조의 정통성을 빚어 가는 하나의 프로젝트로 이해하는 데 가장 중요한 장소 중 하나입니다. 람낑이 특별한 까닭은 탕롱처럼 일상적으로 거주하던 도성과 달리, 발상지로서의 성격과 조상 사당·왕릉으로서의 성격을 함께 지닌 복합 공간이라는 점에 있습니다.",
+        "람낑의 빼어난 가치는 어느 한 전각이나 한 능에 있는 것이 아니라, 공간 배치 전체에 있습니다. 산과 강, 전각과 능으로 이루어진 경관은 매우 의도적으로 짜여 있으며, 풍수의 사유와 의례, 그리고 정치적 질서를 함께 비춰 줍니다.",
+        "람낑은 역사가 '건축으로 빚어진' 장소입니다 — 군사적 승리와 새로운 왕조가 돌과 나무, 길과 의례적 공간으로 전환된 곳입니다. 역사 속의 권력은 문서나 군사력으로만 표현되는 것이 아니라, 공식 경관을 짓는 일을 통해서도 드러납니다.",
+        "람낑은 람선 봉기와 초기 레 국가 사이의 연속성을 이야기하기에 가장 좋은 장소 중 하나이기도 합니다. 많은 이들이 레 러이를 민족 해방의 영웅으로 알고 있지만, 람낑은 그에 못지않게 중요한 다음 단계를 보여 줍니다 — 봉기에서 왕조 질서의 수립으로 나아간 그 길입니다.",
+      ],
     },
     images: [
       "https://s.webpie.net/instances/1/c560f045982b56b9b280c82367675f2c/_p/59a639fea70057c588a3369e99e0172d/66-1694012852-23-09-06-thanh-hoa-1.jpg",
@@ -549,6 +621,7 @@ export const lessons = [
     typeEn: "Scenic Heritage",
     typeCn: "风景名胜遗址",
     typeFr: "Patrimoine Paysager",
+    typeKo: "명승 유산",
     typeColor: "#ffb4a9",
     typeBg: "rgba(255,180,169,0.12)",
     year: "1299",
@@ -563,6 +636,7 @@ export const lessons = [
       vi: "Quần thể núi thiêng nơi vua Trần Nhân Tông từ bỏ ngai vàng để sáng lập Thiền phái Trúc Lâm — dòng Thiền riêng của Việt Nam — kết hợp quyền lực hoàng gia, đạo đức và hành hương tâm linh.",
       cn: "神圣山区建筑群，陈仁宗王在此舍弃王位创立竹林禅——越南自己的禅宗流派——融合了皇权、伦理与精神朝圣。",
       fr: "Un complexe de montagne sacrée où le roi Trần Nhân Tông a renoncé au trône pour fonder le bouddhisme Trúc Lâm — l'école Zen propre au Vietnam — alliant pouvoir royal, éthique et pèlerinage spirituel.",
+      ko: "쩐 년 똥(Trần Nhân Tông) 왕이 왕위에서 물러나 베트남 고유의 선종인 쭉럼(Trúc Lâm)을 창시한 신성한 산악 복합 유적으로, 왕권과 윤리, 그리고 정신적 순례가 한데 어우러져 있습니다.",
     },
     paragraphs: {
       vi: [
@@ -588,6 +662,12 @@ export const lessons = [
         "安子的本质是一处文化宗教景观，山路、庵堂、庙宇、塔、森林和朝圣体验共同构成一个整体。正是「旅程」这一元素创造了安子的价值：这是一处必须逐层穿越才能理解其层层含义的地方。",
         "安子最大的价值不仅在于佛教，而在于这个地方所代表的思想模式。竹林禅不是任何外来禅宗流派的直接翻版；它是在大越文化和政治背景下将佛教思想本土化的一种自发努力。",
         "陈仁宗曾是带领国家经历战争的国王，之后选择了出家之路；这种转化使安子具有远超普通风景名胜的深刻含义。当安子-永严-昆山-劫泊跨区域遗产档案获得国际认可时，所认可的不仅仅是各个单独的地点，而是一个价值网络。",
+      ],
+      ko: [
+        "옌뜨(Yên Tử)는 베트남에서 매우 드문 장소입니다. 빼어난 산악 경관이면서 동시에 순례의 공간이며, 쭉럼 선종의 형성과 맞닿은 사상의 중심지이기 때문입니다. 또한 1299년 쩐 년 똥 왕이 옌뜨에 올라 수행을 시작한 자리이기도 합니다.",
+        "옌뜨의 본질은 문화적·종교적 경관입니다. 산길과 암자, 사찰과 탑, 숲, 그리고 순례의 체험이 한데 어우러져 하나의 전체를 이룹니다. '여정'이라는 요소야말로 옌뜨의 가치를 빚어냅니다 — 이곳은 한 겹 한 겹 공간을 지나가며 그 의미의 층위를 차근차근 이해해야 하는 곳입니다.",
+        "옌뜨의 가장 큰 가치는 불교 그 자체뿐 아니라, 이곳이 대표하는 사유의 모델에 있습니다. 쭉럼은 외부에서 들여온 어느 선종을 그대로 옮긴 것이 아니라, 다이비엣(Đại Việt)의 문화·정치적 맥락 속에서 불교 사상을 토착화하려는 자생적 노력입니다.",
+        "쩐 년 똥은 전쟁을 헤쳐 나간 군주였으나 훗날 출가의 길을 택한 인물이었습니다. 이러한 전환은 옌뜨에 평범한 명승을 훌쩍 넘어서는 의미를 부여합니다. 옌뜨–빈응이엠–꼰선·끼엡박을 잇는 광역 유산 등재가 국제적으로 인정받았을 때 인정된 것은 개별 지점이 아니라 하나의 '가치의 그물망'이었습니다.",
       ],
     },
     images: [

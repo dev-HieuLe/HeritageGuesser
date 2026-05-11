@@ -129,6 +129,38 @@ const steps = {
       desc: "Obtenez 8 ou plus pour monter en rang ; 4 ou moins pour descendre. Grimpez du Fer au Bronze, Argent, Or et au-delà pour mériter votre place au classement des Érudits Impériaux.",
     },
   ],
+  ko: [
+    {
+      icon: "travel_explore",
+      title: "신비로운 유산지가 모습을 드러냅니다",
+      desc: "매 라운드마다 실제 베트남 유산지의 거리 파노라마 속으로 들어가게 됩니다. 회전하고 확대해 건축, 조각, 주변 환경을 살펴보세요.",
+    },
+    {
+      icon: "history_edu",
+      title: "유산의 이름을 맞혀 보세요",
+      desc: "유산지의 이름을 추측해 입력하세요. 최대 5점을 얻을 수 있습니다 — 실제 이름과 가까울수록 이름 점수가 높아집니다.",
+    },
+    {
+      icon: "schedule",
+      title: "유산의 연대를 추정해 보세요",
+      desc: "유산의 연대를 년 단위로 입력하세요. 정확도에 따라 최대 5점을 얻습니다: 오차 10년 이내는 만점, 80년 이내는 1점입니다.",
+    },
+    {
+      icon: "smart_toy",
+      title: "기록 보관자에게 힌트를 요청하세요",
+      desc: "막혔나요? 라운드당 최대 10개의 힌트를 얻기 위해 AI 기록 보관자 아바타와 대화해 보세요. 각 힌트는 정답을 직접 알려주지 않으면서 정답에 더 가까이 다가가게 해 줍니다 — 현명하게 사용하세요.",
+    },
+    {
+      icon: "bolt",
+      title: "타이머가 끝나기 전에 확정하세요",
+      desc: "라운드당 120초가 주어집니다. 확인을 눌러 추측을 확정하세요. 총점(이름 + 연대, 최대 10점)에 따라 XP와 등급 결과가 결정됩니다.",
+    },
+    {
+      icon: "military_tech",
+      title: "등급의 사다리를 오르세요",
+      desc: "8점 이상이면 승급, 4점 이하이면 강등됩니다. 아이언에서 브론즈, 실버, 골드, 그리고 그 이상으로 올라가 황실 학자 명단에 이름을 올려 보세요.",
+    },
+  ],
 };
 
 const modes = {
@@ -212,6 +244,26 @@ const modes = {
       color: "#ffb4a9",
     },
   ],
+  ko: [
+    {
+      icon: "explore",
+      name: "클래식",
+      desc: "등급이 걸리지 않은 연습 라운드. 자유롭게 유산지의 이름과 연대를 알아맞히세요 — 유산 지식을 쌓기에 안성맞춤입니다.",
+      color: "#a2d1bb",
+    },
+    {
+      icon: "history_edu",
+      name: "랭크 (연대기)",
+      desc: "경쟁 모드. 압박 속에서 이름과 연대를 추측하세요 — 8점 이상이면 승급, 4점 이하이면 강등됩니다. 순위표에서는 모든 점수가 중요합니다.",
+      color: "#e9c349",
+    },
+    {
+      icon: "groups",
+      name: "일일 퀘스트",
+      desc: "하루에 모두가 공유하는 유산지 하나. 모두 같은 장소를 봅니다 — 당신의 이름과 연대 정확도를 커뮤니티 전체와 비교해 보세요.",
+      color: "#ffb4a9",
+    },
+  ],
 };
 
 const tips = {
@@ -247,6 +299,14 @@ const tips = {
     "Si vous n'êtes pas sûr du nom exact, tapez l'orthographe phonétique la plus proche — le système de notation utilise la correspondance de similarité, les correspondances partielles rapportent donc des points.",
     "Utilisez judicieusement le chat Archiviste : posez d'abord des questions larges ('Quelle dynastie a construit ceci ?') avant de préciser ('Dans quelle province est-il ?').",
   ],
+  ko: [
+    "플레이하기 전에 아카데미 섹션을 학습하세요 — 유산 이름을 외우는 것이 점수를 가장 크게 올려 주는 방법입니다.",
+    "연대를 추정할 때는 왕조 단위로 생각하세요: 리·쩐 시대 = 약 700~900년 전, 응우옌 왕조 = 약 150~200년 전, 짬파 왕국 = 500~1,500년 이상 전.",
+    "건축 조각은 시대를 드러냅니다 — 연꽃 문양은 보통 리 또는 쩐 시대의 불교 사원에서 발견됩니다.",
+    "프랑스 식민지 시대 건물(대칭 정면, 아치형 창문, 노란 회벽)은 보통 100~130년 전에 지어졌습니다.",
+    "정확한 이름을 모르겠다면 가장 가까운 발음의 철자를 입력하세요 — 채점은 유사도 매칭을 사용하므로 부분 정답도 점수를 받습니다.",
+    "기록 보관자 채팅을 현명하게 사용하세요: '어느 왕조가 지었나요?' 같은 넓은 질문부터 시작해 '어느 성에 있나요?' 같은 좁은 질문으로 좁혀 가세요.",
+  ],
 };
 
 export default function Tutorial() {
@@ -255,10 +315,10 @@ export default function Tutorial() {
   const modeList = modes[lang];
   const tipList = tips[lang];
 
-  const heading = lang === "cn" ? "游戏规则" : lang === "fr" ? "Comment Jouer" : lang === "en" ? "How to Play" : "Cách Chơi";
-  const modesHeading = lang === "cn" ? "游戏模式" : lang === "fr" ? "Modes de Jeu" : lang === "en" ? "Game Modes" : "Chế Độ Chơi";
-  const tipsHeading = lang === "cn" ? "学者秘籍" : lang === "fr" ? "Conseils de l'Archiviste" : lang === "en" ? "Archivist Tips" : "Mẹo Từ Học Giả";
-  const stepLabel = lang === "cn" ? "步骤" : lang === "fr" ? "Étape" : lang === "en" ? "Step" : "Bước";
+  const heading = lang === "cn" ? "游戏规则" : lang === "fr" ? "Comment Jouer" : lang === "ko" ? "플레이 방법" : lang === "en" ? "How to Play" : "Cách Chơi";
+  const modesHeading = lang === "cn" ? "游戏模式" : lang === "fr" ? "Modes de Jeu" : lang === "ko" ? "게임 모드" : lang === "en" ? "Game Modes" : "Chế Độ Chơi";
+  const tipsHeading = lang === "cn" ? "学者秘籍" : lang === "fr" ? "Conseils de l'Archiviste" : lang === "ko" ? "기록 보관자의 팁" : lang === "en" ? "Archivist Tips" : "Mẹo Từ Học Giả";
+  const stepLabel = lang === "cn" ? "步骤" : lang === "fr" ? "Étape" : lang === "ko" ? "단계" : lang === "en" ? "Step" : "Bước";
 
   return (
     <div className="min-h-screen bg-[#0e1513] text-[#dde4e0] flex flex-col items-center px-4 sm:px-8 py-8 sm:py-10">
@@ -267,7 +327,7 @@ export default function Tutorial() {
         <div className="inline-flex items-center px-3 py-1 rounded-full bg-[rgba(15,61,46,0.3)] border border-[rgba(162,209,187,0.2)] mb-4">
           <span className="w-2 h-2 rounded-full bg-[#e9c349] mr-2 inline-block" />
           <span className="text-[10px] font-bold text-[#a2d1bb] uppercase tracking-[0.2em]">
-            {lang === "cn" ? "档案学者指南" : lang === "fr" ? "Le Guide de l'Archiviste" : lang === "en" ? "The Archivist's Guide" : "Cẩm Nang Học Giả"}
+            {lang === "cn" ? "档案学者指南" : lang === "fr" ? "Le Guide de l'Archiviste" : lang === "ko" ? "기록 보관자의 안내서" : lang === "en" ? "The Archivist's Guide" : "Cẩm Nang Học Giả"}
           </span>
         </div>
         <h1
@@ -282,6 +342,8 @@ export default function Tutorial() {
             ? "一处遗产地被揭晓。你的任务：说出它的名字，猜测它的年龄。以下是掌握档案馆所需了解的一切。"
             : lang === "fr"
             ? "Un site patrimonial est révélé. Votre mission : le nommer et deviner son âge. Voici tout ce que vous devez savoir pour maîtriser l'archive."
+            : lang === "ko"
+            ? "한 유산지가 모습을 드러냅니다. 당신의 임무: 그 이름을 맞히고 연대를 추측하는 것. 기록 보관소를 정복하기 위해 알아야 할 모든 것이 여기에 있습니다."
             : lang === "en"
             ? "A heritage site is revealed. Your task: name it and guess how old it is. Here's everything you need to know to master the archive."
             : "Một di sản được tiết lộ. Nhiệm vụ của bạn: đặt tên và đoán độ tuổi của nó. Đây là mọi thứ bạn cần biết để làm chủ kho lưu trữ."}

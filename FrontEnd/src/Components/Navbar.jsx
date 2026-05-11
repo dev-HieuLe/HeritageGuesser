@@ -9,6 +9,7 @@ const LANGS = [
   { code: "vi", label: "Tiếng Việt", short: "VI" },
   { code: "cn", label: "中文", short: "CN" },
   { code: "fr", label: "Français", short: "FR" },
+  { code: "ko", label: "한국어", short: "KO" },
 ];
 
 export default function Navbar({ onMenuClick }) {

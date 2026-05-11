@@ -222,7 +222,7 @@ const Login = () => {
 
           {/* Footer link */}
           <p className="mt-6 text-center text-[13px]" style={{ color: "rgba(192,200,195,0.4)" }}>
-            {lang === "en" ? "Don't have an account?" : "Chưa có tài khoản?"}{" "}
+            {lang === "en" ? "Don't have an account?" : lang === "cn" ? "还没有账号？" : lang === "fr" ? "Pas encore de compte ?" : lang === "ko" ? "계정이 없으신가요?" : "Chưa có tài khoản?"}{" "}
             <Link to="/register" style={{ color: "#a2d1bb", textDecoration: "none", fontWeight: "600" }}
               className="transition-opacity hover:opacity-80"
             >

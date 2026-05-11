@@ -111,7 +111,7 @@ export default function StudyPage() {
           {/* Category pill */}
           <div style={{ display: "inline-flex", alignItems: "center", gap: 6, backgroundColor: "rgba(162,209,187,0.1)", border: "1px solid rgba(162,209,187,0.25)", borderRadius: 24, padding: "5px 16px", marginBottom: 18 }}>
             <span style={{ fontSize: 9, fontWeight: 900, letterSpacing: "0.18em", color: "#a2d1bb" }}>
-              ✦ {featured.typeVi.toUpperCase()}
+              ✦ {(lang === "vi" ? featured.typeVi : lang === "cn" ? featured.typeCn : lang === "fr" ? (featured.typeFr ?? featured.typeEn) : lang === "ko" ? (featured.typeKo ?? featured.typeEn) : featured.typeEn).toUpperCase()}
             </span>
           </div>
 
@@ -292,7 +292,7 @@ export default function StudyPage() {
 
 // ── Lesson card ────────────────────────────────────────────────────────────────
 function LessonCard({ lesson, onClick, isRead = false, tx, lang = "vi" }) {
-  const lessonType = lang === "vi" ? lesson.typeVi : lang === "cn" ? lesson.typeCn : lang === "fr" ? (lesson.typeFr ?? lesson.typeEn) : lesson.typeEn;
+  const lessonType = lang === "vi" ? lesson.typeVi : lang === "cn" ? lesson.typeCn : lang === "fr" ? (lesson.typeFr ?? lesson.typeEn) : lang === "ko" ? (lesson.typeKo ?? lesson.typeEn) : lesson.typeEn;
   const lessonDesc = lesson.desc[lang] ?? lesson.desc.en;
   const [imgErr, setImgErr] = useState(false);
   const [hovered, setHovered] = useState(false);

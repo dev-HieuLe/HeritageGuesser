@@ -64,7 +64,7 @@ export default function LessonDetail() {
     );
   }
 
-  const lessonType = lang === "vi" ? lesson.typeVi : lang === "cn" ? lesson.typeCn : lang === "fr" ? (lesson.typeFr ?? lesson.typeEn) : lesson.typeEn;
+  const lessonType = lang === "vi" ? lesson.typeVi : lang === "cn" ? lesson.typeCn : lang === "fr" ? (lesson.typeFr ?? lesson.typeEn) : lang === "ko" ? (lesson.typeKo ?? lesson.typeEn) : lesson.typeEn;
   const lessonDesc = lesson.desc[lang] ?? lesson.desc.en;
   const lessonParagraphs = lesson.paragraphs[lang] ?? lesson.paragraphs.vi;
 

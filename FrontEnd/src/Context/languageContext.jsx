@@ -9,7 +9,7 @@ export function LanguageProvider({ children }) {
 
   const toggleLang = () => {
     setLang((prev) => {
-      const cycle = { en: "vi", vi: "cn", cn: "fr", fr: "en" };
+      const cycle = { en: "vi", vi: "cn", cn: "fr", fr: "ko", ko: "en" };
       const next = cycle[prev] ?? "en";
       localStorage.setItem("hg_lang", next);
       return next;
@@ -17,7 +17,7 @@ export function LanguageProvider({ children }) {
   };
 
   const changeLang = (code) => {
-    if (!["en", "vi", "cn", "fr"].includes(code)) return;
+    if (!["en", "vi", "cn", "fr", "ko"].includes(code)) return;
     setLang(code);
     localStorage.setItem("hg_lang", code);
   };
