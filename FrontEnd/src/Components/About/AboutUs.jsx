@@ -4,6 +4,7 @@ import { motion, useInView, AnimatePresence } from "framer-motion";
 import { useLang } from "../../Context/languageContext";
 import t from "../../translations";
 import { FaFacebook, FaGithub } from "react-icons/fa";
+import FoundersSection from "./FoundersSection";
 
 /* ─── Animation variants ─────────────────────────────────── */
 const fadeUp = {
@@ -26,6 +27,25 @@ const slideLeft = {
     transition: { duration: 0.9, ease: [0.22, 1, 0.36, 1] },
   },
 };
+/* ─── Contributors (logos are optional; monogram shown if missing) ─── */
+const CONTRIBUTORS = [
+  {
+    name: "Zitga Game",
+    logo: "/contributors/zitga.png",
+    initials: "ZG",
+  },
+  {
+    name: "Delta Global School",
+    logo: "/contributors/dgs.png",
+    initials: "DGS",
+  },
+  {
+    name: "FPT",
+    logo: "/contributors/fpt.png",
+    initials: "FPT",
+  },
+];
+
 const slideRight = {
   hidden: { opacity: 0, x: 48 },
   show: {
@@ -658,37 +678,11 @@ export default function AboutUs() {
               }}
             >
               <p
-                className="text-[14px] italic leading-relaxed mb-3"
+                className="text-[14px] italic leading-relaxed"
                 style={{ color: "#c0c8c3" }}
               >
                 {ab.quote}
               </p>
-              <div className="flex items-center gap-2.5">
-                <div
-                  className="w-7 h-7 rounded-full overflow-hidden flex items-center justify-center"
-                  style={{
-                    background: "rgba(162,209,187,0.15)",
-                    border: "1px solid rgba(162,209,187,0.25)",
-                  }}
-                >
-                  <img
-                    src="/founder_pic/hoapfp.jpg"
-                    alt="Thai Hoa"
-                    className="w-full h-full object-cover object-top"
-                    onError={(e) => {
-                      e.target.style.display = "none";
-                    }}
-                  />
-                </div>
-                <div>
-                  <p className="font-black text-[12px] text-[#a2d1bb]">
-                    Đặng Thái Hoà
-                  </p>
-                  <p className="text-[10px] text-[#8a938d] uppercase tracking-widest">
-                    {ab.quoteRole}
-                  </p>
-                </div>
-              </div>
             </div>
           </motion.div>
 
@@ -963,268 +957,111 @@ export default function AboutUs() {
         </div>
       </section>
 
-      {/* ── TEAM / CONTACT ───────────────────────────────────── */}
+      {/* ── CONTRIBUTORS ─────────────────────────────────────── */}
       <section className="px-4 sm:px-8 pb-16 sm:pb-28">
         <div className="max-w-6xl mx-auto">
           <motion.div
-            className="flex flex-col md:flex-row gap-6"
-            variants={stagger}
+            className="relative rounded-2xl p-7 sm:p-10 overflow-hidden"
+            style={{
+              background: "#161d1b",
+              border: "1px solid rgba(65,73,68,0.2)",
+            }}
+            variants={fadeUp}
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, amount: 0.15 }}
           >
-            {/* Crafted By card */}
-            <motion.div
-              variants={fadeUp}
-              className="flex-1 relative rounded-2xl p-7 sm:p-9 overflow-hidden"
+            <div
+              className="absolute inset-0 pointer-events-none"
               style={{
-                background: "#161d1b",
-                border: "1px solid rgba(65,73,68,0.2)",
+                background:
+                  "radial-gradient(ellipse at top left, rgba(162,209,187,0.04), transparent 60%)",
               }}
-            >
-              <div
-                className="absolute inset-0 pointer-events-none"
+            />
+            <div className="absolute -bottom-10 -right-10 opacity-[0.03] pointer-events-none">
+              <span
+                className="material-symbols-outlined"
                 style={{
-                  background:
-                    "radial-gradient(ellipse at top left, rgba(162,209,187,0.04), transparent 60%)",
+                  fontSize: "160px",
+                  color: "#a2d1bb",
+                  fontVariationSettings: "'FILL' 1",
                 }}
-              />
-              <div className="absolute -bottom-10 -right-10 opacity-[0.03] pointer-events-none">
-                <span
-                  className="material-symbols-outlined"
-                  style={{
-                    fontSize: "160px",
-                    color: "#a2d1bb",
-                    fontVariationSettings: "'FILL' 1",
-                  }}
-                >
-                  groups
-                </span>
-              </div>
+              >
+                handshake
+              </span>
+            </div>
 
-              <div className="relative z-10">
-                <span
-                  className="block text-[10px] font-black uppercase tracking-[0.22em] mb-1"
-                  style={{ color: "#a2d1bb" }}
-                >
-                  {ab.craftedBy}
-                </span>
-                <h3 className="font-black text-[20px] text-[#e3e3de] mb-1 tracking-[-0.01em]">
-                  {ab.foundingTeam}
-                </h3>
-                <p className="text-[13px] mb-7" style={{ color: "#8a938d" }}>
-                  {ab.teamDesc}
-                </p>
+            <div className="relative z-10">
+              <span
+                className="block text-[10px] font-black uppercase tracking-[0.22em] mb-1"
+                style={{ color: "#a2d1bb" }}
+              >
+                {ab.contributorsLabel}
+              </span>
+              <h3 className="font-black text-[20px] sm:text-[24px] text-[#e3e3de] mb-1 tracking-[-0.01em]">
+                {ab.contributorsTitle}
+              </h3>
+              <p
+                className="text-[13px] sm:text-[14px] mb-8 max-w-[540px] leading-relaxed"
+                style={{ color: "#8a938d" }}
+              >
+                {ab.contributorsDesc}
+              </p>
 
-                <div className="flex flex-col gap-3">
-                  {[
-                    {
-                      img: "/founder_pic/hoapfp.jpg",
-                      name: "Đặng Thái Hoà",
-                      role: ab.memberRoles[0],
-                      initials: "TH",
-                      accent: "#a2d1bb",
-                    },
-                    {
-                      img: "/founder_pic/hieupfp.jpg",
-                      name: "Lê Trung Hiếu",
-                      role: ab.memberRoles[1],
-                      initials: "LH",
-                      accent: "#a2d1bb",
-                    },
-                    {
-                      img: "/founder_pic/Tommypfp.jpg",
-                      name: "Nguyễn Thái Sơn",
-                      role: ab.memberRoles[2],
-                      initials: "TS",
-                      accent: "#a2d1bb",
-                    },
-                  ].map((f) => (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {CONTRIBUTORS.map((c, i) => (
+                  <div
+                    key={c.name}
+                    className="flex flex-col gap-3 p-5 rounded-xl h-full"
+                    style={{
+                      background: "rgba(255,255,255,0.02)",
+                      border: "1px solid rgba(65,73,68,0.18)",
+                    }}
+                  >
                     <div
-                      key={f.name}
-                      className="flex items-center gap-3.5 p-3 rounded-xl"
+                      className="w-12 h-12 rounded-xl overflow-hidden shrink-0 flex items-center justify-center"
                       style={{
-                        background: f.badge
-                          ? "rgba(233,195,73,0.04)"
-                          : "rgba(255,255,255,0.02)",
-                        border: `1px solid ${
-                          f.badge
-                            ? "rgba(233,195,73,0.12)"
-                            : "rgba(65,73,68,0.15)"
-                        }`,
+                        background: "rgba(162,209,187,0.08)",
+                        border: "1px solid rgba(162,209,187,0.18)",
                       }}
                     >
-                      <div
-                        className="w-11 h-11 rounded-xl overflow-hidden shrink-0 flex items-center justify-center"
-                        style={{ border: `1.5px solid ${f.accent}30` }}
-                      >
-                        <img
-                          src={f.img}
-                          alt={f.name}
-                          className="w-full h-full object-cover object-top"
-                          onError={(e) => {
-                            e.target.style.display = "none";
-                            e.target.parentElement.innerHTML = `<span style="color:${f.accent};font-weight:900;font-size:14px">${f.initials}</span>`;
-                          }}
-                        />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <p className="font-black text-[14px] text-[#e3e3de] leading-tight">
-                            {f.name}
-                          </p>
-                          {f.badge && (
-                            <span
-                              className="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-[0.1em]"
-                              style={{
-                                background: "rgba(233,195,73,0.12)",
-                                border: "1px solid rgba(233,195,73,0.25)",
-                                color: "#e9c349",
-                              }}
-                            >
-                              {f.badge}
-                            </span>
-                          )}
-                        </div>
-                        <p
-                          className="text-[11px] truncate"
-                          style={{
-                            color: f.badge ? "#a2d1bb" : "#8a938d",
-                            marginTop: "2px",
-                          }}
-                        >
-                          {f.role}
-                        </p>
-                      </div>
+                      <img
+                        src={c.logo}
+                        alt={c.name}
+                        className="w-full h-full object-contain p-1.5"
+                        onError={(e) => {
+                          e.target.style.display = "none";
+                          e.target.parentElement.innerHTML = `<span style="color:#a2d1bb;font-weight:900;font-size:15px">${c.initials}</span>`;
+                        }}
+                      />
                     </div>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
-
-            {/* School + team CTA */}
-            <motion.div
-              variants={fadeUp}
-              className="flex flex-col gap-6 md:w-72 shrink-0"
-            >
-              {/* DGS card */}
-              <div
-                className="flex-1 rounded-2xl p-6 relative overflow-hidden"
-                style={{
-                  background: "#161d1b",
-                  border: "1px solid rgba(65,73,68,0.2)",
-                }}
-              >
-                <div
-                  className="absolute inset-0 pointer-events-none"
-                  style={{
-                    background:
-                      "radial-gradient(ellipse at bottom right, rgba(162,209,187,0.06), transparent 65%)",
-                  }}
-                />
-                <div className="relative z-10">
-                  <div
-                    className="w-10 h-10 rounded-xl flex items-center justify-center mb-4"
-                    style={{
-                      background: "rgba(162,209,187,0.1)",
-                      border: "1px solid rgba(162,209,187,0.2)",
-                    }}
-                  >
-                    <span
-                      className="material-symbols-outlined text-[#a2d1bb]"
-                      style={{
-                        fontSize: "20px",
-                        fontVariationSettings: "'FILL' 1",
-                      }}
+                    <div>
+                      <p className="font-black text-[15px] text-[#e3e3de] leading-tight mb-1">
+                        {c.name}
+                      </p>
+                      <p
+                        className="text-[10px] font-black uppercase tracking-[0.14em]"
+                        style={{ color: "#a2d1bb" }}
+                      >
+                        {ab.contributorRoles[i]}
+                      </p>
+                    </div>
+                    <p
+                      className="text-[12px] sm:text-[13px] leading-relaxed"
+                      style={{ color: "#c0c8c3" }}
                     >
-                      school
-                    </span>
+                      {ab.contributorDescs[i]}
+                    </p>
                   </div>
-                  <h4 className="font-black text-[15px] text-[#e3e3de] mb-1">
-                    {ab.dgsTitle}
-                  </h4>
-                  <p
-                    style={{
-                      color: "#8a938d",
-                      fontSize: "11px",
-                      marginBottom: "10px",
-                    }}
-                  >
-                    {ab.dgsLocation}
-                  </p>
-                  <p
-                    className="text-[12px] sm:text-[13px] leading-relaxed"
-                    style={{ color: "#c0c8c3" }}
-                  >
-                    {ab.dgsDesc}
-                  </p>
-                </div>
+                ))}
               </div>
-
-              {/* Meet the team CTA */}
-              <Link
-                to="/"
-                className="rounded-2xl p-6 no-underline relative overflow-hidden group"
-                style={{
-                  background:
-                    "linear-gradient(135deg, rgba(15,61,46,0.6), rgba(14,21,19,0.9))",
-                  border: "1px solid rgba(162,209,187,0.18)",
-                  transition: "all 0.25s ease",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = "rgba(162,209,187,0.35)";
-                  e.currentTarget.style.boxShadow =
-                    "0 0 24px rgba(162,209,187,0.1)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = "rgba(162,209,187,0.18)";
-                  e.currentTarget.style.boxShadow = "none";
-                }}
-              >
-                <div
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 pointer-events-none"
-                  style={{
-                    background:
-                      "radial-gradient(ellipse at top left, rgba(162,209,187,0.07), transparent 70%)",
-                    transition: "opacity 0.3s",
-                  }}
-                />
-                <div className="relative z-10">
-                  <span
-                    className="block text-[10px] font-black uppercase tracking-[0.2em] mb-2"
-                    style={{ color: "#a2d1bb" }}
-                  >
-                    {ab.theTeamLabel}
-                  </span>
-                  <p className="font-black text-[15px] text-[#e3e3de] mb-1">
-                    {ab.meetFounders}
-                  </p>
-                  <p
-                    className="text-[12px] leading-relaxed mb-4"
-                    style={{ color: "#8a938d" }}
-                  >
-                    {ab.meetFoundersDesc}
-                  </p>
-                  <div
-                    className="flex items-center gap-1.5"
-                    style={{ color: "#a2d1bb" }}
-                  >
-                    <span style={{ fontSize: "12px", fontWeight: 700 }}>
-                      {ab.viewFounders}
-                    </span>
-                    <span
-                      className="material-symbols-outlined"
-                      style={{ fontSize: "14px" }}
-                    >
-                      arrow_forward
-                    </span>
-                  </div>
-                </div>
-              </Link>
-            </motion.div>
+            </div>
           </motion.div>
         </div>
       </section>
+
+      {/* ── FOUNDING TEAM ────────────────────────────────────── */}
+      <FoundersSection />
 
       {/* ── BOTTOM STRIP ─────────────────────────────────────── */}
       <motion.div

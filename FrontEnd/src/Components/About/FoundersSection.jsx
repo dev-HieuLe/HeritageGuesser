@@ -14,6 +14,15 @@ import { FaLinkedin, FaFacebook } from "react-icons/fa";
 /* ─── Static data (language-independent) ───────────────── */
 const foundersMeta = [
   {
+    image: "/founder_pic/hieupfp.jpg",
+    initials: "LH",
+    social: {
+      linkedin: "https://www.linkedin.com/in/hieule-dev/",
+      facebook: "https://www.facebook.com/hieu.le.791557",
+      email: "mailto:lthieu@stu.dgs.org.vn",
+    },
+  },
+  {
     image: "/founder_pic/hoapfp.jpg",
     initials: "TH",
     social: {
@@ -23,21 +32,21 @@ const foundersMeta = [
     },
   },
   {
-    image: "/founder_pic/hieupfp.jpg",
-    initials: "TH",
-    social: {
-      linkedin: "https://www.linkedin.com/in/hieule-dev/",
-      facebook: "https://www.facebook.com/hieu.le.791557",
-      email: "mailto:lthieu@stu.dgs.org.vn",
-    },
-  },
-  {
     image: "/founder_pic/Tommypfp.jpg",
     initials: "TS",
     social: {
       linkedin: "https://www.linkedin.com/in/tony-nguyen-5b0a0b1b0/",
       facebook: "https://www.facebook.com/tommy.nguyen.598125/",
       email: "mailto:ntson@stu.dgs.org.vn",
+    },
+  },
+  {
+    image: "/founder_pic/Hoangpfp.jpg",
+    initials: "HH",
+    social: {
+      linkedin: "#",
+      facebook: "#",
+      email: "#",
     },
   },
 ];
@@ -405,7 +414,7 @@ function FounderCard({ founder, index, onOpen, tx }) {
         />
 
         {/* ── Photo — tall, not full card ── */}
-        <div className="relative overflow-hidden" style={{ height: "405px" }}>
+        <div className="relative overflow-hidden" style={{ height: "380px" }}>
           {founder.image ? (
             <img
               src={founder.image}
@@ -554,8 +563,11 @@ export default function FoundersSection() {
   }));
 
   return (
-    <section className="px-4 sm:px-8 pb-12 sm:pb-20 md:pb-24">
-      <div className="max-w-6xl mx-auto">
+    <section
+      id="founding-team"
+      className="px-4 sm:px-8 pb-12 sm:pb-20 md:pb-24 scroll-mt-24"
+    >
+      <div className="max-w-4xl mx-auto">
         {/* ── Header ── */}
         <motion.div
           className="mb-10 sm:mb-14 text-center"
@@ -598,7 +610,7 @@ export default function FoundersSection() {
 
         {/* ── Cards grid ── */}
         <motion.div
-          className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8"
+          className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8"
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, amount: 0.1 }}

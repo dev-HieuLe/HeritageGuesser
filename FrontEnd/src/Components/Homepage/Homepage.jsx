@@ -20,7 +20,6 @@ import {
   Play,
 } from "lucide-react";
 import { FaYoutube, FaFacebook, FaGithub } from "react-icons/fa";
-import FoundersSection from "./FoundersSection";
 import Navbar from "../Navbar";
 
 const CHANNEL_ICONS = {
@@ -388,7 +387,7 @@ export default function Homepage() {
                 </div>
               </motion.div>
 
-              {/* Today's Quest */}
+              {/* App Promo */}
               <motion.div
                 variants={fadeUp}
                 className="mb-4 sm:mb-0 bg-[#1a211f] rounded-xl p-1 flex flex-col sm:flex-row items-center border border-[rgba(65,73,68,0.1)] shadow-[0_25px_50px_rgba(0,0,0,0.3)]"
@@ -396,27 +395,27 @@ export default function Homepage() {
                 <div className="w-32 h-32 sm:w-48 sm:h-48 rounded-full overflow-hidden shrink-0 m-2 sm:m-1 relative">
                   <img
                     src="/NhaThoLon.png"
-                    alt="My Son"
+                    alt="Heritage Guessr"
                     className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
                   />
                 </div>
                 <div className="p-4 sm:p-8 flex-grow min-w-0 w-full sm:w-auto text-center sm:text-left">
                   <div className="flex items-center gap-2 mb-2 flex-wrap justify-center sm:justify-start">
                     <span className="text-[10px] font-bold px-[10px] py-[2px] bg-[#e9c349] text-[#3c2f00] rounded-full uppercase whitespace-nowrap">
-                      {tx.bento.todaysQuest}
+                      {tx.bento.adBadge}
                     </span>
                     <span className="text-[11px] sm:text-[12px] text-[#c0c8c3]">
-                      {tx.bento.endsIn} 04:12:30
+                      {tx.bento.adTagline}
                     </span>
                   </div>
                   <h3 className="text-[18px] sm:text-[24px] font-bold text-[#e3e3de] mb-2 tracking-[-0.02em] leading-[1.2]">
-                    {tx.bento.questTitle}
+                    {tx.bento.adTitle}
                   </h3>
                   <p className="text-[13px] sm:text-[14px] text-[#c0c8c3] max-w-[320px] mb-3 sm:mb-4 leading-relaxed mx-auto sm:mx-0">
-                    {tx.bento.questDesc}
+                    {tx.bento.adDesc}
                   </p>
                   <span className="text-[11px] sm:text-[12px] font-bold text-[#e9c349]">
-                    {tx.bento.xpReward}
+                    {tx.bento.adCta}
                   </span>
                 </div>
               </motion.div>
@@ -595,9 +594,6 @@ export default function Homepage() {
             </motion.div>
           </div>
         </section>
-
-        {/* ─── FOUNDERS ─── */}
-        <FoundersSection />
 
         {/* ─── FAQ ─── */}
         <section className="px-4 sm:px-8 pb-12 sm:pb-20 md:pb-24">

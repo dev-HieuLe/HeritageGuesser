@@ -63,12 +63,12 @@ const t = {
     bento: {
       liveNow: "Live Now",
       archivistsExploring: "Archivists exploring",
-      todaysQuest: "Today's Quest",
-      endsIn: "Ends in",
-      questTitle: "The Sanctuary of My Son",
-      questDesc:
-        "Identify the hidden motifs within the ancient Hindu temple complex.",
-      xpReward: "+500 XP Rewards",
+      adBadge: "Play Now",
+      adTagline: "Free · No download",
+      adTitle: "Explore Vietnam, One Guess at a Time",
+      adDesc:
+        "Drop into hundreds of heritage sites, guess where you are, and uncover the stories behind them with an AI Archivist at your side.",
+      adCta: "Start your first round →",
       imperialScholars: "Imperial Scholars",
       fullRankings: "Full Rankings",
     },
@@ -220,7 +220,8 @@ const t = {
       rankNow: "Rank Now",
       loading: "Loading rank data...",
       maintenance: "Under Maintenance",
-      maintenanceDesc: "The Ranked Archive is temporarily closed for maintenance. Please check back later.",
+      maintenanceDesc:
+        "The Ranked Archive is temporarily closed for maintenance. Please check back later.",
       backHome: "Back to Home",
       starsOf: (s) => `${s} / 5 stars`,
       rankLabel: (rank, name) => `RANK ${rank} — ${name}`,
@@ -445,7 +446,6 @@ const t = {
         "From a classroom idea to a full-stack platform serving hundreds of students — here's the Heritage Guessr story.",
       quote:
         '"We asked — what if rediscovering Vietnam\'s past could feel like playing a game? That question became Heritage Guessr."',
-      quoteRole: "Innovation Leader",
       timeline: [
         {
           year: "Early 2025 · Genesis",
@@ -492,37 +492,31 @@ const t = {
       pillLang: "EN + VI",
 
       // Hieu quote
-      hieuQuote1: "I wrote every",
+      hieuQuote1: "We wrote every",
       hieuQuoteAccent: "line of code",
       hieuQuote2: "with one goal: make Vietnam's heritage",
       hieuQuoteAccent2: "impossible to forget.",
       hieuRole: "Lead Developer · Designer · Author",
 
-      // Team / Contact
-      craftedBy: "Crafted By",
-      foundingTeam: "The Founding Team",
-      teamDesc:
-        "Three students at Delta Global School, Hanoi — united by one mission.",
-      memberRoles: [
-        "Innovation Leader",
-        "Lead Developer · Designer · Author",
-        "Creative Content Specialist",
+      // Contributors
+      contributorsLabel: "With Support From",
+      contributorsTitle: "Our Contributors",
+      contributorsDesc:
+        "Heritage Guessr is built with the support of organisations that believe technology can keep Vietnamese heritage alive.",
+      contributorRoles: [
+        "Game Studio",
+        "Founding School",
+        "Technology Partner",
       ],
-      dgsTitle: "Delta Global School",
-      dgsLocation: "Hanoi, Vietnam",
-      dgsDesc:
-        "Heritage Guessr was conceived and built at DGS as part of an initiative to preserve and promote Vietnamese cultural heritage through technology.",
-      theTeamLabel: "The Team",
-      meetFounders: "Meet the Founders",
-      meetFoundersDesc:
-        "See the full team behind Heritage Guessr on our homepage.",
-      viewFounders: "View Founders",
-
+      contributorDescs: [
+        "Guidance on game design and production — helping shape how Heritage Guessr plays and feels.",
+        "Where Heritage Guessr was conceived and built, providing mentorship and the first pilot classrooms.",
+        "Support on technology and student innovation, helping the platform reach schools across Vietnam.",
+      ],
       // Bottom strip
       openSource: "Open Source · Educational",
-      bottomTitle: "Built with ❤️ for Vietnamese Cultural Heritage",
-      copyright:
-        "Copyright © 2025 Le Trung Hieu and the Heritage Guessr Team. All rights reserved.",
+      bottomTitle: "Built with <3 by the Heritage Guessr Team",
+      copyright: "© 2026 Heritage Guessr Team",
       followUs: "Follow Us",
       contributeASite: "Contribute a Site",
     },
@@ -530,8 +524,8 @@ const t = {
     // Founders section
     founders: {
       eyebrow: "The People Behind the Platform",
-      headline: "Our",
-      headlineAccent: "Founders",
+      headline: "The Founding",
+      headlineAccent: "Team",
       subtitle:
         "A devoted team preserving and celebrating the soul of Vietnam — one landmark at a time.",
       founderBadge: "Founder",
@@ -539,19 +533,24 @@ const t = {
       connect: "Connect",
       members: [
         {
-          name: "Đặng Thái Hoà",
-          role: "Innovation Leader",
-          bio: "Shapes the strategic vision of Heritage Guessr, applying design thinking and creative direction to craft meaningful experiences that redefine how Vietnamese heritage is explored online.",
-        },
-        {
           name: "Lê Trung Hiếu",
           role: "Full-Stack Engineering Lead & Designer",
           bio: "Leads the end-to-end development of Heritage Guessr, from full-stack engineering and backend architecture to polished frontend design, creating a robust, scalable platform that transforms Vietnamese heritage into an immersive digital experience.",
         },
         {
+          name: "Đặng Thái Hoà",
+          role: "Innovation Leader",
+          bio: "Shapes the strategic vision of Heritage Guessr, applying design thinking and creative direction to craft meaningful experiences that redefine how Vietnamese heritage is explored online.",
+        },
+        {
           name: "Nguyễn Thái Sơn",
           role: "Creative Content Specialist",
           bio: "Breathes cultural soul into every corner of the platform — crafting stories, imagery, and experiences that make Vietnam's heritage unforgettable.",
+        },
+        {
+          name: "Lê Huy Hoàng",
+          role: "Visual Content Creator",
+          bio: "Weaves cultural depth into every visual layer of the platform — curating imagery and creative assets that bring Vietnam's storied landmarks vividly to life.",
         },
       ],
     },
@@ -560,7 +559,8 @@ const t = {
     progressAnalysis: {
       badge: "AI INSIGHTS",
       title: "Progress Analysis",
-      subtitle: "AI will analyze your game history and deliver personalised insights — regions to focus on, missing historical periods, and skills to improve.",
+      subtitle:
+        "AI will analyze your game history and deliver personalised insights — regions to focus on, missing historical periods, and skills to improve.",
       readyLabel: "Ready to analyze",
       readySub: "Based on your full game history",
       loginLabel: "Sign in to analyze",
@@ -569,7 +569,8 @@ const t = {
       notLoggedIn: "Not signed in",
       loadingLabel: "AI is analyzing your data…",
       needMoreData: "Need more data",
-      needMoreDataSub: "Play at least 3 Rank rounds so AI can analyze your progress.",
+      needMoreDataSub:
+        "Play at least 3 Rank rounds so AI can analyze your progress.",
       back: "Go back",
       errorMsg: "Unable to connect. Please try again.",
       retry: "Retry",
@@ -591,7 +592,8 @@ const t = {
     wrongLocations: {
       badge: "WRONG MANY TIMES",
       title: "Locations You Struggle With",
-      subtitle: "Locations you've answered wrong multiple times. Click the AI button to get specific practice tips.",
+      subtitle:
+        "Locations you've answered wrong multiple times. Click the AI button to get specific practice tips.",
       loadLabel: "View struggle locations",
       loadSub: "Based on play history — score < 5",
       loginLabel: "Sign in to view",
@@ -599,7 +601,8 @@ const t = {
       loadBtn: "View Now",
       notLoggedIn: "Not signed in",
       empty: "No struggle locations!",
-      emptySub: "You haven't scored below 5 yet. Keep playing to track your progress.",
+      emptySub:
+        "You haven't scored below 5 yet. Keep playing to track your progress.",
       errorMsg: "Failed to load data. Please try again.",
       retry: "Retry",
       back: "Go back",
@@ -616,17 +619,21 @@ const t = {
       calibTitle: "VR Calibration",
       calibSubtitle: "Adjust to match your cardboard headset",
       eyeWindowWidth: "Eye Window Width",
-      eyeWindowAuto: "Auto-computed from screen size · manual override disabled",
+      eyeWindowAuto:
+        "Auto-computed from screen size · manual override disabled",
       eyeWindowManual: "Manual · set phone screen width below to auto-compute",
       verticalOffset: "Vertical Offset",
-      verticalOffsetHint: "Shifts the image down (+) or up (−) inside the headset",
+      verticalOffsetHint:
+        "Shifts the image down (+) or up (−) inside the headset",
       streetViewZoom: "Street View Zoom",
-      streetViewZoomHint: "0 = 180° FOV (very wide)  ·  1 = standard  ·  3 = max telephoto",
+      streetViewZoomHint:
+        "0 = 180° FOV (very wide)  ·  1 = standard  ·  3 = max telephoto",
       precision: "Precision — Cardboard optics",
       interLens: "Inter-lens Distance",
       interLensHint: "Google Cardboard v2 standard: 63.9 mm",
       phoneScreenWidth: "Phone Screen Width",
-      phoneScreenHint: "Measure the horizontal screen width in landscape (long side). Set to 0 to use manual eye width.",
+      phoneScreenHint:
+        "Measure the horizontal screen width in landscape (long side). Set to 0 to use manual eye width.",
       computedEye: "Computed eye window:",
       saveApply: "Save & Apply",
       resetDefaults: "Reset to Defaults",
@@ -643,13 +650,16 @@ const t = {
       preparingArchive: "Prepare the Ranked Archive",
       sessionProgress: "Session Progress",
       sealedTitle: "Ranked Archive Sealed",
-      sealedDesc: (n) => `Daily ranked limit of ${n} sessions reached. Come back tomorrow — or upgrade to play without limits.`,
+      sealedDesc: (n) =>
+        `Daily ranked limit of ${n} sessions reached. Come back tomorrow — or upgrade to play without limits.`,
       upgradeTitle: "Upgrade to Plus",
-      upgradeDesc: "Unlimited Ranked sessions, advanced study content, and exclusive badges — from just 65,000₫/month.",
+      upgradeDesc:
+        "Unlimited Ranked sessions, advanced study content, and exclusive badges — from just 65,000₫/month.",
       viewSubscription: "View Subscription",
       backHome: "Back to Home",
       maintenanceTitle: "Under Maintenance",
-      maintenanceDesc: "The Ranked Archive is temporarily closed for maintenance. Please check back later.",
+      maintenanceDesc:
+        "The Ranked Archive is temporarily closed for maintenance. Please check back later.",
       noImagery: "No Imagery Available",
       useClues: "Use the clues to make your best guess",
       enterHeritage: "Enter Heritage Identity",
@@ -805,11 +815,12 @@ const t = {
     bento: {
       liveNow: "Đang Trực Tuyến",
       archivistsExploring: "Học giả đang khám phá",
-      todaysQuest: "Nhiệm Vụ Hôm Nay",
-      endsIn: "Kết thúc sau",
-      questTitle: "Thánh Địa Mỹ Sơn",
-      questDesc: "Xác định các họa tiết ẩn trong quần thể đền Hindu cổ đại.",
-      xpReward: "+500 XP Phần Thưởng",
+      adBadge: "Chơi Ngay",
+      adTagline: "Miễn phí · Không cần tải",
+      adTitle: "Khám Phá Việt Nam Qua Từng Lượt Đoán",
+      adDesc:
+        "Bước vào hàng trăm di sản, đoán xem bạn đang ở đâu và khám phá câu chuyện phía sau cùng Nhà Lưu Trữ AI.",
+      adCta: "Bắt đầu lượt chơi đầu tiên →",
       imperialScholars: "Học Giả Đế Vương",
       fullRankings: "Xếp Hạng Đầy Đủ",
     },
@@ -952,7 +963,6 @@ const t = {
         "Từ ý tưởng trong lớp học đến nền tảng full-stack phục vụ hàng trăm học sinh — đây là câu chuyện của Heritage Guessr.",
       quote:
         '"Chúng tôi đã tự hỏi — điều gì sẽ xảy ra nếu việc khám phá lại quá khứ Việt Nam có thể cảm giác như chơi game? Câu hỏi đó đã trở thành Heritage Guessr."',
-      quoteRole: "Lãnh Đạo Đổi Mới",
       timeline: [
         {
           year: "Đầu 2025 · Khởi Nguyên",
@@ -1005,31 +1015,25 @@ const t = {
       hieuQuoteAccent2: "không thể bị lãng quên.",
       hieuRole: "Trưởng Nhóm Phát Triển · Thiết Kế · Tác Giả",
 
-      // Team / Contact
-      craftedBy: "Được Tạo Bởi",
-      foundingTeam: "Đội Sáng Lập",
-      teamDesc:
-        "Ba học sinh tại Delta Global School, Hà Nội — cùng chung một sứ mệnh.",
-      memberRoles: [
-        "Lãnh Đạo Đổi Mới",
-        "Trưởng Nhóm Phát Triển · Thiết Kế · Tác Giả",
-        "Chuyên Gia Nội Dung Sáng Tạo",
+      // Contributors
+      contributorsLabel: "Với Sự Đồng Hành Của",
+      contributorsTitle: "Những Người Đồng Hành",
+      contributorsDesc:
+        "Heritage Guessr được xây dựng với sự hỗ trợ của những tổ chức tin rằng công nghệ có thể giữ cho di sản Việt Nam sống mãi.",
+      contributorRoles: [
+        "Studio Game",
+        "Ngôi Trường Khởi Nguồn",
+        "Đối Tác Công Nghệ",
       ],
-      dgsTitle: "Delta Global School",
-      dgsLocation: "Hà Nội, Việt Nam",
-      dgsDesc:
-        "Heritage Guessr được thai nghén và xây dựng tại DGS như một phần của sáng kiến bảo tồn và quảng bá di sản văn hóa Việt Nam thông qua công nghệ.",
-      theTeamLabel: "Đội Ngũ",
-      meetFounders: "Gặp Gỡ Những Nhà Sáng Lập",
-      meetFoundersDesc:
-        "Xem toàn bộ đội ngũ đứng sau Heritage Guessr trên trang chủ của chúng tôi.",
-      viewFounders: "Xem Nhà Sáng Lập",
-
+      contributorDescs: [
+        "Cố vấn về thiết kế và sản xuất game — góp phần định hình lối chơi và trải nghiệm của Heritage Guessr.",
+        "Nơi Heritage Guessr được hình thành và xây dựng, đồng hành cố vấn và mở những lớp học thử nghiệm đầu tiên.",
+        "Hỗ trợ về công nghệ và đổi mới sáng tạo học đường, giúp nền tảng đến với các trường học trên cả nước.",
+      ],
       // Bottom strip
       openSource: "Mã Nguồn Mở · Giáo Dục",
       bottomTitle: "Được tạo ra với ❤️ cho Di Sản Văn Hóa Việt Nam",
-      copyright:
-        "Bản quyền © 2025 Lê Trung Hiếu và Đội Ngũ Heritage Guessr. Mọi quyền được bảo lưu.",
+      copyright: "© 2026 Heritage Guessr Team",
       followUs: "Theo Dõi",
       contributeASite: "Đóng Góp Địa Danh",
     },
@@ -1037,8 +1041,8 @@ const t = {
     // Founders section
     founders: {
       eyebrow: "Những Người Đứng Sau Nền Tảng",
-      headline: "Những",
-      headlineAccent: "Nhà Sáng Lập",
+      headline: "Đội Ngũ",
+      headlineAccent: "Sáng Lập",
       subtitle:
         "Một đội ngũ tận tâm bảo tồn và tôn vinh hồn Việt — từng di tích một.",
       founderBadge: "Nhà Sáng Lập",
@@ -1046,19 +1050,24 @@ const t = {
       connect: "Kết Nối",
       members: [
         {
-          name: "Đặng Thái Hoà",
-          role: "Lãnh Đạo Đổi Mới",
-          bio: "Dẫn dắt tầm nhìn đằng sau các tính năng đột phá của Heritage Guessr, không ngừng mở rộng giới hạn của một nền tảng edutainment.",
-        },
-        {
           name: "Lê Trung Hiếu",
           role: "Lãnh Đạo Kỹ Thuật & Design",
           bio: "Phụ trách toàn bộ quá trình phát triển Heritage Guessr, từ kỹ thuật full-stack và kiến trúc backend đến thiết kế frontend, tạo ra nền tảng vững chắc biến di sản Việt Nam thành trải nghiệm số sống động.",
         },
         {
+          name: "Đặng Thái Hoà",
+          role: "Lãnh Đạo Đổi Mới",
+          bio: "Dẫn dắt tầm nhìn đằng sau các tính năng đột phá của Heritage Guessr, không ngừng mở rộng giới hạn của một nền tảng edutainment.",
+        },
+        {
           name: "Nguyễn Thái Sơn",
           role: "Chuyên Gia Nội Dung Sáng Tạo",
           bio: "Thổi hồn văn hóa vào từng ngóc ngách của nền tảng — tạo ra những câu chuyện, hình ảnh và trải nghiệm khiến di sản Việt Nam trở nên khó quên.",
+        },
+        {
+          name: "Lê Huy Hoàng",
+          role: "Nhà Sáng Tạo Nội Dung Hình Ảnh",
+          bio: "Dệt chiều sâu văn hóa vào từng lớp hình ảnh của nền tảng — tuyển chọn hình ảnh và tài sản sáng tạo giúp các địa danh lịch sử Việt Nam hiện lên sống động.",
         },
       ],
     },
@@ -1148,7 +1157,8 @@ const t = {
       rankNow: "Xếp Hạng Ngay",
       loading: "Đang tải dữ liệu xếp hạng...",
       maintenance: "Đang Bảo Trì",
-      maintenanceDesc: "Khu vực Xếp Hạng tạm thời đóng cửa để bảo trì. Vui lòng quay lại sau.",
+      maintenanceDesc:
+        "Khu vực Xếp Hạng tạm thời đóng cửa để bảo trì. Vui lòng quay lại sau.",
       backHome: "Về Trang Chủ",
       starsOf: (s) => `${s} / 5 sao`,
       rankLabel: (rank, name) => `HẠNG ${rank} — ${name}`,
@@ -1307,7 +1317,8 @@ const t = {
     progressAnalysis: {
       badge: "AI INSIGHTS",
       title: "Phân Tích Tiến Trình",
-      subtitle: "AI sẽ phân tích lịch sử chơi của bạn và đưa ra gợi ý cá nhân hoá — vùng miền cần tập trung, giai đoạn lịch sử còn thiếu, và kỹ năng cần cải thiện.",
+      subtitle:
+        "AI sẽ phân tích lịch sử chơi của bạn và đưa ra gợi ý cá nhân hoá — vùng miền cần tập trung, giai đoạn lịch sử còn thiếu, và kỹ năng cần cải thiện.",
       readyLabel: "Sẵn sàng phân tích",
       readySub: "Dựa trên toàn bộ lịch sử chơi của bạn",
       loginLabel: "Đăng nhập để phân tích",
@@ -1316,7 +1327,8 @@ const t = {
       notLoggedIn: "Chưa đăng nhập",
       loadingLabel: "AI đang phân tích dữ liệu của bạn…",
       needMoreData: "Cần thêm dữ liệu",
-      needMoreDataSub: "Hãy chơi thêm ít nhất 3 ván trong chế độ Rank để AI có thể phân tích tiến trình của bạn.",
+      needMoreDataSub:
+        "Hãy chơi thêm ít nhất 3 ván trong chế độ Rank để AI có thể phân tích tiến trình của bạn.",
       back: "Quay lại",
       errorMsg: "Không thể kết nối. Vui lòng thử lại sau.",
       retry: "Thử lại",
@@ -1338,7 +1350,8 @@ const t = {
     wrongLocations: {
       badge: "SÁI NHIỀU LẦN",
       title: "Địa Danh Hay Mắc Lỗi",
-      subtitle: "Những địa danh bạn đã trả lời sai nhiều lần. Bấm nút AI để nhận gợi ý luyện tập cụ thể.",
+      subtitle:
+        "Những địa danh bạn đã trả lời sai nhiều lần. Bấm nút AI để nhận gợi ý luyện tập cụ thể.",
       loadLabel: "Xem địa danh hay sai",
       loadSub: "Dựa trên lịch sử chơi — điểm < 5",
       loginLabel: "Đăng nhập để xem",
@@ -1346,7 +1359,8 @@ const t = {
       loadBtn: "Xem Ngay",
       notLoggedIn: "Chưa đăng nhập",
       empty: "Không có địa danh hay sai!",
-      emptySub: "Bạn chưa có lần nào đạt dưới 5 điểm. Hãy thử chơi thêm để theo dõi tiến trình.",
+      emptySub:
+        "Bạn chưa có lần nào đạt dưới 5 điểm. Hãy thử chơi thêm để theo dõi tiến trình.",
       errorMsg: "Không thể tải dữ liệu. Vui lòng thử lại.",
       retry: "Thử lại",
       back: "Quay lại",
@@ -1363,17 +1377,22 @@ const t = {
       calibTitle: "Hiệu Chỉnh VR",
       calibSubtitle: "Điều chỉnh để phù hợp với kính cardboard của bạn",
       eyeWindowWidth: "Chiều Rộng Cửa Sổ Mắt",
-      eyeWindowAuto: "Tự động tính từ kích thước màn hình · không thể chỉnh thủ công",
-      eyeWindowManual: "Thủ công · nhập chiều rộng màn hình bên dưới để tự tính",
+      eyeWindowAuto:
+        "Tự động tính từ kích thước màn hình · không thể chỉnh thủ công",
+      eyeWindowManual:
+        "Thủ công · nhập chiều rộng màn hình bên dưới để tự tính",
       verticalOffset: "Độ Lệch Dọc",
-      verticalOffsetHint: "Dịch chuyển hình ảnh xuống (+) hoặc lên (−) bên trong kính",
+      verticalOffsetHint:
+        "Dịch chuyển hình ảnh xuống (+) hoặc lên (−) bên trong kính",
       streetViewZoom: "Thu Phóng Street View",
-      streetViewZoomHint: "0 = 180° FOV (rất rộng)  ·  1 = chuẩn  ·  3 = tele tối đa",
+      streetViewZoomHint:
+        "0 = 180° FOV (rất rộng)  ·  1 = chuẩn  ·  3 = tele tối đa",
       precision: "Độ Chính Xác — Quang Học Cardboard",
       interLens: "Khoảng Cách Giữa Hai Thấu Kính",
       interLensHint: "Tiêu chuẩn Google Cardboard v2: 63,9 mm",
       phoneScreenWidth: "Chiều Rộng Màn Hình Điện Thoại",
-      phoneScreenHint: "Đo chiều rộng màn hình theo chiều ngang (cạnh dài). Đặt 0 để dùng chiều rộng mắt thủ công.",
+      phoneScreenHint:
+        "Đo chiều rộng màn hình theo chiều ngang (cạnh dài). Đặt 0 để dùng chiều rộng mắt thủ công.",
       computedEye: "Cửa sổ mắt đã tính:",
       saveApply: "Lưu & Áp Dụng",
       resetDefaults: "Đặt Lại Mặc Định",
@@ -1390,13 +1409,16 @@ const t = {
       preparingArchive: "Chuẩn Bị Kho Rank",
       sessionProgress: "Tiến Trình Phiên",
       sealedTitle: "Kho Rank Đã Đóng",
-      sealedDesc: (n) => `Đã đạt giới hạn ${n} phiên rank hôm nay. Quay lại ngày mai — hoặc nâng cấp để chơi không giới hạn.`,
+      sealedDesc: (n) =>
+        `Đã đạt giới hạn ${n} phiên rank hôm nay. Quay lại ngày mai — hoặc nâng cấp để chơi không giới hạn.`,
       upgradeTitle: "Nâng cấp gói Plus",
-      upgradeDesc: "Ván Ranked không giới hạn, nội dung học nâng cao và huy hiệu độc quyền — chỉ từ 65.000₫/tháng.",
+      upgradeDesc:
+        "Ván Ranked không giới hạn, nội dung học nâng cao và huy hiệu độc quyền — chỉ từ 65.000₫/tháng.",
       viewSubscription: "Xem gói đăng ký",
       backHome: "Quay về trang chủ",
       maintenanceTitle: "Đang Bảo Trì",
-      maintenanceDesc: "Kho Rank tạm thời đóng cửa để bảo trì. Vui lòng quay lại sau.",
+      maintenanceDesc:
+        "Kho Rank tạm thời đóng cửa để bảo trì. Vui lòng quay lại sau.",
       noImagery: "Không Có Hình Ảnh",
       useClues: "Dùng các gợi ý để đưa ra câu trả lời tốt nhất",
       enterHeritage: "Nhập Tên Di Sản",
@@ -1446,7 +1468,8 @@ const t = {
       hintMessage:
         "Mẹo: trả lời gần đúng vẫn có điểm! Nêu được thành phố, loại đền chùa, hay nhân vật mà di tích tôn vinh đều được điểm phần. Câu trả lời càng cụ thể, điểm càng cao.",
       ratingTitle: "Đang Phân Tích",
-      ratingSubtitle: "Đang chấm xem câu trả lời của bạn sát di tích thật đến mức nào.",
+      ratingSubtitle:
+        "Đang chấm xem câu trả lời của bạn sát di tích thật đến mức nào.",
       rankUp: (name) => `Lên Rank → ${name}`,
       rankDown: (name) => `Tụt Rank → ${name}`,
     },
@@ -1551,11 +1574,12 @@ const t = {
     bento: {
       liveNow: "正在直播",
       archivistsExploring: "档案员正在探索",
-      todaysQuest: "今日任务",
-      endsIn: "结束于",
-      questTitle: "美山圣地",
-      questDesc: "识别古印度教神庙群中隐藏的图案。",
-      xpReward: "+500 XP 奖励",
+      adBadge: "立即游玩",
+      adTagline: "免费 · 无需下载",
+      adTitle: "一次一猜，探索越南",
+      adDesc:
+        "走进数百处文化遗产，猜出你所在的位置，并在 AI 档案员的陪伴下揭开背后的故事。",
+      adCta: "开始第一局 →",
       imperialScholars: "帝王学者",
       fullRankings: "完整排名",
     },
@@ -1844,7 +1868,8 @@ const t = {
       },
       modal: {
         notEnoughTitle: "积分不足",
-        notEnoughBody: "此物品需要 {need} 积分。您有 {have} 积分。还需 {diff} 积分才能兑换此奖励。",
+        notEnoughBody:
+          "此物品需要 {need} 积分。您有 {have} 积分。还需 {diff} 积分才能兑换此奖励。",
         confirmTitle: "如何兑换",
         contactIntro: "通过以下任意渠道联系我们，用积分换取此物品。",
         phone: "电话",
@@ -1911,7 +1936,6 @@ const t = {
         "从课堂创意到服务数百名学生的全栈平台——这是Heritage Guessr的故事。",
       quote:
         '"我们问——如果重新发现越南的过去能像玩游戏一样感觉如何？这个问题成就了Heritage Guessr。"',
-      quoteRole: "创新领导者",
       timeline: [
         {
           year: "2025年初 · 起源",
@@ -1962,23 +1986,21 @@ const t = {
       hieuQuoteAccent2: "永远无法被遗忘。",
       hieuRole: "首席开发者 · 设计师 · 作者",
 
-      craftedBy: "由以下人员打造",
-      foundingTeam: "创始团队",
-      teamDesc: "河内Delta Global School的三名学生——共同承担同一使命。",
-      memberRoles: ["创新领导者", "首席开发者 · 设计师 · 作者", "创意内容专家"],
-      dgsTitle: "Delta Global School",
-      dgsLocation: "河内，越南",
-      dgsDesc:
-        "Heritage Guessr在DGS构思和构建，作为通过技术保护和推广越南文化遗产倡议的一部分。",
-      theTeamLabel: "团队",
-      meetFounders: "认识创始人",
-      meetFoundersDesc: "在我们的主页上查看Heritage Guessr背后的完整团队。",
-      viewFounders: "查看创始人",
+      // Contributors
+      contributorsLabel: "特别鸣谢",
+      contributorsTitle: "我们的贡献者",
+      contributorsDesc:
+        "Heritage Guessr 的成长离不开这些相信技术能够守护越南文化遗产的机构。",
+      contributorRoles: ["游戏工作室", "创始学校", "技术伙伴"],
+      contributorDescs: [
+        "在游戏设计与制作上提供指导，帮助塑造 Heritage Guessr 的玩法与体验。",
+        "Heritage Guessr 的构思与诞生之地，提供指导以及最早的试点课堂。",
+        "在技术与学生创新方面给予支持，帮助平台走进越南各地的学校。",
+      ],
 
       openSource: "开源 · 教育",
       bottomTitle: "为越南文化遗产用 ❤️ 构建",
-      copyright:
-        "版权所有 © 2025 Lê Trung Hiếu 和 Heritage Guessr 团队。保留所有权利。",
+      copyright: "© 2026 Heritage Guessr Team",
       followUs: "关注我们",
       contributeASite: "贡献地点",
     },
@@ -1986,27 +2008,32 @@ const t = {
     // Founders section
     founders: {
       eyebrow: "平台背后的人",
-      headline: "我们的",
-      headlineAccent: "创始人",
+      headline: "创始",
+      headlineAccent: "团队",
       subtitle: "一支专注的团队，一个地标接一个地标地保护和颂扬越南的灵魂。",
       founderBadge: "创始人",
       viewProfile: "查看资料 →",
       connect: "联系",
       members: [
         {
-          name: "Đặng Thái Hoà",
-          role: "创新领导者",
-          bio: "塑造Heritage Guessr的战略愿景，运用设计思维和创意指导打造有意义的体验，重新定义越南遗产的在线探索方式。",
-        },
-        {
           name: "Lê Trung Hiếu",
           role: "全栈工程主管兼设计师",
           bio: "领导Heritage Guessr的端到端开发，从全栈工程和后端架构到精致的前端设计，打造将越南遗产转化为沉浸式数字体验的强大可扩展平台。",
         },
         {
+          name: "Đặng Thái Hoà",
+          role: "创新领导者",
+          bio: "塑造Heritage Guessr的战略愿景，运用设计思维和创意指导打造有意义的体验，重新定义越南遗产的在线探索方式。",
+        },
+        {
           name: "Nguyễn Thái Sơn",
           role: "创意内容专家",
           bio: "将文化灵魂注入平台的每个角落——打造让越南遗产令人难忘的故事、图像和体验。",
+        },
+        {
+          name: "Lê Huy Hoàng",
+          role: "视觉内容创作者",
+          bio: "将文化深度融入平台的每一个视觉层面——精心策划图像与创意素材，让越南历史地标生动呈现。",
         },
       ],
     },
@@ -2015,7 +2042,8 @@ const t = {
     progressAnalysis: {
       badge: "AI洞察",
       title: "进度分析",
-      subtitle: "AI将分析您的游戏历史，提供个性化见解——需要关注的地区、缺失的历史时期以及需要提升的技能。",
+      subtitle:
+        "AI将分析您的游戏历史，提供个性化见解——需要关注的地区、缺失的历史时期以及需要提升的技能。",
       readyLabel: "准备分析",
       readySub: "基于您的完整游戏历史",
       loginLabel: "登录以分析",
@@ -2081,7 +2109,8 @@ const t = {
       interLens: "镜间距离",
       interLensHint: "Google Cardboard v2标准：63.9 mm",
       phoneScreenWidth: "手机屏幕宽度",
-      phoneScreenHint: "测量横屏时的水平屏幕宽度（长边）。设为0则使用手动眼窗宽度。",
+      phoneScreenHint:
+        "测量横屏时的水平屏幕宽度（长边）。设为0则使用手动眼窗宽度。",
       computedEye: "计算的眼窗：",
       saveApply: "保存并应用",
       resetDefaults: "重置为默认值",
@@ -2098,7 +2127,8 @@ const t = {
       preparingArchive: "准备排名档案馆",
       sessionProgress: "场次进度",
       sealedTitle: "排名档案馆已封闭",
-      sealedDesc: (n) => `今日排名限额${n}场已达到。明天再来——或升级以无限次游玩。`,
+      sealedDesc: (n) =>
+        `今日排名限额${n}场已达到。明天再来——或升级以无限次游玩。`,
       upgradeTitle: "升级至Plus",
       upgradeDesc: "无限排名场次、高级学习内容和专属徽章——每月仅需65,000₫。",
       viewSubscription: "查看订阅",
@@ -2260,12 +2290,12 @@ const t = {
     bento: {
       liveNow: "En Direct",
       archivistsExploring: "Archivistes en exploration",
-      todaysQuest: "Quête du Jour",
-      endsIn: "Se termine dans",
-      questTitle: "Le Sanctuaire de My Son",
-      questDesc:
-        "Identifiez les motifs cachés dans l'ancien complexe de temples hindous.",
-      xpReward: "+500 XP de Récompense",
+      adBadge: "Jouer",
+      adTagline: "Gratuit · Sans téléchargement",
+      adTitle: "Explorez le Vietnam, une Devinette à la Fois",
+      adDesc:
+        "Plongez dans des centaines de sites patrimoniaux, devinez où vous êtes et découvrez leurs histoires avec l'Archiviste IA à vos côtés.",
+      adCta: "Commencez votre première manche →",
       imperialScholars: "Érudits Impériaux",
       fullRankings: "Classement Complet",
     },
@@ -2373,10 +2403,16 @@ const t = {
     register: {
       subtitle: "Rejoindre l'Archive",
       fields: {
-        name: { label: "Nom du Curateur", placeholder: "Votre alias archivistique" },
+        name: {
+          label: "Nom du Curateur",
+          placeholder: "Votre alias archivistique",
+        },
         email: { label: "E-mail", placeholder: "curateur@archive.vn" },
         password: { label: "Mot de passe", placeholder: "••••••••" },
-        confirmPassword: { label: "Confirmer le mot de passe", placeholder: "••••••••" },
+        confirmPassword: {
+          label: "Confirmer le mot de passe",
+          placeholder: "••••••••",
+        },
       },
       submit: "S'inscrire comme Curateur",
       orDivider: "Ou s'inscrire avec",
@@ -2394,12 +2430,16 @@ const t = {
         passwordTooShort: "Le mot de passe doit contenir au moins 8 caractères",
         confirmRequired: "Confirmez votre mot de passe",
         confirmMismatch: "Les mots de passe ne correspondent pas",
-        nameInvalidChars: "Le nom doit contenir au moins une lettre ou un chiffre",
-        emailInUse: "Cet e-mail est déjà enregistré. Essayez de vous connecter.",
-        usernameTaken: "Ce nom d'utilisateur est déjà pris. Veuillez en choisir un autre.",
+        nameInvalidChars:
+          "Le nom doit contenir au moins une lettre ou un chiffre",
+        emailInUse:
+          "Cet e-mail est déjà enregistré. Essayez de vous connecter.",
+        usernameTaken:
+          "Ce nom d'utilisateur est déjà pris. Veuillez en choisir un autre.",
         registrationError: "Erreur d'inscription. Veuillez réessayer.",
         invalidData: "Données d'inscription invalides. Vérifiez vos saisies.",
-        passwordTooLong: "Le mot de passe doit contenir moins de 128 caractères",
+        passwordTooLong:
+          "Le mot de passe doit contenir moins de 128 caractères",
         somethingWrong: "Une erreur s'est produite. Veuillez réessayer.",
         serverError: "Erreur serveur. Veuillez réessayer plus tard.",
       },
@@ -2417,7 +2457,8 @@ const t = {
       rankNow: "Jouer Maintenant",
       loading: "Chargement des données de rang...",
       maintenance: "En Maintenance",
-      maintenanceDesc: "L'Archive Classée est temporairement fermée pour maintenance. Revenez plus tard.",
+      maintenanceDesc:
+        "L'Archive Classée est temporairement fermée pour maintenance. Revenez plus tard.",
       backHome: "Retour à l'Accueil",
       starsOf: (s) => `${s} / 5 étoiles`,
       rankLabel: (rank, name) => `RANG ${rank} — ${name}`,
@@ -2490,8 +2531,8 @@ const t = {
         "Allez sur google.com/maps et recherchez le site patrimonial par son nom.",
         "Cliquez sur le repère de localisation pour ouvrir son panneau de détails.",
         "Passez en Street View en faisant glisser le bonhomme jaune sur la carte.",
-        "Copiez l'URL complète de votre navigateur — elle doit contenir les coordonnées \"@lat,lng\".",
-        "Collez l'URL dans le champ \"URL Google Street View\" et soumettez.",
+        'Copiez l\'URL complète de votre navigateur — elle doit contenir les coordonnées "@lat,lng".',
+        'Collez l\'URL dans le champ "URL Google Street View" et soumettez.',
       ],
     },
 
@@ -2551,8 +2592,7 @@ const t = {
         tshirtDesc:
           "T-shirt en coton premium portant l'emblème Heritage Guessr.",
         tshirt2: "T-shirt Heritage (Alt)",
-        tshirt2Desc:
-          "Coloris alternatif du t-shirt officiel Heritage Guessr.",
+        tshirt2Desc: "Coloris alternatif du t-shirt officiel Heritage Guessr.",
         starbucks: "Carte Cadeau Starbucks",
         starbucksDesc:
           "Une carte cadeau Starbucks pour alimenter votre prochaine session patrimoniale.",
@@ -2637,7 +2677,6 @@ const t = {
         "D'une idée de classe à une plateforme full-stack servant des centaines d'étudiants — voici l'histoire de Heritage Guessr.",
       quote:
         '"Nous nous sommes demandé — et si redécouvrir le passé du Vietnam pouvait ressembler à jouer à un jeu ? Cette question est devenue Heritage Guessr."',
-      quoteRole: "Leader de l'Innovation",
       timeline: [
         {
           year: "Début 2025 · Genèse",
@@ -2688,29 +2727,25 @@ const t = {
       hieuQuoteAccent2: "impossible à oublier.",
       hieuRole: "Développeur Principal · Designer · Auteur",
 
-      craftedBy: "Créé Par",
-      foundingTeam: "L'Équipe Fondatrice",
-      teamDesc:
-        "Trois étudiants à Delta Global School, Hanoï — unis par une seule mission.",
-      memberRoles: [
-        "Leader de l'Innovation",
-        "Développeur Principal · Designer · Auteur",
-        "Spécialiste Contenu Créatif",
+      // Contributors
+      contributorsLabel: "Avec le Soutien De",
+      contributorsTitle: "Nos Contributeurs",
+      contributorsDesc:
+        "Heritage Guessr est construit avec le soutien d'organisations convaincues que la technologie peut faire vivre le patrimoine vietnamien.",
+      contributorRoles: [
+        "Studio de Jeu",
+        "École Fondatrice",
+        "Partenaire Technologique",
       ],
-      dgsTitle: "Delta Global School",
-      dgsLocation: "Hanoï, Vietnam",
-      dgsDesc:
-        "Heritage Guessr a été conçu et construit à DGS dans le cadre d'une initiative de préservation et de promotion du patrimoine culturel vietnamien par la technologie.",
-      theTeamLabel: "L'Équipe",
-      meetFounders: "Rencontrer les Fondateurs",
-      meetFoundersDesc:
-        "Découvrez toute l'équipe derrière Heritage Guessr sur notre page d'accueil.",
-      viewFounders: "Voir les Fondateurs",
+      contributorDescs: [
+        "Conseils en game design et en production — pour façonner la manière dont Heritage Guessr se joue et se ressent.",
+        "Le lieu où Heritage Guessr a été conçu et construit, avec du mentorat et les premières classes pilotes.",
+        "Soutien en technologie et en innovation étudiante, aidant la plateforme à atteindre les écoles du Vietnam.",
+      ],
 
       openSource: "Open Source · Éducatif",
       bottomTitle: "Construit avec ❤️ pour le Patrimoine Culturel Vietnamien",
-      copyright:
-        "Copyright © 2025 Le Trung Hieu et l'équipe Heritage Guessr. Tous droits réservés.",
+      copyright: "© 2026 Heritage Guessr Team",
       followUs: "Nous Suivre",
       contributeASite: "Contribuer un Site",
     },
@@ -2718,8 +2753,8 @@ const t = {
     // Founders
     founders: {
       eyebrow: "Les Personnes Derrière la Plateforme",
-      headline: "Nos",
-      headlineAccent: "Fondateurs",
+      headline: "L'Équipe",
+      headlineAccent: "Fondatrice",
       subtitle:
         "Une équipe dévouée préservant et célébrant l'âme du Vietnam — un monument à la fois.",
       founderBadge: "Fondateur",
@@ -2727,19 +2762,24 @@ const t = {
       connect: "Connecter",
       members: [
         {
-          name: "Đặng Thái Hoà",
-          role: "Leader de l'Innovation",
-          bio: "Façonne la vision stratégique de Heritage Guessr, appliquant la pensée design et la direction créative pour créer des expériences significatives qui redéfinissent la façon dont le patrimoine vietnamien est exploré en ligne.",
-        },
-        {
           name: "Lê Trung Hiếu",
           role: "Responsable Ingénierie Full-Stack & Designer",
           bio: "Dirige le développement end-to-end de Heritage Guessr, de l'ingénierie full-stack et l'architecture backend au design frontend soigné, créant une plateforme robuste et évolutive qui transforme le patrimoine vietnamien en expérience numérique immersive.",
         },
         {
+          name: "Đặng Thái Hoà",
+          role: "Leader de l'Innovation",
+          bio: "Façonne la vision stratégique de Heritage Guessr, appliquant la pensée design et la direction créative pour créer des expériences significatives qui redéfinissent la façon dont le patrimoine vietnamien est exploré en ligne.",
+        },
+        {
           name: "Nguyễn Thái Sơn",
           role: "Spécialiste Contenu Créatif",
           bio: "Insuffle l'âme culturelle dans chaque recoin de la plateforme — créant des histoires, des images et des expériences qui rendent le patrimoine vietnamien inoubliable.",
+        },
+        {
+          name: "Lê Huy Hoàng",
+          role: "Créateur de Contenu Visuel",
+          bio: "Tisse la profondeur culturelle dans chaque couche visuelle de la plateforme — sélectionnant des images et des ressources créatives qui font revivre les sites emblématiques du Vietnam.",
         },
       ],
     },
@@ -2748,7 +2788,8 @@ const t = {
     progressAnalysis: {
       badge: "APERÇUS IA",
       title: "Analyse de Progression",
-      subtitle: "L'IA analysera votre historique de jeu et vous fournira des insights personnalisés — régions à cibler, périodes historiques manquantes et compétences à améliorer.",
+      subtitle:
+        "L'IA analysera votre historique de jeu et vous fournira des insights personnalisés — régions à cibler, périodes historiques manquantes et compétences à améliorer.",
       readyLabel: "Prêt à analyser",
       readySub: "Basé sur l'intégralité de votre historique de jeu",
       loginLabel: "Connectez-vous pour analyser",
@@ -2757,7 +2798,8 @@ const t = {
       notLoggedIn: "Non connecté",
       loadingLabel: "L'IA analyse vos données…",
       needMoreData: "Plus de données nécessaires",
-      needMoreDataSub: "Jouez au moins 3 manches Classées pour que l'IA puisse analyser votre progression.",
+      needMoreDataSub:
+        "Jouez au moins 3 manches Classées pour que l'IA puisse analyser votre progression.",
       back: "Retour",
       errorMsg: "Impossible de se connecter. Veuillez réessayer.",
       retry: "Réessayer",
@@ -2779,7 +2821,8 @@ const t = {
     wrongLocations: {
       badge: "SOUVENT RATÉ",
       title: "Sites où Vous Échouez",
-      subtitle: "Sites auxquels vous avez répondu incorrectement plusieurs fois. Cliquez sur le bouton IA pour obtenir des conseils de pratique spécifiques.",
+      subtitle:
+        "Sites auxquels vous avez répondu incorrectement plusieurs fois. Cliquez sur le bouton IA pour obtenir des conseils de pratique spécifiques.",
       loadLabel: "Voir les sites difficiles",
       loadSub: "Basé sur l'historique de jeu — score < 5",
       loginLabel: "Connectez-vous pour voir",
@@ -2787,7 +2830,8 @@ const t = {
       loadBtn: "Voir Maintenant",
       notLoggedIn: "Non connecté",
       empty: "Aucun site difficile !",
-      emptySub: "Vous n'avez pas encore eu de score inférieur à 5. Continuez à jouer pour suivre votre progression.",
+      emptySub:
+        "Vous n'avez pas encore eu de score inférieur à 5. Continuez à jouer pour suivre votre progression.",
       errorMsg: "Impossible de charger les données. Veuillez réessayer.",
       retry: "Réessayer",
       back: "Retour",
@@ -2804,17 +2848,22 @@ const t = {
       calibTitle: "Calibration VR",
       calibSubtitle: "Ajustez pour correspondre à votre casque cardboard",
       eyeWindowWidth: "Largeur de la Fenêtre Oculaire",
-      eyeWindowAuto: "Calculé automatiquement depuis la taille de l'écran · remplacement manuel désactivé",
-      eyeWindowManual: "Manuel · définissez la largeur de l'écran du téléphone ci-dessous pour calculer automatiquement",
+      eyeWindowAuto:
+        "Calculé automatiquement depuis la taille de l'écran · remplacement manuel désactivé",
+      eyeWindowManual:
+        "Manuel · définissez la largeur de l'écran du téléphone ci-dessous pour calculer automatiquement",
       verticalOffset: "Décalage Vertical",
-      verticalOffsetHint: "Déplace l'image vers le bas (+) ou vers le haut (−) dans le casque",
+      verticalOffsetHint:
+        "Déplace l'image vers le bas (+) ou vers le haut (−) dans le casque",
       streetViewZoom: "Zoom Street View",
-      streetViewZoomHint: "0 = 180° FOV (très large)  ·  1 = standard  ·  3 = téléobjectif max",
+      streetViewZoomHint:
+        "0 = 180° FOV (très large)  ·  1 = standard  ·  3 = téléobjectif max",
       precision: "Précision — Optique Cardboard",
       interLens: "Distance Inter-Lentilles",
       interLensHint: "Standard Google Cardboard v2 : 63,9 mm",
       phoneScreenWidth: "Largeur Écran Téléphone",
-      phoneScreenHint: "Mesurez la largeur horizontale de l'écran en paysage (côté long). Mettez 0 pour utiliser la largeur oculaire manuelle.",
+      phoneScreenHint:
+        "Mesurez la largeur horizontale de l'écran en paysage (côté long). Mettez 0 pour utiliser la largeur oculaire manuelle.",
       computedEye: "Fenêtre oculaire calculée :",
       saveApply: "Sauvegarder & Appliquer",
       resetDefaults: "Réinitialiser les Paramètres",
@@ -2831,13 +2880,16 @@ const t = {
       preparingArchive: "Préparer l'Archive Classée",
       sessionProgress: "Progression de Session",
       sealedTitle: "Archive Classée Scellée",
-      sealedDesc: (n) => `Limite journalière de ${n} sessions atteinte. Revenez demain — ou passez à la formule supérieure pour jouer sans limite.`,
+      sealedDesc: (n) =>
+        `Limite journalière de ${n} sessions atteinte. Revenez demain — ou passez à la formule supérieure pour jouer sans limite.`,
       upgradeTitle: "Passer à Plus",
-      upgradeDesc: "Sessions Classées illimitées, contenu d'étude avancé et badges exclusifs — à partir de seulement 65 000₫/mois.",
+      upgradeDesc:
+        "Sessions Classées illimitées, contenu d'étude avancé et badges exclusifs — à partir de seulement 65 000₫/mois.",
       viewSubscription: "Voir l'Abonnement",
       backHome: "Retour à l'Accueil",
       maintenanceTitle: "En Maintenance",
-      maintenanceDesc: "L'Archive Classée est temporairement fermée pour maintenance. Revenez plus tard.",
+      maintenanceDesc:
+        "L'Archive Classée est temporairement fermée pour maintenance. Revenez plus tard.",
       noImagery: "Pas d'Imagerie Disponible",
       useClues: "Utilisez les indices pour faire votre meilleure estimation",
       enterHeritage: "Entrez l'Identité du Patrimoine",
@@ -2887,7 +2939,8 @@ const t = {
       hintMessage:
         "Astuce : même les réponses partielles rapportent des points ! Nommer la ville, le type de temple ou le personnage historique honoré donne du crédit partiel. Plus votre réponse est précise, plus vous gagnez de points.",
       ratingTitle: "Analyse en Cours",
-      ratingSubtitle: "Évaluation de la proximité de votre réponse avec le site réel.",
+      ratingSubtitle:
+        "Évaluation de la proximité de votre réponse avec le site réel.",
       rankUp: (name) => `Montée de Rang → ${name}`,
       rankDown: (name) => `Descente de Rang → ${name}`,
     },
@@ -2993,12 +3046,12 @@ const t = {
     bento: {
       liveNow: "실시간",
       archivistsExploring: "기록 보관자가 탐험 중",
-      todaysQuest: "오늘의 퀘스트",
-      endsIn: "종료까지",
-      questTitle: "미선 성지",
-      questDesc:
-        "고대 힌두교 사원 단지에 숨겨진 문양을 찾아내세요.",
-      xpReward: "+500 XP 보상",
+      adBadge: "지금 플레이",
+      adTagline: "무료 · 다운로드 불필요",
+      adTitle: "한 번의 추측으로 만나는 베트남",
+      adDesc:
+        "수백 곳의 문화유산 속으로 들어가 현재 위치를 추측하고, AI 기록 보관자와 함께 그 이야기를 밝혀보세요.",
+      adCta: "첫 라운드 시작하기 →",
       imperialScholars: "황실 학자들",
       fullRankings: "전체 순위",
     },
@@ -3127,11 +3180,14 @@ const t = {
         passwordTooShort: "비밀번호는 최소 8자 이상이어야 합니다",
         confirmRequired: "비밀번호를 확인해 주세요",
         confirmMismatch: "비밀번호가 일치하지 않습니다",
-        nameInvalidChars: "이름에는 최소 한 개의 글자나 숫자가 포함되어야 합니다",
+        nameInvalidChars:
+          "이름에는 최소 한 개의 글자나 숫자가 포함되어야 합니다",
         emailInUse: "이미 등록된 이메일입니다. 로그인을 시도해 보세요.",
-        usernameTaken: "이미 사용 중인 사용자명입니다. 다른 이름을 선택해 주세요.",
+        usernameTaken:
+          "이미 사용 중인 사용자명입니다. 다른 이름을 선택해 주세요.",
         registrationError: "가입 중 오류가 발생했습니다. 다시 시도해 주세요.",
-        invalidData: "가입 정보가 유효하지 않습니다. 입력 내용을 확인해 주세요.",
+        invalidData:
+          "가입 정보가 유효하지 않습니다. 입력 내용을 확인해 주세요.",
         passwordTooLong: "비밀번호는 128자 미만이어야 합니다",
         somethingWrong: "문제가 발생했습니다. 다시 시도해 주세요.",
         serverError: "서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.",
@@ -3150,7 +3206,8 @@ const t = {
       rankNow: "지금 플레이",
       loading: "등급 데이터 불러오는 중...",
       maintenance: "점검 중",
-      maintenanceDesc: "랭크 기록 보관소가 일시적으로 점검 중입니다. 나중에 다시 확인해 주세요.",
+      maintenanceDesc:
+        "랭크 기록 보관소가 일시적으로 점검 중입니다. 나중에 다시 확인해 주세요.",
       backHome: "홈으로 돌아가기",
       starsOf: (s) => `${s} / 5 별`,
       rankLabel: (rank, name) => `등급 ${rank} — ${name}`,
@@ -3192,8 +3249,7 @@ const t = {
       pending: "대기 중",
       declined: "반려됨",
       yourContributions: "당신의 기여",
-      noContributions:
-        "아직 기여가 없습니다. 유산지를 처음으로 등록해 보세요!",
+      noContributions: "아직 기여가 없습니다. 유산지를 처음으로 등록해 보세요!",
       submitFirstSite: "첫 번째 유산지 제출하기",
       theArtOfArchiving: "기록의 예술",
       cards: [
@@ -3223,8 +3279,8 @@ const t = {
         "google.com/maps에서 유산지의 이름으로 검색하세요.",
         "위치 핀을 클릭해 상세 정보 패널을 여세요.",
         "노란색 사람 아이콘을 지도 위로 끌어 스트리트뷰로 전환하세요.",
-        "브라우저에서 전체 URL을 복사하세요 — \"@위도,경도\" 좌표가 포함되어야 합니다.",
-        "복사한 URL을 \"Google 스트리트뷰 URL\" 입력란에 붙여넣고 제출하세요.",
+        '브라우저에서 전체 URL을 복사하세요 — "@위도,경도" 좌표가 포함되어야 합니다.',
+        '복사한 URL을 "Google 스트리트뷰 URL" 입력란에 붙여넣고 제출하세요.',
       ],
     },
 
@@ -3268,30 +3324,24 @@ const t = {
     shop: {
       eyebrow: "유산 기록 보관소 상점",
       title: "기프트 상점",
-      subtitle:
-        "열심히 모은 포인트를 특별한 유산 기념품으로 교환하세요.",
+      subtitle: "열심히 모은 포인트를 특별한 유산 기념품으로 교환하세요.",
       points: "포인트",
       redeem: "교환하기",
       notEnough: "포인트 부족",
       items: {
         keyboard: "기계식 키보드",
-        keyboardDesc:
-          "프리미엄 풀사이즈 기계식 키보드 — 기록 보관자의 무기.",
+        keyboardDesc: "프리미엄 풀사이즈 기계식 키보드 — 기록 보관자의 무기.",
         mouse: "게이밍 마우스",
-        mouseDesc:
-          "헌신적인 학자를 위해 설계된 고정밀 게이밍 마우스.",
+        mouseDesc: "헌신적인 학자를 위해 설계된 고정밀 게이밍 마우스.",
         tshirt: "헤리티지 티셔츠 (클래식)",
-        tshirtDesc:
-          "Heritage Guessr 엠블럼이 새겨진 프리미엄 면 티셔츠.",
+        tshirtDesc: "Heritage Guessr 엠블럼이 새겨진 프리미엄 면 티셔츠.",
         tshirt2: "헤리티지 티셔츠 (얼터너티브)",
-        tshirt2Desc:
-          "공식 Heritage Guessr 티셔츠의 다른 색상 버전.",
+        tshirt2Desc: "공식 Heritage Guessr 티셔츠의 다른 색상 버전.",
         starbucks: "스타벅스 기프트 카드",
         starbucksDesc:
           "다음 유산 탐험 세션에 활력을 더해 줄 스타벅스 기프트 카드.",
         keychain: "헤리티지 키체인",
-        keychainDesc:
-          "수공예 키체인 — 당신의 보관자 정신을 담은 작은 증표.",
+        keychainDesc: "수공예 키체인 — 당신의 보관자 정신을 담은 작은 증표.",
       },
       modal: {
         notEnoughTitle: "포인트 부족",
@@ -3324,12 +3374,7 @@ const t = {
         vrDiscovery: "VR 탐험",
       },
 
-      statsLabels: [
-        "도달한 학생 수",
-        "유산지 수",
-        "AI 모델",
-        "파일럿 학교",
-      ],
+      statsLabels: ["도달한 학생 수", "유산지 수", "AI 모델", "파일럿 학교"],
 
       missionLabel: "우리의 사명",
       missionVi: "Lan tỏa, kết nối và gìn giữ.",
@@ -3370,7 +3415,6 @@ const t = {
         "교실의 아이디어에서 수백 명의 학생에게 봉사하는 풀스택 플랫폼으로 — 이것이 Heritage Guessr의 이야기입니다.",
       quote:
         '"우리는 자문해 보았습니다 — 베트남의 과거를 다시 발견하는 일이 게임을 하는 것처럼 느껴진다면 어떨까? 그 질문이 Heritage Guessr가 되었습니다."',
-      quoteRole: "혁신 리더",
       timeline: [
         {
           year: "2025년 초 · 시작",
@@ -3421,29 +3465,21 @@ const t = {
       hieuQuoteAccent2: "잊을 수 없게 만드는 것.",
       hieuRole: "리드 개발자 · 디자이너 · 저자",
 
-      craftedBy: "제작",
-      foundingTeam: "창립 팀",
-      teamDesc:
-        "하노이 Delta Global School의 세 학생 — 단 하나의 사명으로 뭉쳤습니다.",
-      memberRoles: [
-        "혁신 리더",
-        "리드 개발자 · 디자이너 · 저자",
-        "크리에이티브 콘텐츠 전문가",
+      // Contributors
+      contributorsLabel: "함께해 주신 곳",
+      contributorsTitle: "기여자들",
+      contributorsDesc:
+        "Heritage Guessr는 기술이 베트남의 문화유산을 지킬 수 있다고 믿는 기관들의 지원으로 만들어지고 있습니다.",
+      contributorRoles: ["게임 스튜디오", "창립 학교", "기술 파트너"],
+      contributorDescs: [
+        "게임 디자인과 제작에 대한 조언으로 Heritage Guessr의 플레이 경험을 함께 다듬었습니다.",
+        "Heritage Guessr가 구상되고 만들어진 곳으로, 멘토링과 첫 파일럿 수업을 제공했습니다.",
+        "기술과 학생 혁신을 지원하여 플랫폼이 베트남 전역의 학교에 닿도록 돕고 있습니다.",
       ],
-      dgsTitle: "Delta Global School",
-      dgsLocation: "베트남 하노이",
-      dgsDesc:
-        "Heritage Guessr는 기술을 통해 베트남 문화유산을 보존하고 알리기 위한 이니셔티브의 일환으로 DGS에서 구상되고 구축되었습니다.",
-      theTeamLabel: "팀",
-      meetFounders: "창립자를 만나보세요",
-      meetFoundersDesc:
-        "홈페이지에서 Heritage Guessr 뒤의 전체 팀을 만나보세요.",
-      viewFounders: "창립자 보기",
 
       openSource: "오픈 소스 · 교육용",
       bottomTitle: "베트남 문화유산을 위한 ❤️로 제작되었습니다",
-      copyright:
-        "Copyright © 2025 Le Trung Hieu 및 Heritage Guessr 팀. 모든 권리 보유.",
+      copyright: "© 2026 Heritage Guessr Team",
       followUs: "팔로우하기",
       contributeASite: "유산지 기여하기",
     },
@@ -3451,8 +3487,8 @@ const t = {
     // Founders
     founders: {
       eyebrow: "플랫폼 뒤의 사람들",
-      headline: "우리의",
-      headlineAccent: "창립자",
+      headline: "창립",
+      headlineAccent: "팀",
       subtitle:
         "베트남의 영혼을 보존하고 기리는 헌신적인 팀 — 한 번에 한 기념물씩.",
       founderBadge: "창립자",
@@ -3460,19 +3496,24 @@ const t = {
       connect: "연결하기",
       members: [
         {
-          name: "Đặng Thái Hoà",
-          role: "혁신 리더",
-          bio: "Heritage Guessr의 전략적 비전을 빚어내며, 디자인 씽킹과 크리에이티브 디렉션을 적용해 베트남 유산이 온라인에서 탐험되는 방식을 재정의하는 의미 있는 경험을 만들어 갑니다.",
-        },
-        {
           name: "Lê Trung Hiếu",
           role: "풀스택 엔지니어링 리드 & 디자이너",
           bio: "풀스택 엔지니어링과 백엔드 아키텍처부터 정교한 프런트엔드 디자인까지 Heritage Guessr의 엔드 투 엔드 개발을 이끌며, 베트남 유산을 몰입형 디지털 경험으로 변환하는 견고하고 확장 가능한 플랫폼을 만들어 갑니다.",
         },
         {
+          name: "Đặng Thái Hoà",
+          role: "혁신 리더",
+          bio: "Heritage Guessr의 전략적 비전을 빚어내며, 디자인 씽킹과 크리에이티브 디렉션을 적용해 베트남 유산이 온라인에서 탐험되는 방식을 재정의하는 의미 있는 경험을 만들어 갑니다.",
+        },
+        {
           name: "Nguyễn Thái Sơn",
           role: "크리에이티브 콘텐츠 전문가",
           bio: "플랫폼의 구석구석에 문화의 영혼을 불어넣습니다 — 베트남 유산을 잊을 수 없게 만드는 이야기, 이미지, 경험을 빚어냅니다.",
+        },
+        {
+          name: "Lê Huy Hoàng",
+          role: "비주얼 콘텐츠 크리에이터",
+          bio: "플랫폼의 모든 시각적 레이어에 문화적 깊이를 녹여냅니다 — 베트남의 역사적 명소를 생생하게 살아 숨쉬게 만드는 이미지와 크리에이티브 에셋을 큐레이팅합니다.",
         },
       ],
     },
@@ -3481,7 +3522,8 @@ const t = {
     progressAnalysis: {
       badge: "AI 인사이트",
       title: "진행 분석",
-      subtitle: "AI가 게임 기록을 분석해 맞춤형 인사이트를 제공합니다 — 집중할 지역, 부족한 시대, 향상해야 할 역량.",
+      subtitle:
+        "AI가 게임 기록을 분석해 맞춤형 인사이트를 제공합니다 — 집중할 지역, 부족한 시대, 향상해야 할 역량.",
       readyLabel: "분석 준비됨",
       readySub: "전체 게임 기록을 기반으로",
       loginLabel: "분석을 위해 로그인하세요",
@@ -3490,7 +3532,8 @@ const t = {
       notLoggedIn: "로그인되지 않음",
       loadingLabel: "AI가 데이터를 분석 중…",
       needMoreData: "더 많은 데이터 필요",
-      needMoreDataSub: "AI가 진행 상황을 분석할 수 있도록 최소 3번의 랭크 매치를 플레이해 주세요.",
+      needMoreDataSub:
+        "AI가 진행 상황을 분석할 수 있도록 최소 3번의 랭크 매치를 플레이해 주세요.",
       back: "뒤로",
       errorMsg: "연결할 수 없습니다. 다시 시도해 주세요.",
       retry: "다시 시도",
@@ -3512,7 +3555,8 @@ const t = {
     wrongLocations: {
       badge: "자주 틀리는 유산지",
       title: "어려워하는 유산지",
-      subtitle: "여러 번 잘못 답한 유산지입니다. AI 버튼을 눌러 구체적인 연습 조언을 받아 보세요.",
+      subtitle:
+        "여러 번 잘못 답한 유산지입니다. AI 버튼을 눌러 구체적인 연습 조언을 받아 보세요.",
       loadLabel: "어려운 유산지 보기",
       loadSub: "게임 기록 기반 — 점수 < 5",
       loginLabel: "보려면 로그인하세요",
@@ -3520,7 +3564,8 @@ const t = {
       loadBtn: "지금 보기",
       notLoggedIn: "로그인되지 않음",
       empty: "어려운 유산지가 없습니다!",
-      emptySub: "아직 5점 미만을 받은 적이 없습니다. 계속 플레이하며 진행 상황을 확인해 보세요.",
+      emptySub:
+        "아직 5점 미만을 받은 적이 없습니다. 계속 플레이하며 진행 상황을 확인해 보세요.",
       errorMsg: "데이터를 불러올 수 없습니다. 다시 시도해 주세요.",
       retry: "다시 시도",
       back: "뒤로",
@@ -3538,16 +3583,19 @@ const t = {
       calibSubtitle: "카드보드 헤드셋에 맞게 조정하세요",
       eyeWindowWidth: "시야 창 너비",
       eyeWindowAuto: "화면 크기로부터 자동 계산됨 · 수동 재설정 비활성화",
-      eyeWindowManual: "수동 · 아래에 휴대폰 화면 너비를 입력하면 자동 계산됩니다",
+      eyeWindowManual:
+        "수동 · 아래에 휴대폰 화면 너비를 입력하면 자동 계산됩니다",
       verticalOffset: "수직 오프셋",
       verticalOffsetHint: "헤드셋에서 이미지를 아래(+) 또는 위(−)로 이동합니다",
       streetViewZoom: "스트리트뷰 줌",
-      streetViewZoomHint: "0 = 180° 시야각(매우 넓음)  ·  1 = 표준  ·  3 = 최대 망원",
+      streetViewZoomHint:
+        "0 = 180° 시야각(매우 넓음)  ·  1 = 표준  ·  3 = 최대 망원",
       precision: "정밀도 — 카드보드 광학",
       interLens: "렌즈 간 거리",
       interLensHint: "Google Cardboard v2 표준: 63.9mm",
       phoneScreenWidth: "휴대폰 화면 너비",
-      phoneScreenHint: "가로 모드에서 화면의 수평 너비(긴 쪽)를 측정하세요. 수동 시야 창 너비를 사용하려면 0으로 설정하세요.",
+      phoneScreenHint:
+        "가로 모드에서 화면의 수평 너비(긴 쪽)를 측정하세요. 수동 시야 창 너비를 사용하려면 0으로 설정하세요.",
       computedEye: "계산된 시야 창:",
       saveApply: "저장 & 적용",
       resetDefaults: "기본값으로 재설정",
@@ -3564,13 +3612,16 @@ const t = {
       preparingArchive: "랭크 기록 보관소 준비 중",
       sessionProgress: "세션 진행도",
       sealedTitle: "랭크 기록 보관소 봉인됨",
-      sealedDesc: (n) => `일일 ${n} 세션 한도에 도달했습니다. 내일 다시 오시거나 — 무제한 플레이를 위해 업그레이드하세요.`,
+      sealedDesc: (n) =>
+        `일일 ${n} 세션 한도에 도달했습니다. 내일 다시 오시거나 — 무제한 플레이를 위해 업그레이드하세요.`,
       upgradeTitle: "더 누리기 위해 업그레이드",
-      upgradeDesc: "무제한 랭크 세션, 고급 스터디 콘텐츠, 독점 배지 — 월 65,000₫부터 시작합니다.",
+      upgradeDesc:
+        "무제한 랭크 세션, 고급 스터디 콘텐츠, 독점 배지 — 월 65,000₫부터 시작합니다.",
       viewSubscription: "구독 보기",
       backHome: "홈으로 돌아가기",
       maintenanceTitle: "점검 중",
-      maintenanceDesc: "랭크 기록 보관소가 일시적으로 점검 중입니다. 나중에 다시 확인해 주세요.",
+      maintenanceDesc:
+        "랭크 기록 보관소가 일시적으로 점검 중입니다. 나중에 다시 확인해 주세요.",
       noImagery: "이미지 없음",
       useClues: "단서를 활용해 최선의 추측을 해 보세요",
       enterHeritage: "유산 정체성 입력",
