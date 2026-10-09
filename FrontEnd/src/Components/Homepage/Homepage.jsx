@@ -539,62 +539,6 @@ export default function Homepage() {
           </div>
         </section>
 
-        {/* ─── CTA ─── */}
-        <section className="px-4 sm:px-8 pb-12 sm:pb-20 md:pb-24">
-          <div className="max-w-6xl mx-auto">
-            <motion.div
-              className="relative bg-[#1a211f] rounded-xl p-6 sm:p-10 md:p-16 overflow-hidden border border-[rgba(65,73,68,0.1)] shadow-[0_0_100px_rgba(15,61,46,0.5)]"
-              variants={fadeUp}
-              initial="hidden"
-              whileInView="show"
-              viewport={{ once: true, amount: 0.2 }}
-            >
-              <div
-                className="absolute top-0 right-0 w-1/2 h-full pointer-events-none"
-                style={{
-                  background:
-                    "linear-gradient(to left, rgba(162,209,187,0.1), transparent)",
-                }}
-              />
-              <div className="relative z-10 flex flex-col items-center text-center">
-                <h2
-                  className="font-black text-[#e3e3de] mb-4 sm:mb-6 tracking-[-0.03em]"
-                  style={{ fontSize: "clamp(26px, 5vw, 64px)" }}
-                >
-                  {tx.cta.headline}
-                </h2>
-                <p className="text-[14px] sm:text-[16px] md:text-[18px] text-[#c0c8c3] max-w-[640px] mb-7 sm:mb-10 leading-relaxed">
-                  {tx.cta.body}
-                </p>
-                <div className="flex gap-3 sm:gap-4 flex-wrap justify-center">
-                  <Link
-                    to="/register"
-                    style={{ transition: ease }}
-                    className="px-6 sm:px-10 py-3 sm:py-5 bg-[#e9c349] text-[#3c2f00] font-black rounded-xl no-underline text-[13px] sm:text-[14px] uppercase tracking-[0.15em] hover:shadow-[0_0_30px_rgba(233,195,73,0.4)]"
-                  >
-                    {tx.cta.createProfile}
-                  </Link>
-                  <Link
-                    to="/login"
-                    style={{ transition: ease }}
-                    className="px-6 sm:px-10 py-3 sm:py-5 bg-white/[0.05] border border-white/10 text-white font-black rounded-xl no-underline text-[13px] sm:text-[14px] uppercase tracking-[0.15em] hover:bg-white/10"
-                  >
-                    {tx.cta.questLogin}
-                  </Link>
-                </div>
-              </div>
-              <div className="absolute -bottom-20 -left-20 opacity-[0.05] pointer-events-none hidden sm:block">
-                <span
-                  className="material-symbols-outlined text-[300px]"
-                  style={{ fontVariationSettings: "'FILL' 1" }}
-                >
-                  temple_buddhist
-                </span>
-              </div>
-            </motion.div>
-          </div>
-        </section>
-
         {/* ─── FAQ ─── */}
         <section className="px-4 sm:px-8 pb-12 sm:pb-20 md:pb-24">
           <div className="max-w-3xl mx-auto">
