@@ -289,11 +289,6 @@ function FounderModal({ founder, onClose, tx }) {
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.2, duration: 0.46, ease: [0.22, 1, 0.36, 1] }}
         >
-          {/* Role eyebrow */}
-          <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#e9c349] mb-3 block">
-            {founder.role}
-          </span>
-
           {/* Name */}
           <h3 className="font-black text-[#e3e3de] text-[22px] sm:text-[26px] tracking-[-0.02em] leading-tight mb-1">
             {founder.name}
@@ -510,7 +505,7 @@ function FounderCard({ founder, index, onOpen, tx }) {
 
           {/* Founder badge — top, red */}
           <span
-            className="inline-block px-2.5 py-0.5 rounded-md mb-1.5 text-[10px] font-black uppercase tracking-[0.14em]"
+            className="inline-block px-2.5 py-0.5 rounded-md mb-2 text-[10px] font-black uppercase tracking-[0.14em]"
             style={{
               background: "rgba(220,38,38,0.2)",
               border: "1px solid rgba(220,38,38,0.38)",
@@ -519,20 +514,6 @@ function FounderCard({ founder, index, onOpen, tx }) {
           >
             {tx.founderBadge}
           </span>
-
-          {/* Role badge — below founder */}
-          <div className="mb-2">
-            <span
-              className="inline-block px-2.5 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-[0.08em]"
-              style={{
-                background: "rgba(162,209,187,0.09)",
-                border: "1px solid rgba(162,209,187,0.2)",
-                color: "#a2d1bb",
-              }}
-            >
-              {founder.role}
-            </span>
-          </div>
 
           {/* Name */}
           <h3 className="font-black text-[#e3e3de] text-[20px] tracking-[-0.02em] leading-tight mb-0 transition-transform duration-300 group-hover:-translate-y-0.5">
