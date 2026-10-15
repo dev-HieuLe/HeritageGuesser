@@ -38,7 +38,7 @@ VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 | `/game`       | Game                | Core gameplay (Street View + guessing)     |
 | `/game/rank`  | RankPlay            | Ranked mode gameplay                       |
 | `/rank`       | Rank                | Player rank dashboard                      |
-| `/leaderboard`| Leaderboard         | Global top 20 players                      |
+| `/leaderboard`| Leaderboard         | Global top 100 players                      |
 | `/study`      | Studypage           | Heritage card browser                      |
 | `/study/:id`  | LessonDetail        | Heritage lesson with XP rewards            |
 | `/explore`    | Discover            | Free Street View explorer                  |

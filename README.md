@@ -34,7 +34,7 @@ HeritageGuesser drops you into a Google Street View of a real Vietnamese UNESCO 
 - **Settings** — Update your account profile (name, email, password) from a dedicated settings page.
 - **3D VRM Avatar** — An animated VRM 3D avatar represents Savannah in the chat interface.
 - **Bilingual UI** — Full English / Vietnamese toggle across all pages.
-- **Leaderboard** — Top 20 players with podium display and rank tiers.
+- **Leaderboard** — Top 100 players with podium display and rank tiers.
 - **Feedback Modal** — Players can submit in-app feedback; contact links to Gmail and Facebook.
 - **Secure Auth** — JWT access + refresh tokens stored in httpOnly cookies. Bcrypt password hashing. Google OAuth via Supabase with profile picture sync. Accounts created via Google are blocked from password login with a clear error message.
 - **Community Contributions** — Authenticated users can submit new heritage sites via Google Maps URL. Gemma auto-generates cultural metadata (description, era, region, difficulty). Submissions enter a pending review queue before going live.
@@ -71,7 +71,7 @@ HeritageGuesser/
 │   │   ├── DiscoverController.js             # Google Geocoding for Street View discovery
 │   │   ├── heritageCheck.js                  # Forwards guess to NLP server for scoring
 │   │   ├── historyController.js              # Record game results in player_history
-│   │   ├── LeaderboardController.js          # Top 20 players query
+│   │   ├── LeaderboardController.js          # Top 100 players query
 │   │   ├── locationController.js             # Get all / random heritage locations
 │   │   ├── nlpController.js                  # NLP helper utilities
 │   │   ├── personalizeController.js          # Gemma-powered location recommendations
@@ -300,7 +300,7 @@ Auth forms with client-side validation, error toasts via `AuthToast`, and redire
 
 | Method | Endpoint       | Auth | Description                                             |
 | ------ | -------------- | ---- | ------------------------------------------------------- |
-| `GET`  | `/leaderboard` | No   | Top 20 players ordered by rank → rank_progress → level. |
+| `GET`  | `/leaderboard` | No   | Top 100 players ordered by rank → rank_progress → level. |
 
 ### Player
 

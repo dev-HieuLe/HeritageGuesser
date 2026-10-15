@@ -5,6 +5,7 @@ import { useLang } from "../../Context/languageContext";
 import t from "../../translations";
 
 const INITIAL_VISIBLE = 20;
+const MAX_PLAYERS = 100;
 
 const rankNames = [
   "Iron",
@@ -36,7 +37,7 @@ export default function Leaderboard() {
       })
       .then((res) => {
         if (Array.isArray(res.data)) {
-          setPlayers(res.data);
+          setPlayers(res.data.slice(0, MAX_PLAYERS));
         }
       })
       .catch((err) => console.error("Leaderboard fetch failed:", err))
@@ -142,7 +143,7 @@ export default function Leaderboard() {
             className="text-2xl font-black tracking-tight"
             style={{ color: "#a2d1bb" }}
           >
-            Leaderboard
+            Top 100 Players
           </h2>
         </div>
 

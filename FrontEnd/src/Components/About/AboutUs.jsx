@@ -270,10 +270,11 @@ export default function AboutUs() {
   ];
 
   const STATS = [
-    { value: 390, suffix: "+", label: ab.statsLabels[0] },
+    { value: 500, suffix: "+", label: ab.statsLabels[0] },
     { value: 124, suffix: "+", label: ab.statsLabels[1] },
     { value: 3, suffix: "", label: ab.statsLabels[2] },
-    { value: 2, suffix: "", label: ab.statsLabels[3] },
+    { value: 5, suffix: "", label: ab.statsLabels[3] },
+    { value: 2, suffix: "", label: ab.statsLabels[4] },
   ];
 
   const TIMELINE = ab.timeline.map((item, i) => ({
@@ -432,7 +433,7 @@ export default function AboutUs() {
       <section className="px-4 sm:px-8 pb-16 sm:pb-20">
         <div className="max-w-5xl mx-auto">
           <motion.div
-            className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6"
+            className="grid grid-cols-2 md:grid-cols-5 gap-4 sm:gap-6"
             variants={stagger}
             initial="hidden"
             whileInView="show"
@@ -827,129 +828,6 @@ export default function AboutUs() {
                     label={ab.pillLang}
                     color="#38bdf8"
                   />
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ── HIEU QUOTE ───────────────────────────────────────── */}
-      <section className="px-4 sm:px-8 pb-16 sm:pb-24">
-        <div className="max-w-5xl mx-auto">
-          <motion.div
-            className="relative rounded-2xl overflow-hidden py-12 sm:py-16 px-8 sm:px-14"
-            style={{
-              background: "linear-gradient(135deg, #12140e 0%, #1a211f 100%)",
-              border: "1px solid rgba(65,73,68,0.25)",
-            }}
-            variants={fadeUp}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.3 }}
-          >
-            {/* Vertical gold bar */}
-            <div
-              className="absolute left-0 top-8 bottom-8 w-[3px] rounded-r-full"
-              style={{
-                background:
-                  "linear-gradient(to bottom, #e9c349, rgba(233,195,73,0.08))",
-              }}
-            />
-            {/* Oversized decorative quote mark */}
-            <div
-              className="absolute -top-4 left-8 sm:left-12 pointer-events-none select-none"
-              style={{
-                fontSize: "160px",
-                color: "#e9c349",
-                opacity: 0.06,
-                lineHeight: 1,
-                fontFamily: "Georgia, serif",
-              }}
-            >
-              &#8220;
-            </div>
-            {/* Subtle right glow */}
-            <div
-              className="absolute top-0 right-0 w-72 h-full pointer-events-none"
-              style={{
-                background:
-                  "radial-gradient(ellipse at right center, rgba(233,195,73,0.04), transparent 70%)",
-              }}
-            />
-
-            <div className="relative z-10">
-              <p
-                className="font-black leading-[1.35] tracking-[-0.01em] mb-7"
-                style={{
-                  fontSize: "clamp(18px, 3vw, 30px)",
-                  color: "#e3e3de",
-                }}
-              >
-                "{ab.hieuQuote1}{" "}
-                <i
-                  style={{
-                    fontStyle: "italic",
-                    color: "#f1cf63",
-                    background:
-                      "linear-gradient(180deg, #fff6c7 0%, #f8de7a 38%, #e9c349 62%, #c9961a 100%)",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    textShadow:
-                      "0 1px 0 rgba(255,255,255,0.22), 0 2px 10px rgba(233,195,73,0.18)",
-                    filter: "drop-shadow(0 2px 6px rgba(233,195,73,0.14))",
-                    letterSpacing: "-0.01em",
-                  }}
-                >
-                  {ab.hieuQuoteAccent}
-                </i>{" "}
-                {ab.hieuQuote2}{" "}
-                <em
-                  style={{
-                    fontStyle: "italic",
-                    background:
-                      "linear-gradient(180deg, #fff8d6 0%, #f7dc74 42%, #e9c349 68%, #c79216 100%)",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    textShadow:
-                      "0 1px 0 rgba(255,255,255,0.2), 0 2px 10px rgba(233,195,73,0.16)",
-                    filter: "drop-shadow(0 2px 6px rgba(233,195,73,0.12))",
-                  }}
-                >
-                  {ab.hieuQuoteAccent2}
-                </em>
-                "
-              </p>
-              <div className="flex items-center gap-3 flex-wrap">
-                <div
-                  className="w-11 h-11 rounded-xl overflow-hidden shrink-0"
-                  style={{
-                    border: "1.5px solid rgba(233,195,73,0.3)",
-                    boxShadow: "0 0 12px rgba(233,195,73,0.1)",
-                  }}
-                >
-                  <img
-                    src="/founder_pic/hieupfp.jpg"
-                    alt="Hieu"
-                    className="w-full h-full object-cover object-top"
-                    onError={(e) => {
-                      e.target.style.display = "none";
-                    }}
-                  />
-                </div>
-                <div>
-                  <p
-                    className="font-black text-[14px]"
-                    style={{ color: "#e9c349" }}
-                  >
-                    Lê Trung Hiếu
-                  </p>
-                  <p
-                    className="text-[11px] uppercase tracking-[0.14em]"
-                    style={{ color: "#8a938d" }}
-                  >
-                    {ab.hieuRole}
-                  </p>
                 </div>
               </div>
             </div>

@@ -391,10 +391,11 @@ const t = {
 
       // Stats
       statsLabels: [
-        "Students Reached",
+        "Users / Students",
         "Heritage Sites",
         "AI Models",
-        "Schools Piloting",
+        "Schools Piloted",
+        "Schools Adopted",
       ],
 
       // Mission
@@ -453,7 +454,7 @@ const t = {
         {
           year: "Late 2025 · Pilot Launch",
           title: "Schools & Real Feedback",
-          desc: "After feature upgrades, the project was piloted at DGS Adventure (The Dewey School) and Luong Van Can High School. Over 300 students and 10 teachers participated, providing valuable reviews and feedback.",
+          desc: "After feature upgrades, the project was piloted in 5 schools and adopted by DGS Adventure (The Dewey School) and Luong Van Can High School. Over 500 students and 10 teachers participated, providing valuable reviews and feedback.",
         },
         {
           year: "Mar 2026 · Beta 1.0",
@@ -905,6 +906,7 @@ const t = {
         "Di Sản Văn Hóa",
         "Mô Hình AI",
         "Trường Thí Điểm",
+        "Trường Áp Dụng",
       ],
 
       // Mission
@@ -963,7 +965,7 @@ const t = {
         {
           year: "Cuối 2025 · Ra Mắt Thử Nghiệm",
           title: "Trường Học & Phản Hồi Thực Tế",
-          desc: "Sau khi nâng cấp tính năng, dự án được thử nghiệm tại hệ DGS Adventure (The Dewey School) và Trường THPT Lương Văn Can. Hơn 300 học sinh và 10 giáo viên tham gia đưa ra nhận xét và phản hồi.",
+          desc: "Sau khi nâng cấp tính năng, dự án được thử nghiệm tại 5 trường và được áp dụng chính thức tại hệ DGS Adventure (The Dewey School) và Trường THPT Lương Văn Can. Hơn 500 học sinh và 10 giáo viên tham gia đưa ra nhận xét và phản hồi.",
         },
         {
           year: "T3 2026 · Beta 1.0",
@@ -1875,7 +1877,7 @@ const t = {
         vrDiscovery: "VR探索",
       },
 
-      statsLabels: ["学生受众", "遗产地点", "AI模型", "试点学校"],
+      statsLabels: ["学生受众", "遗产地点", "AI模型", "试点学校", "采用学校"],
 
       missionLabel: "我们的使命",
       missionVi: "Lan tỏa, kết nối và gìn giữ.",
@@ -1929,7 +1931,7 @@ const t = {
         {
           year: "2025年底 · 试点发布",
           title: "学校与真实反馈",
-          desc: "功能升级后，项目在DGS Adventure（The Dewey School）和梁文灿高中进行了试点。超过300名学生和10名教师参与，提供了宝贵的评价和反馈。",
+          desc: "功能升级后，项目在5所学校进行了试点，并被DGS Adventure（The Dewey School）和梁文灿高中正式采用。超过500名学生和10名教师参与，提供了宝贵的评价和反馈。",
         },
         {
           year: "2026年3月 · Beta 1.0",
@@ -2608,6 +2610,7 @@ const t = {
         "Sites Patrimoniaux",
         "Modèles IA",
         "Écoles Pilotes",
+        "Écoles Adoptantes",
       ],
 
       missionLabel: "Notre Mission",
@@ -2663,7 +2666,7 @@ const t = {
         {
           year: "Fin 2025 · Lancement Pilote",
           title: "Écoles & Retours Réels",
-          desc: "Après des améliorations de fonctionnalités, le projet a été piloté à DGS Adventure (The Dewey School) et au lycée Luong Van Can. Plus de 300 étudiants et 10 enseignants y ont participé, fournissant des avis précieux.",
+          desc: "Après des améliorations de fonctionnalités, le projet a été piloté dans 5 écoles et adopté par DGS Adventure (The Dewey School) et le lycée Luong Van Can. Plus de 500 étudiants et 10 enseignants y ont participé, fournissant des avis précieux.",
         },
         {
           year: "Mar 2026 · Beta 1.0",
@@ -3339,7 +3342,7 @@ const t = {
         vrDiscovery: "VR 탐험",
       },
 
-      statsLabels: ["도달한 학생 수", "유산지 수", "AI 모델", "파일럿 학교"],
+      statsLabels: ["도달한 학생 수", "유산지 수", "AI 모델", "파일럿 학교", "도입 학교"],
 
       missionLabel: "우리의 사명",
       missionVi: "Lan tỏa, kết nối và gìn giữ.",
@@ -3394,7 +3397,7 @@ const t = {
         {
           year: "2025년 말 · 파일럿 출시",
           title: "학교 & 실제 피드백",
-          desc: "기능 개선 후 프로젝트는 DGS Adventure(The Dewey School)와 Luong Van Can 고등학교에서 시범 운영되었습니다. 300명 이상의 학생과 10명의 교사가 참여해 귀중한 의견을 제공했습니다.",
+          desc: "기능 개선 후 프로젝트는 5개 학교에서 시범 운영되었으며, DGS Adventure(The Dewey School)와 Luong Van Can 고등학교에서 도입되었습니다. 500명 이상의 학생과 10명의 교사가 참여해 귀중한 의견을 제공했습니다.",
         },
         {
           year: "2026년 3월 · 베타 1.0",
